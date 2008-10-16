@@ -1,11 +1,11 @@
 Name:             gnuplot
-Version:          0.1
+Version:          0.2
 License:          GPL
 License-File:     LICENSE
 Author:           Henning Thielemann <haskell@henning-thielemann.de>
 Maintainer:       Henning Thielemann <haskell@henning-thielemann.de>
 Homepage:         http://www.haskell.org/haskellwiki/GNUPlot
-Homepage:         http://code.haskell.org/gnuplot/
+Package-URL:      http://code.haskell.org/gnuplot/
 Category:         Graphics, Math
 Synopsis:         2D and 3D plots using GNUPlot
 Description:
@@ -27,12 +27,8 @@ Flag buildTests
 Library
   If flag(splitBase)
     Build-Depends: base >= 2, process >= 1.0 && < 1.1, time >= 1.1 && < 1.2, old-locale >= 1.0 && < 1.1
-    -- random is needed for the Test
   Else
     Build-Depends: base >= 1.0 && < 2
-    -- From the Monad Template Library we only need the State monad.
-    -- If your compiler does not support functional dependencies,
-    -- it would be easy to replace that by mapAccumL.
 
   GHC-Options:      -Wall
   Hs-Source-Dirs:   src
