@@ -1,9 +1,9 @@
 module Graphics.GNUPlot.Simple where
 
-import System.Exit (ExitCode)
+import System.Exit (ExitCode, )
 import System.Cmd (rawSystem, system, )
-import Data.List 
-import Control.Monad
+import Data.List (intersperse, )
+import Control.Monad (zipWithM, )
 import Data.Maybe (listToMaybe, mapMaybe, isNothing, )
 import Graphics.GNUPlot.Utility (dropWhileRev, functionToGraph, )
 
