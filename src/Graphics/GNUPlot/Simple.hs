@@ -2,10 +2,11 @@ module Graphics.GNUPlot.Simple where
 
 import System.Exit (ExitCode, )
 import System.Cmd (rawSystem, system, )
-import Data.List (intersperse, )
 import Control.Monad (zipWithM, )
 import Data.Maybe (listToMaybe, mapMaybe, isNothing, )
-import Graphics.GNUPlot.Utility (dropWhileRev, functionToGraph, )
+import Graphics.GNUPlot.Utility
+   (dropWhileRev, functionToGraph,
+    quote, commaConcat, semiColonConcat, showTriplet, )
 
 {-* User front-end -}
 
@@ -245,15 +246,6 @@ tmpFileStem = "curve"
 tmpFile = tmpFileStem ++ ".dat"
 
 
-showTriplet :: (Show a, Show b, Show c) => (a,b,c) -> String
-showTriplet (x,y,z) = unwords [show x, show y, show z]
-
-
-commaConcat, semiColonConcat :: [String] -> String
-commaConcat = concat . intersperse ", "
-semiColonConcat = concat . intersperse "; "
-
-
 attrToProg :: Attribute -> String
 attrToProg (EPS filename) =
    "set terminal postscript eps;" ++  -- latex
@@ -407,9 +399,6 @@ plot2dMultiSharedAbscissa attrs styles dat =
           callGNUPlot attrs "plot" plotParams
           return ()
 
-quote :: String -> String
-quote str = "\"" ++ str ++ "\""
-
 callGNUPlot :: [Attribute] -> String -> [String] -> IO ExitCode
 callGNUPlot attrs cmd params =
    startGNUPlot (semiColonConcat (map attrToProg attrs ++
@@ -420,7 +409,7 @@ callGNUPlot attrs cmd params =
    -- instead of the option, one can also use 'set terminal x11 persist'
 
 startGNUPlot ::
-      String {-^ The program that shall pipe into GNUPlot -}
+      String {-^ The GNUPlot script to be piped into GNUPlot -}
    -> String {-^ Options for GNUPlot -}
    -> IO ExitCode
 startGNUPlot program options =
