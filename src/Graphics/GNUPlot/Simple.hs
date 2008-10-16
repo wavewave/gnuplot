@@ -1,4 +1,40 @@
-module Graphics.GNUPlot.Simple where
+module Graphics.GNUPlot.Simple (
+    Attribute(..),
+    Size(..),
+    Aspect(..),
+
+    LineAttr(..),
+    LineSpec(..),
+    PlotType(..),
+
+    PlotStyle,
+
+    linearScale,
+    defaultStyle,
+
+    plotList,
+    plotListStyle,
+    plotLists,
+    plotListsStyle,
+    plotFunc,
+    plotFuncs,
+    plotPath,
+    plotPaths,
+    plotPathStyle,
+    plotPathsStyle,
+    plotParamFunc,
+    plotParamFuncs,
+    plotDots,
+
+    Plot3dType(..),
+    CornersToColor(..),
+    Attribute3d(..),
+    plotMesh3d,
+    plotFunc3d,
+
+    epspdfPlot,
+    inclPlot,
+  ) where
 
 import System.Exit (ExitCode, )
 import System.Cmd (rawSystem, system, )
