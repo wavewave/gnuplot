@@ -90,6 +90,9 @@ defaultStyle = (Lines, CustomStyle [])
 
 
 
+{- |
+> plotList [] (take 30 (let fibs = 0 : 1 : zipWith (+) fibs (tail fibs) in fibs))
+-}
 plotList :: Show a => [Attribute] -> [a] -> IO ()
 plotList attrs = plotListStyle attrs defaultStyle
 
@@ -121,9 +124,15 @@ plotListsStyle attrs dats =
             fileNames (map fst dats))
       return ()
 
+{- |
+> plotFunc [] (linearScale 1000 (-10,10)) sin
+-}
 plotFunc :: Show a => [Attribute] -> [a] -> (a -> a) -> IO ()
 plotFunc attrs args f = plotPath attrs (functionToGraph args f)
 
+{- |
+> plotFuncs [] (linearScale 1000 (-10,10)) [sin, cos]
+-}
 plotFuncs :: Show a => [Attribute] -> [a] -> [a -> a] -> IO ()
 plotFuncs attrs args fs =
    plot2dMultiSharedAbscissa attrs (zipWith const (repeat defaultStyle) fs)
@@ -141,6 +150,9 @@ plotPathStyle = plot2dGen
 plotPathsStyle :: Show a => [Attribute] -> [(PlotStyle, [(a,a)])] -> IO ()
 plotPathsStyle = plot2dMultiGen
 
+{- |
+> plotParamFunc [] (linearScale 1000 (0,2*pi)) (\t -> (sin (2*t), cos t))
+-}
 plotParamFunc :: Show a => [Attribute] -> [a] -> (a -> (a,a)) -> IO ()
 plotParamFunc attrs args f = plotPath attrs (map f args)
 
