@@ -37,12 +37,13 @@ module Graphics.Gnuplot.Simple (
   ) where
 
 import System.Exit (ExitCode, )
-import System.Cmd (rawSystem, system, )
+import System.Cmd (rawSystem, )
 import Control.Monad (zipWithM, )
 import Data.Maybe (listToMaybe, mapMaybe, isNothing, )
+import qualified Graphics.Gnuplot.Execute as Exec
 import Graphics.Gnuplot.Utility
    (dropWhileRev, functionToGraph,
-    quote, commaConcat, semiColonConcat, showTriplet, )
+    quote, commaConcat, showTriplet, )
 
 {-* User front-end -}
 
@@ -227,10 +228,11 @@ plotMesh3d :: (Show a, Show b, Show c) =>
    [Attribute] -> [Attribute3d] -> [[(a,b,c)]] -> IO ()
 plotMesh3d attrs pt dat =
    do writeFile tmpFile (unlines (map (unlines . map showTriplet) dat))
-      startGnuplot (semiColonConcat (map attrToProg attrs ++
-                           ["set pm3d " ++ unwords (map attribute3dToString pt)] ++
-                    ["splot " ++ quote tmpFile ++ " using 1:2:3 with pm3"]))
-                   "-persist"
+      Exec.simple
+         (map attrToProg attrs ++
+          ["set pm3d " ++ unwords (map attribute3dToString pt)] ++
+          ["splot " ++ quote tmpFile ++ " using 1:2:3 with pm3"])
+         ["-persist"]
       return ()
 
 {- |
@@ -437,28 +439,10 @@ plot2dMultiSharedAbscissa attrs styles dat =
 
 callGnuplot :: [Attribute] -> String -> [String] -> IO ExitCode
 callGnuplot attrs cmd params =
-   startGnuplot (semiColonConcat (map attrToProg attrs ++
-                          [cmd ++ " " ++
-                           extractRanges attrs ++ " " ++
-                           commaConcat params]))
-                "-persist"
+   Exec.simple
+      (map attrToProg attrs ++
+       [cmd ++ " " ++
+        extractRanges attrs ++ " " ++
+        commaConcat params])
+      ["-persist"]
    -- instead of the option, one can also use 'set terminal x11 persist'
-
-{-
-There could be three flavors of this function:
-
-1. Write gnuplot script to a file and load it into gnuplot
-2. use runInteractiveProcess
-3. use 'echo' and piping in a shell - restricted to Unix
--}
-startGnuplot ::
-      String {-^ The gnuplot script to be piped into gnuplot -}
-   -> String {-^ Options for gnuplot -}
-   -> IO ExitCode
-startGnuplot program options =
-   let escape ('\"':xs) = '\\' : '\"' : escape xs
-       escape (x:xs)    = x : escape xs
-       escape [] = []
-       cmd = "sh -c 'echo " ++ quote (escape program) ++ " | gnuplot " ++ options ++ "'"
-   in  do --putStrLn cmd
-          system cmd
