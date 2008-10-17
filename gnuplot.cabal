@@ -4,12 +4,12 @@ License:          GPL
 License-File:     LICENSE
 Author:           Henning Thielemann <haskell@henning-thielemann.de>
 Maintainer:       Henning Thielemann <haskell@henning-thielemann.de>
-Homepage:         http://www.haskell.org/haskellwiki/GNUPlot
+Homepage:         http://www.haskell.org/haskellwiki/Gnuplot
 Package-URL:      http://code.haskell.org/gnuplot/
 Category:         Graphics, Math
-Synopsis:         2D and 3D plots using GNUPlot
+Synopsis:         2D and 3D plots using gnuplot
 Description:
-   This is a wrapper to GNUPlot
+   This is a wrapper to gnuplot
    which lets you create 2D and 3D plots.
    .
    In the past this was part of the htam package.
@@ -33,7 +33,7 @@ Library
   GHC-Options:      -Wall
   Hs-Source-Dirs:   src
   Exposed-Modules:
-    Graphics.GNUPlot.Simple
-    Graphics.GNUPlot.Time
+    Graphics.Gnuplot.Simple
+    Graphics.Gnuplot.Time
   Other-Modules:
-    Graphics.GNUPlot.Utility
+    Graphics.Gnuplot.Utility

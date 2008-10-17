@@ -1,14 +1,14 @@
-module Graphics.GNUPlot.Time where
+module Graphics.Gnuplot.Time where
 
 import System.Locale(defaultTimeLocale)
 import Data.Time.Format(FormatTime, formatTime)
-import Graphics.GNUPlot.Utility (mapFst)
+import Graphics.Gnuplot.Utility (mapFst)
 
 {- |
 Use it this way:
 
 > import Data.Time
-> import Graphics.GNUPlot.Simple
+> import Graphics.Gnuplot.Simple
 >
 > main =
 >    plotPath [XTime, XFormat "%m-%d"] $ prepXTime $

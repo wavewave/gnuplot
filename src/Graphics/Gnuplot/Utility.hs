@@ -1,4 +1,4 @@
-module Graphics.GNUPlot.Utility where
+module Graphics.Gnuplot.Utility where
 
 import Data.List (intersperse, )
 

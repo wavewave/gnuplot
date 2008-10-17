@@ -1,4 +1,4 @@
-module Graphics.GNUPlot.Simple (
+module Graphics.Gnuplot.Simple (
     Attribute(..),
     Size(..),
     Aspect(..),
@@ -40,7 +40,7 @@ import System.Exit (ExitCode, )
 import System.Cmd (rawSystem, system, )
 import Control.Monad (zipWithM, )
 import Data.Maybe (listToMaybe, mapMaybe, isNothing, )
-import Graphics.GNUPlot.Utility
+import Graphics.Gnuplot.Utility
    (dropWhileRev, functionToGraph,
     quote, commaConcat, semiColonConcat, showTriplet, )
 
@@ -136,7 +136,7 @@ plotList attrs = plotListStyle attrs defaultStyle
 plotListStyle :: Show a => [Attribute] -> PlotStyle -> [a] -> IO ()
 plotListStyle attrs style dat =
    do writeFile tmpFile (unlines (map show dat))
-      callGNUPlot attrs "plot"
+      callGnuplot attrs "plot"
                   [quote tmpFile ++ " using 1 with " ++
                    plotStyleToString style]
       return ()
@@ -153,7 +153,7 @@ plotListsStyle attrs dats =
                            (unlines (map show dat))
                     >> return fileName)
          [(1::Int)..] (map snd dats)
-      callGNUPlot attrs "plot"
+      callGnuplot attrs "plot"
          (zipWith
             (\fileName style ->
                quote fileName ++ " using 1 with " ++
@@ -227,7 +227,7 @@ plotMesh3d :: (Show a, Show b, Show c) =>
    [Attribute] -> [Attribute3d] -> [[(a,b,c)]] -> IO ()
 plotMesh3d attrs pt dat =
    do writeFile tmpFile (unlines (map (unlines . map showTriplet) dat))
-      startGNUPlot (semiColonConcat (map attrToProg attrs ++
+      startGnuplot (semiColonConcat (map attrToProg attrs ++
                            ["set pm3d " ++ unwords (map attribute3dToString pt)] ++
                     ["splot " ++ quote tmpFile ++ " using 1:2:3 with pm3"]))
                    "-persist"
@@ -243,13 +243,13 @@ plotFunc3d attrs pt xArgs yArgs f =
 
 
 
-{-* For inclusion of GNUPlot graphics in LaTeX documents using lhs2TeX -}
+{-* For inclusion of gnuplot graphics in LaTeX documents using lhs2TeX -}
 
 {-| Redirects the output of a plotting function to an EPS file
     and additionally converts it to PDF. -}
 epspdfPlot ::
       FilePath
-   -> ([Attribute] -> IO ())  {-^ Drawing function that expects some GNUPlot attributes. -}
+   -> ([Attribute] -> IO ())  {-^ Drawing function that expects some gnuplot attributes. -}
    -> IO ()
 epspdfPlot filename plot =
    do plot (EPS (filename++".eps") : Key Nothing : [])
@@ -266,7 +266,7 @@ epspdfPlot filename plot =
     is the most flexible one. -}
 inclPlot ::
       FilePath
-   -> ([Attribute] -> IO ())  {-^ Drawing function that expects some GNUPlot attributes. -}
+   -> ([Attribute] -> IO ())  {-^ Drawing function that expects some gnuplot attributes. -}
    -> IO String
 inclPlot filename plot =
    do epspdfPlot filename plot
@@ -400,7 +400,7 @@ attribute3dToString (CornersToColor c2c) =
 
 
 {-| Writes point data to a file and returns a string containing
-    GNUPlot.plot parameters to invoke the file. -}
+    Gnuplot.plot parameters to invoke the file. -}
 storeData :: Show a => FilePath -> PlotStyle -> [(a,a)] -> IO String
 storeData file style dat =
    do writeFile file (unlines (map (\(x,y) -> show x ++ " " ++ show y) dat))
@@ -409,7 +409,7 @@ storeData file style dat =
 plot2dGen :: Show a => [Attribute] -> PlotStyle -> [(a,a)] -> IO ()
 plot2dGen attrs style dat =
    do plotParam <- storeData tmpFile style dat
-      callGNUPlot attrs "plot" [plotParam]
+      callGnuplot attrs "plot" [plotParam]
       return ()
 
 plot2dMultiGen :: Show a =>
@@ -418,7 +418,7 @@ plot2dMultiGen attrs styleDat =
    do plotParams <- sequence $
          zipWith (\n -> uncurry (storeData (tmpFileStem++show n++".dat")))
                  [(0::Int)..] styleDat
-      callGNUPlot attrs "plot" plotParams
+      callGnuplot attrs "plot" plotParams
       return ()
 
 plot2dMultiSharedAbscissa :: Show a =>
@@ -432,23 +432,30 @@ plot2dMultiSharedAbscissa attrs styles dat =
              foldr (\y -> shows y . (' ':)) (shows x "\n") ys) dat) -}
           writeFile tmpFile
              (unlines (map (unwords . map show . uncurry (:)) dat))
-          callGNUPlot attrs "plot" plotParams
+          callGnuplot attrs "plot" plotParams
           return ()
 
-callGNUPlot :: [Attribute] -> String -> [String] -> IO ExitCode
-callGNUPlot attrs cmd params =
-   startGNUPlot (semiColonConcat (map attrToProg attrs ++
+callGnuplot :: [Attribute] -> String -> [String] -> IO ExitCode
+callGnuplot attrs cmd params =
+   startGnuplot (semiColonConcat (map attrToProg attrs ++
                           [cmd ++ " " ++
                            extractRanges attrs ++ " " ++
                            commaConcat params]))
                 "-persist"
    -- instead of the option, one can also use 'set terminal x11 persist'
 
-startGNUPlot ::
-      String {-^ The GNUPlot script to be piped into GNUPlot -}
-   -> String {-^ Options for GNUPlot -}
+{-
+There could be three flavors of this function:
+
+1. Write gnuplot script to a file and load it into gnuplot
+2. use runInteractiveProcess
+3. use 'echo' and piping in a shell - restricted to Unix
+-}
+startGnuplot ::
+      String {-^ The gnuplot script to be piped into gnuplot -}
+   -> String {-^ Options for gnuplot -}
    -> IO ExitCode
-startGNUPlot program options =
+startGnuplot program options =
    let escape ('\"':xs) = '\\' : '\"' : escape xs
        escape (x:xs)    = x : escape xs
        escape [] = []
