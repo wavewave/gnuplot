@@ -12,12 +12,14 @@ simple ::
    -> IO ExitCode
 simple program options =
    let cmd =
-          "sh -c 'echo " ++ quote (escape (semiColonConcat program)) ++
+          "sh -c 'echo " ++ quote (semiColonConcat program) ++
                  " | gnuplot " ++ unwords options ++ "'"
    in  do --putStrLn cmd
           system cmd
 
+{-
 escape :: String -> String
 escape ('\"':xs) = '\\' : '\"' : escape xs
 escape (x:xs)    = x : escape xs
 escape [] = []
+-}

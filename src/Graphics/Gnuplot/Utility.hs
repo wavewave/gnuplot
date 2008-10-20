@@ -22,7 +22,7 @@ semiColonConcat = concat . intersperse "; "
 
 
 quote :: String -> String
-quote str = "\"" ++ str ++ "\""
+quote = show
 
 
 
