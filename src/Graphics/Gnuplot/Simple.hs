@@ -7,7 +7,7 @@ module Graphics.Gnuplot.Simple (
     LineSpec(..),
     PlotType(..),
 
-    PlotStyle,
+    PlotStyle(..),
 
     linearScale,
     defaultStyle,
@@ -115,7 +115,7 @@ data PlotType =
    | Vectors
    | PM3d
 
-type PlotStyle = (PlotType, LineSpec)
+data PlotStyle = PlotStyle { plotType :: PlotType, lineSpec :: LineSpec, title :: Maybe String }
 
 
 -- candidate for Useful, similar routines are in module Integration
@@ -124,7 +124,7 @@ linearScale n (x0,x1) =
    map (\m -> x0 + (x1-x0) * fromIntegral m / fromIntegral n) [0..n]
 
 defaultStyle :: PlotStyle
-defaultStyle = (Lines, CustomStyle [])
+defaultStyle = PlotStyle Lines (CustomStyle []) Nothing
 
 
 
@@ -138,7 +138,7 @@ plotListStyle :: Show a => [Attribute] -> PlotStyle -> [a] -> IO ()
 plotListStyle attrs style dat =
    do writeFile tmpFile (unlines (map show dat))
       callGnuplot attrs "plot"
-                  [quote tmpFile ++ " using 1 with " ++
+                  [quote tmpFile ++ " using 1 " ++
                    plotStyleToString style]
       return ()
 
@@ -157,7 +157,7 @@ plotListsStyle attrs dats =
       callGnuplot attrs "plot"
          (zipWith
             (\fileName style ->
-               quote fileName ++ " using 1 with " ++
+               quote fileName ++ " using 1 " ++
                   plotStyleToString style)
             fileNames (map fst dats))
       return ()
@@ -199,7 +199,7 @@ plotParamFuncs attrs args fs = plotPaths attrs (map (flip map args) fs)
 
 
 plotDots :: Show a => [Attribute] -> [(a,a)] -> IO ()
-plotDots attrs = plot2dGen attrs (Points, CustomStyle [])
+plotDots attrs = plot2dGen attrs (defaultStyle { plotType = Dots })
 
 
 
@@ -306,7 +306,7 @@ attrToProg (BoxAspect (Ratio r)) = "set size ratio " ++ show r
 attrToProg (BoxAspect (NoRatio)) = "set size noratio"
 attrToProg (LineStyle num style)
    = "set linestyle " ++ show num ++ " " ++ unwords (map lineAttrToString style)
-attrToProg (Title  title)        = "set title " ++ quote title
+attrToProg (Title  title_)       = "set title " ++ quote title_
 attrToProg (XLabel label)        = "set xlabel " ++ quote label
 attrToProg (YLabel label)        = "set ylabel " ++ quote label
 attrToProg (XRange _)            = ""  -- xrange is handled in plot command
@@ -378,8 +378,12 @@ plotTypeToString PM3d           = "pm3d"
 
 
 plotStyleToString :: PlotStyle -> String
-plotStyleToString (p, l) =
-   plotTypeToString p ++ " " ++ lineSpecToString l
+plotStyleToString (PlotStyle p l t) =
+   "with " ++ plotTypeToString p ++ " " ++ lineSpecToString l ++ " " ++ titleToString t
+
+titleToString :: Maybe String -> String
+titleToString Nothing = ""
+titleToString (Just x) = "title " ++ quote x
 
 
 plot3dTypeToString :: Plot3dType -> String
@@ -406,7 +410,7 @@ attribute3dToString (CornersToColor c2c) =
 storeData :: Show a => FilePath -> PlotStyle -> [(a,a)] -> IO String
 storeData file style dat =
    do writeFile file (unlines (map (\(x,y) -> show x ++ " " ++ show y) dat))
-      return (quote file ++ " using 1:2 with " ++ plotStyleToString style)
+      return (quote file ++ " using 1:2 " ++ plotStyleToString style)
 
 plot2dGen :: Show a => [Attribute] -> PlotStyle -> [(a,a)] -> IO ()
 plot2dGen attrs style dat =
@@ -428,7 +432,7 @@ plot2dMultiSharedAbscissa :: Show a =>
 plot2dMultiSharedAbscissa attrs styles dat =
    let plotParams =
           zipWith (\n style -> quote tmpFile ++ " using 1:"
-                       ++ show (n+1) ++ " with " ++ plotStyleToString style)
+                       ++ show (n+1) ++ " " ++ plotStyleToString style)
                   [(1::Int)..] styles
    in  do {- writeFile tmpFile (concatMap (\(x,ys) ->
              foldr (\y -> shows y . (' ':)) (shows x "\n") ys) dat) -}
