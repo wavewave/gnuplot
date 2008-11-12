@@ -49,6 +49,7 @@ import Graphics.Gnuplot.Utility
 
 data Attribute =
      EPS    FilePath
+   | PNG    FilePath
    | Grid   (Maybe [String])
    | Key    (Maybe [String])
    | Border (Maybe [String])
@@ -288,6 +289,11 @@ attrToProg :: Attribute -> String
 attrToProg (EPS filename) =
    "set terminal postscript eps;" ++  -- latex
    "set output " ++ quote filename
+
+attrToProg (PNG filename) =
+   "set terminal png;" ++  -- latex
+   "set output " ++ quote filename
+
 attrToProg (Grid   (Just x))     = "set grid " ++ unwords x
 attrToProg (Grid   Nothing)      = "set nogrid"
 attrToProg (Key    (Just x))     = "set key " ++ unwords x
