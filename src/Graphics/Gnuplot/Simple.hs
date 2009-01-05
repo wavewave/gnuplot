@@ -48,7 +48,8 @@ import Graphics.Gnuplot.Utility
 {-* User front-end -}
 
 data Attribute =
-     EPS    FilePath
+     Custom String [String]  -- ^ anything that is allowed after gnuplot's @set@ command
+   | EPS    FilePath
    | PNG    FilePath
    | Grid   (Maybe [String])
    | Key    (Maybe [String])
@@ -286,6 +287,9 @@ tmpFile = tmpFileStem ++ ".dat"
 
 
 attrToProg :: Attribute -> String
+attrToProg (Custom attribute parameters) =
+   "set " ++ attribute ++ " " ++ unwords parameters
+
 attrToProg (EPS filename) =
    "set terminal postscript eps;" ++  -- latex
    "set output " ++ quote filename
