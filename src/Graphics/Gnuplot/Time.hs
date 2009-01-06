@@ -1,8 +1,8 @@
 module Graphics.Gnuplot.Time where
 
-import System.Locale(defaultTimeLocale)
-import Data.Time.Format(FormatTime, formatTime)
-import Graphics.Gnuplot.Utility (mapFst)
+import System.Locale (defaultTimeLocale, )
+import Data.Time.Format (FormatTime, formatTime, )
+import Data.Tuple.HT (mapFst, )
 
 {- |
 Use it this way:

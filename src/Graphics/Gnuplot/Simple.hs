@@ -42,8 +42,10 @@ import Control.Monad (zipWithM, )
 import Data.Maybe (listToMaybe, mapMaybe, isNothing, )
 import qualified Graphics.Gnuplot.Execute as Exec
 import Graphics.Gnuplot.Utility
-   (dropWhileRev, functionToGraph,
+   (functionToGraph,
     quote, commaConcat, showTriplet, )
+import Data.List.HT (dropWhileRev, )
+
 
 {-* User front-end -}
 
