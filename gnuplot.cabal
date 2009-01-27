@@ -63,8 +63,10 @@ Library
       Hs-Source-Dirs: execute/tmp
 
   Exposed-Modules:
+    Graphics.Gnuplot.Advanced
     Graphics.Gnuplot.Simple
     Graphics.Gnuplot.Time
   Other-Modules:
+    Graphics.Gnuplot.Private.LineSpecification
     Graphics.Gnuplot.Utility
     Graphics.Gnuplot.Execute
