@@ -3,6 +3,7 @@ module Graphics.Gnuplot.Simple (
     Size(..),
     Aspect(..),
 
+    LineAttr(..),
     LineSpec(..),
     PlotType(..),
 
@@ -38,7 +39,7 @@ module Graphics.Gnuplot.Simple (
 import System.Exit (ExitCode, )
 import System.Cmd (rawSystem, )
 import Control.Monad (zipWithM, )
-import Data.Maybe (listToMaybe, mapMaybe, isNothing, catMaybes, )
+import Data.Maybe (listToMaybe, mapMaybe, isNothing, )
 import qualified Graphics.Gnuplot.Execute as Exec
 import Graphics.Gnuplot.Utility
    (functionToGraph,
@@ -60,7 +61,7 @@ data Attribute =
    | Size   (Size)
    | Aspect (Aspect)
    | BoxAspect (Aspect)
-   | LineStyle Int LineSpec
+   | LineStyle Int [LineAttr]
    | Title  String
    | XLabel String
    | YLabel String
@@ -81,29 +82,17 @@ data Aspect =
    | NoRatio
 
 {- The Int types would be better enumerations
-   but their interpretations depend on the gnuplot output type. :-(
- -}
+   but their interpretations depend on the gnuplot output type. :-( -}
+data LineAttr =
+     LineType  Int
+   | LineWidth Double
+   | PointType Int
+   | PointSize Double
+   | LineTitle String
 
 data LineSpec =
-   LineSpec
-      { lspecLineStyle :: Maybe Int
-      , lspecLineType  :: Maybe Int
-      , lspecLineWidth :: Maybe Double
-      , lspecPointType :: Maybe Int
-      , lspecPointSize :: Maybe Double
-      , lspecTitle     :: Maybe String
-      }
-
-defaultLineSpec :: LineSpec
-defaultLineSpec =
-   LineSpec
-      { lspecLineStyle = Nothing
-      , lspecLineType  = Nothing
-      , lspecLineWidth = Nothing
-      , lspecPointType = Nothing
-      , lspecPointSize = Nothing
-      , lspecTitle     = Nothing
-      }
+     DefaultStyle Int
+   | CustomStyle  [LineAttr]
 
 data PlotType =
      Lines
@@ -140,11 +129,9 @@ linearScale n (x0,x1) =
    map (\m -> x0 + (x1-x0) * fromIntegral m / fromIntegral n) [0..n]
 
 defaultStyle :: PlotStyle
-defaultStyle =
-   PlotStyle
-      { plotType = Lines
-      , lineSpec = defaultLineSpec
-      }
+defaultStyle = PlotStyle Lines (CustomStyle [])
+
+
 
 {- |
 > plotList [] (take 30 (let fibs = 0 : 1 : zipWith (+) fibs (tail fibs) in fibs))
@@ -330,8 +317,8 @@ attrToProg (Aspect (Ratio r))    = "set size ratio " ++ show (-r)
 attrToProg (Aspect (NoRatio))    = "set size noratio"
 attrToProg (BoxAspect (Ratio r)) = "set size ratio " ++ show r
 attrToProg (BoxAspect (NoRatio)) = "set size noratio"
-attrToProg (LineStyle num linespec) =
-   "set linestyle " ++ show num ++ " " ++ lineSpecToString linespec
+attrToProg (LineStyle num style) =
+   "set linestyle " ++ show num ++ " " ++ unwords (map lineAttrToString style)
 attrToProg (Title  title_)       = "set title " ++ quote title_
 attrToProg (XLabel label)        = "set xlabel " ++ quote label
 attrToProg (YLabel label)        = "set ylabel " ++ quote label
@@ -365,20 +352,17 @@ extractRanges attrs =
    in  unwords (map (maybe "[:]" showRng) (dropWhileRev isNothing ranges))
 
 
+
+lineAttrToString :: LineAttr -> String
+lineAttrToString (LineType  t) = "linetype "  ++ show t
+lineAttrToString (LineWidth x) = "linewidth " ++ show x
+lineAttrToString (PointType t) = "pointtype " ++ show t
+lineAttrToString (PointSize x) = "pointsize " ++ show x
+lineAttrToString (LineTitle s) = "title "     ++ quote s
+
 lineSpecToString :: LineSpec -> String
-lineSpecToString linespec =
-   let showField :: String -> (a -> String) -> (LineSpec -> Maybe a) -> Maybe [String]
-       showField s f access = fmap (\a -> [s, f a]) $ access linespec
-   in  unwords $ concat $ catMaybes $
-       showField "linetype"  show  lspecLineType  :
-       showField "linewidth" show  lspecLineWidth :
-       showField "pointtype" show  lspecPointType :
-       showField "pointsize" show  lspecPointSize :
-       showField "title"     quote lspecTitle     :
-       showField "linestyle" show  lspecLineStyle :
-       []
-
-
+lineSpecToString (DefaultStyle n) = "linestyle " ++ show n
+lineSpecToString (CustomStyle  s) = unwords (map lineAttrToString s)
 
 plotTypeToString :: PlotType -> String
 plotTypeToString Lines          = "lines"
@@ -408,7 +392,7 @@ plotTypeToString PM3d           = "pm3d"
 
 
 plotStyleToString :: PlotStyle -> String
-plotStyleToString (PlotStyle p l ) =
+plotStyleToString (PlotStyle p l) =
    "with " ++ plotTypeToString p ++ " " ++ lineSpecToString l
 
 
