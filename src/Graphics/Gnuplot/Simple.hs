@@ -38,7 +38,7 @@ module Graphics.Gnuplot.Simple (
 import System.Exit (ExitCode, )
 import System.Cmd (rawSystem, )
 import Control.Monad (zipWithM, )
-import Data.Maybe (listToMaybe, mapMaybe, isNothing, )
+import Data.Maybe (listToMaybe, mapMaybe, isNothing, catMaybes, )
 import qualified Graphics.Gnuplot.Execute as Exec
 import Graphics.Gnuplot.Utility
    (functionToGraph,
@@ -85,22 +85,25 @@ data Aspect =
  -}
 
 data LineSpec =
-  LineSpec { lspecLineStyle :: Maybe Int
-           , lspecLineType  :: Maybe Int
-           , lspecLineWidth :: Maybe Double
-           , lspecPointType :: Maybe Int
-           , lspecPointSize :: Maybe Double
-           , lspecTitle     :: Maybe String
-           }
+   LineSpec
+      { lspecLineStyle :: Maybe Int
+      , lspecLineType  :: Maybe Int
+      , lspecLineWidth :: Maybe Double
+      , lspecPointType :: Maybe Int
+      , lspecPointSize :: Maybe Double
+      , lspecTitle     :: Maybe String
+      }
 
 defaultLineSpec :: LineSpec
-defaultLineSpec = LineSpec { lspecLineStyle = Nothing
-                           , lspecLineType  = Nothing
-                           , lspecLineWidth = Nothing
-                           , lspecPointType = Nothing
-                           , lspecPointSize = Nothing
-                           , lspecTitle     = Nothing
-                           }
+defaultLineSpec =
+   LineSpec
+      { lspecLineStyle = Nothing
+      , lspecLineType  = Nothing
+      , lspecLineWidth = Nothing
+      , lspecPointType = Nothing
+      , lspecPointSize = Nothing
+      , lspecTitle     = Nothing
+      }
 
 data PlotType =
      Lines
@@ -137,9 +140,11 @@ linearScale n (x0,x1) =
    map (\m -> x0 + (x1-x0) * fromIntegral m / fromIntegral n) [0..n]
 
 defaultStyle :: PlotStyle
-defaultStyle = PlotStyle { plotType = Lines
-                         , lineSpec = defaultLineSpec
-                         }
+defaultStyle =
+   PlotStyle
+      { plotType = Lines
+      , lineSpec = defaultLineSpec
+      }
 
 {- |
 > plotList [] (take 30 (let fibs = 0 : 1 : zipWith (+) fibs (tail fibs) in fibs))
@@ -325,16 +330,16 @@ attrToProg (Aspect (Ratio r))    = "set size ratio " ++ show (-r)
 attrToProg (Aspect (NoRatio))    = "set size noratio"
 attrToProg (BoxAspect (Ratio r)) = "set size ratio " ++ show r
 attrToProg (BoxAspect (NoRatio)) = "set size noratio"
-attrToProg (LineStyle num linespec)
-   = "set linestyle " ++ show num ++ " " ++ (lineSpecToString linespec)
+attrToProg (LineStyle num linespec) =
+   "set linestyle " ++ show num ++ " " ++ lineSpecToString linespec
 attrToProg (Title  title_)       = "set title " ++ quote title_
 attrToProg (XLabel label)        = "set xlabel " ++ quote label
 attrToProg (YLabel label)        = "set ylabel " ++ quote label
 attrToProg (XRange _)            = ""  -- xrange is handled in plot command
 attrToProg (YRange _)            = ""  -- yrange is handled in plot command
 attrToProg (ZRange _)            = ""  -- zrange is handled in plot command
-attrToProg (Palette colors)
-   = "set palette defined (" ++
+attrToProg (Palette colors) =
+   "set palette defined (" ++
      commaConcat (map (\(idx,c) -> show idx ++ " " ++ showTriplet c) colors) ++ ")"
 attrToProg (ColorBox (Just x))     = "set colorbox " ++ unwords x
 attrToProg (ColorBox Nothing)      = "unset colorbox"
@@ -355,26 +360,25 @@ zRangeFromAttr _            = Nothing
 extractRanges :: [Attribute] -> String
 extractRanges attrs =
    let ranges = map (listToMaybe . flip mapMaybe attrs)
-                    [xRangeFromAttr,  yRangeFromAttr, zRangeFromAttr]
+                    [xRangeFromAttr, yRangeFromAttr, zRangeFromAttr]
        showRng (l,r) = "[" ++ show l ++ ":" ++ show r ++ "]"
    in  unwords (map (maybe "[:]" showRng) (dropWhileRev isNothing ranges))
 
 
 lineSpecToString :: LineSpec -> String
 lineSpecToString linespec =
-  unwords $ [ s | Just s <- strings ]
-  where
-  strings = [ mMaybe "linetype"  show  $ lspecLineType  linespec
-            , mMaybe "linewidth" show  $ lspecLineWidth linespec
-            , mMaybe "pointtype" show  $ lspecPointType linespec
-            , mMaybe "pointsize" show  $ lspecPointSize linespec
-            , mMaybe "title"     quote $ lspecTitle     linespec
-            , mMaybe "linestyle" show  $ lspecLineStyle linespec
-            ]
+   let showField :: String -> (a -> String) -> (LineSpec -> Maybe a) -> Maybe [String]
+       showField s f access = fmap (\a -> [s, f a]) $ access linespec
+   in  unwords $ concat $ catMaybes $
+       showField "linetype"  show  lspecLineType  :
+       showField "linewidth" show  lspecLineWidth :
+       showField "pointtype" show  lspecPointType :
+       showField "pointsize" show  lspecPointSize :
+       showField "title"     quote lspecTitle     :
+       showField "linestyle" show  lspecLineStyle :
+       []
 
-  mMaybe :: String -> (a -> String) -> Maybe a -> Maybe String
-  mMaybe _s _f Nothing   = Nothing
-  mMaybe s  f  (Just a)  = Just $ unwords [ s, f a ]
+
 
 plotTypeToString :: PlotType -> String
 plotTypeToString Lines          = "lines"
