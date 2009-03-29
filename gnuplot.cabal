@@ -66,7 +66,11 @@ Library
     Graphics.Gnuplot.Advanced
     Graphics.Gnuplot.Simple
     Graphics.Gnuplot.Time
+    Graphics.Gnuplot.Terminal.PostScript
+    Graphics.Gnuplot.Terminal.PNG
+    Graphics.Gnuplot.Terminal.SVG
   Other-Modules:
     Graphics.Gnuplot.Private.LineSpecification
     Graphics.Gnuplot.Utility
     Graphics.Gnuplot.Execute
+    Graphics.Gnuplot.Terminal

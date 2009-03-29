@@ -1,3 +1,11 @@
+{- |
+This is a simple monolithic interface to Gnuplot
+that can be used as is in GHCi or Hugs.
+We do not plan to support every feature of Gnuplot,
+instead we will develop an advanced modularized interface.
+That will however be designed for non-interactive use,
+e.g. scripts for plotting statistics.
+-}
 module Graphics.Gnuplot.Simple (
     Attribute(..),
     Size(..),
@@ -11,6 +19,8 @@ module Graphics.Gnuplot.Simple (
 
     linearScale,
     defaultStyle,
+
+    terminal,
 
     plotList,
     plotListStyle,
@@ -40,6 +50,7 @@ import System.Exit (ExitCode, )
 import System.Cmd (rawSystem, )
 import Control.Monad (zipWithM, )
 import Data.Maybe (listToMaybe, mapMaybe, isNothing, )
+import qualified Graphics.Gnuplot.Terminal as Terminal
 import qualified Graphics.Gnuplot.Execute as Exec
 import Graphics.Gnuplot.Utility
    (functionToGraph,
@@ -47,12 +58,13 @@ import Graphics.Gnuplot.Utility
 import Data.List.HT (dropWhileRev, )
 
 
-{-* User front-end -}
+-- * User front-end
 
 data Attribute =
      Custom String [String]  -- ^ anything that is allowed after gnuplot's @set@ command
    | EPS    FilePath
    | PNG    FilePath
+   | Terminal Terminal.T     -- ^ you cannot use this, call 'terminal' instead
    | Grid   (Maybe [String])
    | Key    (Maybe [String])
    | Border (Maybe [String])
@@ -132,6 +144,12 @@ defaultStyle :: PlotStyle
 defaultStyle = PlotStyle Lines (CustomStyle [])
 
 
+terminal :: Terminal.C term => term -> Attribute
+terminal =
+   Terminal . Terminal.canonical
+
+
+-- * plot functions
 
 {- |
 > plotList [] (take 30 (let fibs = 0 : 1 : zipWith (+) fibs (tail fibs) in fibs))
@@ -250,7 +268,7 @@ plotFunc3d attrs pt xArgs yArgs f =
 
 
 
-{-* For inclusion of gnuplot graphics in LaTeX documents using lhs2TeX -}
+-- * For inclusion of gnuplot graphics in LaTeX documents using lhs2TeX
 
 {-| Redirects the output of a plotting function to an EPS file
     and additionally converts it to PDF. -}
@@ -281,7 +299,7 @@ inclPlot filename plot =
 
 
 
-{-* Internal functions -}
+-- * Internal functions
 
 tmpFileStem, tmpFile :: FilePath
 
@@ -293,12 +311,16 @@ attrToProg :: Attribute -> String
 attrToProg (Custom attribute parameters) =
    "set " ++ attribute ++ " " ++ unwords parameters
 
+attrToProg (Terminal (Terminal.Cons options commands)) =
+   "set terminal " ++ unwords options ++ ";" ++
+   unwords commands
+
 attrToProg (EPS filename) =
    "set terminal postscript eps;" ++  -- latex
    "set output " ++ quote filename
 
 attrToProg (PNG filename) =
-   "set terminal png;" ++  -- latex
+   "set terminal png; " ++
    "set output " ++ quote filename
 
 attrToProg (Grid   (Just x))     = "set grid " ++ unwords x
