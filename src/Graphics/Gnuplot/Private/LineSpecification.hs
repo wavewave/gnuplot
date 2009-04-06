@@ -4,36 +4,60 @@ import Data.Maybe (catMaybes, )
 import Graphics.Gnuplot.Utility (quote, )
 
 
+{-
+The Int types would be better enumerations
+but their interpretations depend on the gnuplot output type. :-(
+-}
+
 data T =
    Cons
-      { lineStyle :: Maybe Int
-      , lineType  :: Maybe Int
-      , lineWidth :: Maybe Double
-      , pointType :: Maybe Int
-      , pointSize :: Maybe Double
-      , title     :: Maybe String
+      { lineStyle_ :: Maybe Int
+      , lineType_  :: Maybe Int
+      , lineWidth_ :: Maybe Double
+      , pointType_ :: Maybe Int
+      , pointSize_ :: Maybe Double
+      , title_     :: Maybe String
       }
 
 deflt :: T
 deflt =
    Cons
-      { lineStyle = Nothing
-      , lineType  = Nothing
-      , lineWidth = Nothing
-      , pointType = Nothing
-      , pointSize = Nothing
-      , title     = Nothing
+      { lineStyle_ = Nothing
+      , lineType_  = Nothing
+      , lineWidth_ = Nothing
+      , pointType_ = Nothing
+      , pointSize_ = Nothing
+      , title_     = Nothing
       }
+
+lineStyle :: Int -> T -> T
+lineStyle x ls = ls{lineStyle_ = Just x}
+
+lineType :: Int -> T -> T
+lineType x ls = ls{lineType_ = Just x}
+
+lineWidth :: Double -> T -> T
+lineWidth x ls = ls{lineWidth_ = Just x}
+
+pointType :: Int -> T -> T
+pointType x ls = ls{pointType_ = Just x}
+
+pointSize :: Double -> T -> T
+pointSize x ls = ls{pointSize_ = Just x}
+
+title :: String -> T -> T
+title x ls = ls{title_ = Just x}
+
 
 toString :: T -> String
 toString linespec =
    let showField :: String -> (a -> String) -> (T -> Maybe a) -> Maybe [String]
        showField s f access = fmap (\a -> [s, f a]) $ access linespec
    in  unwords $ concat $ catMaybes $
-       showField "linetype"  show  lineType  :
-       showField "linewidth" show  lineWidth :
-       showField "pointtype" show  pointType :
-       showField "pointsize" show  pointSize :
-       showField "title"     quote title     :
-       showField "linestyle" show  lineStyle :
+       showField "linetype"  show  lineType_  :
+       showField "linewidth" show  lineWidth_ :
+       showField "pointtype" show  pointType_ :
+       showField "pointsize" show  pointSize_ :
+       showField "title"     quote title_     :
+       showField "linestyle" show  lineStyle_ :
        []
