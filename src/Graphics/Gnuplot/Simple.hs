@@ -46,7 +46,6 @@ module Graphics.Gnuplot.Simple (
     inclPlot,
   ) where
 
-import System.Exit (ExitCode, )
 import System.Cmd (rawSystem, )
 import Control.Monad (zipWithM, )
 import Data.Maybe (listToMaybe, mapMaybe, isNothing, )
@@ -163,7 +162,6 @@ plotListStyle attrs style dat =
       callGnuplot attrs "plot"
                   [quote tmpFile ++ " using 1 " ++
                    plotStyleToString style]
-      return ()
 
 plotLists :: Show a => [Attribute] -> [[a]] -> IO ()
 plotLists attrs = plotListsStyle attrs . map ((,) defaultStyle)
@@ -183,7 +181,6 @@ plotListsStyle attrs dats =
                quote fileName ++ " using 1 " ++
                   plotStyleToString style)
             fileNames (map fst dats))
-      return ()
 
 {- |
 > plotFunc [] (linearScale 1000 (-10,10)) sin
@@ -448,7 +445,6 @@ plot2dGen :: Show a => [Attribute] -> PlotStyle -> [(a,a)] -> IO ()
 plot2dGen attrs style dat =
    do plotParam <- storeData tmpFile style dat
       callGnuplot attrs "plot" [plotParam]
-      return ()
 
 plot2dMultiGen :: Show a =>
    [Attribute] -> [(PlotStyle, [(a,a)])] -> IO ()
@@ -457,7 +453,6 @@ plot2dMultiGen attrs styleDat =
          zipWith (\n -> uncurry (storeData (tmpFileStem++show n++".dat")))
                  [(0::Int)..] styleDat
       callGnuplot attrs "plot" plotParams
-      return ()
 
 plot2dMultiSharedAbscissa :: Show a =>
    [Attribute] -> [PlotStyle] -> [(a,[a])] -> IO ()
@@ -471,9 +466,8 @@ plot2dMultiSharedAbscissa attrs styles dat =
           writeFile tmpFile
              (unlines (map (unwords . map show . uncurry (:)) dat))
           callGnuplot attrs "plot" plotParams
-          return ()
 
-callGnuplot :: [Attribute] -> String -> [String] -> IO ExitCode
+callGnuplot :: [Attribute] -> String -> [String] -> IO ()
 callGnuplot attrs cmd params =
    Exec.simple
       (map attrToProg attrs ++
@@ -482,3 +476,4 @@ callGnuplot attrs cmd params =
         commaConcat params])
       ["-persist"]
    -- instead of the option, one can also use 'set terminal x11 persist'
+     >> return ()
