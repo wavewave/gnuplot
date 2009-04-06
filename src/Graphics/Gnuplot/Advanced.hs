@@ -15,6 +15,8 @@ module Graphics.Gnuplot.Advanced (
     linearScale,
     defaultStyle,
 
+    terminal,
+
     plotList,
     plotListStyle,
     plotLists,
@@ -45,6 +47,8 @@ import System.Exit (ExitCode, )
 import System.Cmd (rawSystem, )
 import Control.Monad (zipWithM, )
 import Data.Maybe (listToMaybe, mapMaybe, isNothing, )
+import qualified Graphics.Gnuplot.Terminal as Terminal
+import qualified Graphics.Gnuplot.Terminal.PostScript as PS
 import qualified Graphics.Gnuplot.Execute as Exec
 import Graphics.Gnuplot.Utility
    (functionToGraph,
@@ -52,12 +56,12 @@ import Graphics.Gnuplot.Utility
 import Data.List.HT (dropWhileRev, )
 
 
-{-* User front-end -}
+
+-- * User front-end
 
 data Attribute =
      Custom String [String]  -- ^ anything that is allowed after gnuplot's @set@ command
-   | EPS    FilePath
-   | PNG    FilePath
+   | Terminal Terminal.T     -- ^ you cannot use this, call 'terminal' instead
    | Grid   (Maybe [String])
    | Key    (Maybe [String])
    | Border (Maybe [String])
@@ -130,6 +134,14 @@ defaultStyle =
       { plotType = Lines
       , lineSpec = LineSpec.deflt
       }
+
+
+terminal :: Terminal.C term => term -> Attribute
+terminal =
+   Terminal . Terminal.canonical
+
+
+-- * plot functions
 
 {- |
 > plotList [] (take 30 (let fibs = 0 : 1 : zipWith (+) fibs (tail fibs) in fibs))
@@ -245,7 +257,7 @@ plotFunc3d attrs pt xArgs yArgs f =
 
 
 
-{-* For inclusion of gnuplot graphics in LaTeX documents using lhs2TeX -}
+-- * For inclusion of gnuplot graphics in LaTeX documents using lhs2TeX
 
 {-| Redirects the output of a plotting function to an EPS file
     and additionally converts it to PDF. -}
@@ -254,7 +266,7 @@ epspdfPlot ::
    -> ([Attribute] -> IO ExitCode)  {-^ Drawing function that expects some gnuplot attributes. -}
    -> IO ExitCode
 epspdfPlot filename plot =
-   do plot (EPS (filename++".eps") : Key Nothing : [])
+   do plot (terminal (PS.eps $ PS.cons (filename++".eps")) : Key Nothing : [])
       rawSystem "epstopdf" [filename++".eps"]
 
 {-| Creates an EPS and a PDF graphics
@@ -275,7 +287,7 @@ inclPlot filename plot =
 
 
 
-{-* Internal functions -}
+-- * Internal functions
 
 tmpFileStem, tmpFile :: FilePath
 
@@ -287,13 +299,9 @@ attrToProg :: Attribute -> String
 attrToProg (Custom attribute parameters) =
    "set " ++ attribute ++ " " ++ unwords parameters
 
-attrToProg (EPS filename) =
-   "set terminal postscript eps;" ++  -- latex
-   "set output " ++ quote filename
-
-attrToProg (PNG filename) =
-   "set terminal png;" ++  -- latex
-   "set output " ++ quote filename
+attrToProg (Terminal (Terminal.Cons options commands)) =
+   "set terminal " ++ unwords options ++ ";" ++
+   unwords commands
 
 attrToProg (Grid   (Just x))     = "set grid " ++ unwords x
 attrToProg (Grid   Nothing)      = "set nogrid"
