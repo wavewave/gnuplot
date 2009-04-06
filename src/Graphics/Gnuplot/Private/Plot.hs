@@ -36,6 +36,10 @@ data File =
       graphs_ :: [Graph.T]
    }
 
+writeData :: File -> IO ()
+writeData (File fn cont _) =
+   maybe (return ()) (writeFile fn) cont
+
 
 tmpFileStem, tmpFile :: FilePath
 

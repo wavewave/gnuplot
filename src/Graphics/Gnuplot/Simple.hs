@@ -375,10 +375,7 @@ attribute3dToString (CornersToColor c2c) =
 plot2d :: [Attribute] -> Plot.T -> IO ()
 plot2d attrs (Plot.Cons mp) =
    let files = State.evaluate 0 mp
-   in  do sequence_ $
-             mapMaybe (\(Plot.File filename cont _) ->
-                fmap (writeFile filename) cont) $
-             files
+   in  do mapM_ Plot.writeData files
           callGnuplot attrs "plot" $
              concatMap (\(Plot.File filename _ grs) ->
                 map (\gr -> quote filename ++ " " ++ Graph.toString gr) grs) $
