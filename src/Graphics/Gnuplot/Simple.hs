@@ -230,12 +230,10 @@ plotMesh3d :: (Show a, Show b, Show c) =>
    [Attribute] -> [Attribute3d] -> [[(a,b,c)]] -> IO ()
 plotMesh3d attrs pt dat =
    do writeFile tmpFile (unlines (map (unlines . map showTriplet) dat))
-      Exec.simple
-         (map attrToProg attrs ++
-          ["set pm3d " ++ unwords (map attribute3dToString pt)] ++
-          ["splot " ++ quote tmpFile ++ " using 1:2:3 with pm3"])
-         ["-persist"]
-      return ()
+      callGnuplot
+         (attrs ++ [Custom "pm3d" (map attribute3dToString pt)])
+         "splot"
+         [quote tmpFile ++ " using 1:2:3 with pm3"]
 
 {- |
 > let xs = [-2,-1.8..2::Double] in plotFunc3d [] [] xs xs (\x y -> exp(-(x*x+y*y)))
