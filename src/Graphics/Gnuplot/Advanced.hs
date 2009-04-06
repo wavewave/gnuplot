@@ -8,51 +8,42 @@ module Graphics.Gnuplot.Advanced (
     Size(..),
     Aspect(..),
 
-    PlotType(..),
-
-    PlotStyle(..),
+--    Graph.Type(..),
 
     linearScale,
-    defaultStyle,
 
     terminal,
 
-    plotList,
-    plotListStyle,
-    plotLists,
-    plotListsStyle,
-    plotFunc,
-    plotFuncs,
-    plotPath,
-    plotPaths,
-    plotPathStyle,
-    plotPathsStyle,
-    plotParamFunc,
-    plotParamFuncs,
-    plotDots,
+    plot2d,
 
+{-
     Plot3dType(..),
     CornersToColor(..),
     Attribute3d(..),
     plotMesh3d,
     plotFunc3d,
+-}
 
     epspdfPlot,
     inclPlot,
   ) where
 
 import qualified Graphics.Gnuplot.Private.LineSpecification as LineSpec
+import qualified Graphics.Gnuplot.Private.Graph as Graph
+import qualified Graphics.Gnuplot.Private.Plot  as Plot
+
+import qualified Graphics.Gnuplot.Terminal.PostScript as PS
+import qualified Graphics.Gnuplot.Terminal as Terminal
+import qualified Graphics.Gnuplot.Execute as Exec
+
 
 import System.Exit (ExitCode, )
 import System.Cmd (rawSystem, )
-import Control.Monad (zipWithM, )
-import Data.Maybe (listToMaybe, mapMaybe, isNothing, )
-import qualified Graphics.Gnuplot.Terminal as Terminal
-import qualified Graphics.Gnuplot.Terminal.PostScript as PS
-import qualified Graphics.Gnuplot.Execute as Exec
 import Graphics.Gnuplot.Utility
-   (functionToGraph,
-    quote, commaConcat, showTriplet, )
+   (quote, commaConcat, showTriplet, )
+
+import qualified Data.Monoid.State as State
+import Data.Maybe (listToMaybe, mapMaybe, isNothing, )
 import Data.List.HT (dropWhileRev, )
 
 
@@ -90,50 +81,11 @@ data Aspect =
      Ratio Double
    | NoRatio
 
-{- The Int types would be better enumerations
-   but their interpretations depend on the gnuplot output type. :-(
- -}
-
-data PlotType =
-     Lines
-   | Points
-   | LinesPoints
-   | Impulses
-   | Dots
-   | Steps
-   | FSteps
-   | HiSteps
-   | ErrorBars
-   | XErrorBars
-   | YErrorBars
-   | XYErrorBars
-   | ErrorLines
-   | XErrorLines
-   | YErrorLines
-   | XYErrorLines
-   | Boxes
-   | FilledCurves
-   | BoxErrorBars
-   | BoxXYErrorBars
-   | FinanceBars
-   | CandleSticks
-   | Vectors
-   | PM3d
-
-data PlotStyle = PlotStyle { plotType :: PlotType, lineSpec :: LineSpec.T }
-
 
 -- candidate for Useful, similar routines are in module Integration
 linearScale :: Fractional a => Integer -> (a,a) -> [a]
 linearScale n (x0,x1) =
    map (\m -> x0 + (x1-x0) * fromIntegral m / fromIntegral n) [0..n]
-
-defaultStyle :: PlotStyle
-defaultStyle =
-   PlotStyle
-      { plotType = Lines
-      , lineSpec = LineSpec.deflt
-      }
 
 
 terminal :: Terminal.C term => term -> Attribute
@@ -143,79 +95,7 @@ terminal =
 
 -- * plot functions
 
-{- |
-> plotList [] (take 30 (let fibs = 0 : 1 : zipWith (+) fibs (tail fibs) in fibs))
--}
-plotList :: Show a => [Attribute] -> [a] -> IO ExitCode
-plotList attrs = plotListStyle attrs defaultStyle
-
-plotListStyle :: Show a => [Attribute] -> PlotStyle -> [a] -> IO ExitCode
-plotListStyle attrs style dat =
-   do writeFile tmpFile (unlines (map show dat))
-      callGnuplot attrs "plot"
-                  [quote tmpFile ++ " using 1 " ++
-                   plotStyleToString style]
-
-plotLists :: Show a => [Attribute] -> [[a]] -> IO ExitCode
-plotLists attrs = plotListsStyle attrs . map ((,) defaultStyle)
-
-plotListsStyle :: Show a => [Attribute] -> [(PlotStyle, [a])] -> IO ExitCode
-plotListsStyle attrs dats =
-   do fileNames <- zipWithM
-         (\n dat ->
-             let fileName = tmpFileStem ++ show n ++ ".dat"
-             in  writeFile fileName
-                           (unlines (map show dat))
-                    >> return fileName)
-         [(1::Int)..] (map snd dats)
-      callGnuplot attrs "plot"
-         (zipWith
-            (\fileName style ->
-               quote fileName ++ " using 1 " ++
-                  plotStyleToString style)
-            fileNames (map fst dats))
-
-{- |
-> plotFunc [] (linearScale 1000 (-10,10)) sin
--}
-plotFunc :: Show a => [Attribute] -> [a] -> (a -> a) -> IO ExitCode
-plotFunc attrs args f = plotPath attrs (functionToGraph args f)
-
-{- |
-> plotFuncs [] (linearScale 1000 (-10,10)) [sin, cos]
--}
-plotFuncs :: Show a => [Attribute] -> [a] -> [a -> a] -> IO ExitCode
-plotFuncs attrs args fs =
-   plot2dMultiSharedAbscissa attrs (zipWith const (repeat defaultStyle) fs)
-      (map (\x -> (x, map ($ x) fs)) args)
-
-plotPath :: Show a => [Attribute] -> [(a,a)] -> IO ExitCode
-plotPath attrs = plot2dGen attrs defaultStyle
-
-plotPaths :: Show a => [Attribute] -> [[(a,a)]] -> IO ExitCode
-plotPaths attrs = plot2dMultiGen attrs . zip (repeat defaultStyle)
-
-plotPathStyle :: Show a => [Attribute] -> PlotStyle -> [(a,a)] -> IO ExitCode
-plotPathStyle = plot2dGen
-
-plotPathsStyle :: Show a => [Attribute] -> [(PlotStyle, [(a,a)])] -> IO ExitCode
-plotPathsStyle = plot2dMultiGen
-
-{- |
-> plotParamFunc [] (linearScale 1000 (0,2*pi)) (\t -> (sin (2*t), cos t))
--}
-plotParamFunc :: Show a => [Attribute] -> [a] -> (a -> (a,a)) -> IO ExitCode
-plotParamFunc attrs args f = plotPath attrs (map f args)
-
-plotParamFuncs :: Show a => [Attribute] -> [a] -> [a -> (a,a)] -> IO ExitCode
-plotParamFuncs attrs args fs = plotPaths attrs (map (flip map args) fs)
-
-
-plotDots :: Show a => [Attribute] -> [(a,a)] -> IO ExitCode
-plotDots attrs = plot2dGen attrs (defaultStyle { plotType = Dots })
-
-
-
+{-
 data Plot3dType =
      Surface
    | ColorMap
@@ -254,7 +134,7 @@ plotFunc3d :: (Show a, Show b, Show c) =>
    [Attribute] -> [Attribute3d] -> [b] -> [c] -> (b -> c -> a) -> IO ExitCode
 plotFunc3d attrs pt xArgs yArgs f =
    plotMesh3d attrs pt (map (map (\(x,y) -> (x, y, f x y)) . flip map yArgs . (,)) xArgs)
-
+-}
 
 
 -- * For inclusion of gnuplot graphics in LaTeX documents using lhs2TeX
@@ -288,11 +168,6 @@ inclPlot filename plot =
 
 
 -- * Internal functions
-
-tmpFileStem, tmpFile :: FilePath
-
-tmpFileStem = "curve"
-tmpFile = tmpFileStem ++ ".dat"
 
 
 attrToProg :: Attribute -> String
@@ -354,39 +229,7 @@ extractRanges attrs =
    in  unwords (map (maybe "[:]" showRng) (dropWhileRev isNothing ranges))
 
 
-
-plotTypeToString :: PlotType -> String
-plotTypeToString Lines          = "lines"
-plotTypeToString Points         = "points"
-plotTypeToString LinesPoints    = "linespoints"
-plotTypeToString Impulses       = "impulses"
-plotTypeToString Dots           = "dots"
-plotTypeToString Steps          = "steps"
-plotTypeToString FSteps         = "fsteps"
-plotTypeToString HiSteps        = "histeps"
-plotTypeToString ErrorBars      = "errorbars"
-plotTypeToString XErrorBars     = "xerrorbars"
-plotTypeToString YErrorBars     = "yerrorbars"
-plotTypeToString XYErrorBars    = "xyerrorbars"
-plotTypeToString ErrorLines     = "errorlines"
-plotTypeToString XErrorLines    = "xerrorlines"
-plotTypeToString YErrorLines    = "yerrorlines"
-plotTypeToString XYErrorLines   = "xyerrorlines"
-plotTypeToString Boxes          = "boxes"
-plotTypeToString FilledCurves   = "filledcurves"
-plotTypeToString BoxErrorBars   = "boxerrorbars"
-plotTypeToString BoxXYErrorBars = "boxxyerrorbars"
-plotTypeToString FinanceBars    = "financebars"
-plotTypeToString CandleSticks   = "candlesticks"
-plotTypeToString Vectors        = "vectors"
-plotTypeToString PM3d           = "pm3d"
-
-
-plotStyleToString :: PlotStyle -> String
-plotStyleToString (PlotStyle p l) =
-   "with " ++ plotTypeToString p ++ " " ++ LineSpec.toString l
-
-
+{-
 plot3dTypeToString :: Plot3dType -> String
 plot3dTypeToString Surface  = ""
 plot3dTypeToString ColorMap = "map"
@@ -404,40 +247,20 @@ attribute3dToString :: Attribute3d -> String
 attribute3dToString (Plot3dType     pt)  = plot3dTypeToString pt
 attribute3dToString (CornersToColor c2c) =
    "corners2color " ++cornersToColorToString c2c
+-}
 
 
-{-| Writes point data to a file and returns a string containing
-    Gnuplot.plot parameters to invoke the file. -}
-storeData :: Show a => FilePath -> PlotStyle -> [(a,a)] -> IO String
-storeData file style dat =
-   do writeFile file (unlines (map (\(x,y) -> show x ++ " " ++ show y) dat))
-      return (quote file ++ " using 1:2 " ++ plotStyleToString style)
-
-plot2dGen :: Show a => [Attribute] -> PlotStyle -> [(a,a)] -> IO ExitCode
-plot2dGen attrs style dat =
-   do plotParam <- storeData tmpFile style dat
-      callGnuplot attrs "plot" [plotParam]
-
-plot2dMultiGen :: Show a =>
-   [Attribute] -> [(PlotStyle, [(a,a)])] -> IO ExitCode
-plot2dMultiGen attrs styleDat =
-   do plotParams <- sequence $
-         zipWith (\n -> uncurry (storeData (tmpFileStem++show n++".dat")))
-                 [(0::Int)..] styleDat
-      callGnuplot attrs "plot" plotParams
-
-plot2dMultiSharedAbscissa :: Show a =>
-   [Attribute] -> [PlotStyle] -> [(a,[a])] -> IO ExitCode
-plot2dMultiSharedAbscissa attrs styles dat =
-   let plotParams =
-          zipWith (\n style -> quote tmpFile ++ " using 1:"
-                       ++ show (n+1) ++ " " ++ plotStyleToString style)
-                  [(1::Int)..] styles
-   in  do {- writeFile tmpFile (concatMap (\(x,ys) ->
-             foldr (\y -> shows y . (' ':)) (shows x "\n") ys) dat) -}
-          writeFile tmpFile
-             (unlines (map (unwords . map show . uncurry (:)) dat))
-          callGnuplot attrs "plot" plotParams
+plot2d :: [Attribute] -> Plot.T -> IO ExitCode
+plot2d attrs (Plot.Cons mp) =
+   let (Plot.Plan files) = State.evaluate 0 mp
+   in  do sequence_ $
+             mapMaybe (\(Plot.File filename cont _) ->
+                fmap (writeFile filename) cont) $
+             files
+          callGnuplot attrs "plot" $
+             concatMap (\(Plot.File filename _ grs) ->
+                map (\gr -> quote filename ++ " " ++ Graph.toString gr) grs) $
+             files
 
 callGnuplot :: [Attribute] -> String -> [String] -> IO ExitCode
 callGnuplot attrs cmd params =
