@@ -374,7 +374,7 @@ attribute3dToString (CornersToColor c2c) =
 
 plot2d :: [Attribute] -> Plot.T -> IO ()
 plot2d attrs (Plot.Cons mp) =
-   let (Plot.Plan files) = State.evaluate 0 mp
+   let files = State.evaluate 0 mp
    in  do sequence_ $
              mapMaybe (\(Plot.File filename cont _) ->
                 fmap (writeFile filename) cont) $

@@ -10,7 +10,7 @@ import Data.Monoid (Monoid, mempty, mappend, )
 {- |
 Plots can be assembled using 'mappend' or 'mconcat'.
 -}
-newtype T = Cons (State.T Int Plan)
+newtype T = Cons (State.T Int [File])
 
 instance Monoid T where
    mempty = Cons mempty
@@ -21,23 +21,12 @@ instance Monoid T where
 withUniqueFile :: String -> [Graph.T] -> T
 withUniqueFile content graphs =
    Cons (State.Cons $ \n ->
-      (Plan [File (tmpFileStem ++ show n ++ ".dat") (Just content) graphs],
+      ([File (tmpFileStem ++ show n ++ ".dat") (Just content) graphs],
        succ n))
 
 fromGraphs :: FilePath -> [Graph.T] -> T
 fromGraphs name gs =
-   Cons (State.pure (Plan [File name Nothing gs]))
-
-
-newtype Plan =
-   Plan {
-      write :: [File]
-   }
-
-instance Monoid Plan where
-   mempty = Plan mempty
-   mappend (Plan w0) (Plan w1) =
-      Plan (mappend w0 w1)
+   Cons (State.pure [File name Nothing gs])
 
 
 data File =
@@ -58,9 +47,7 @@ tmpFile = tmpFileStem ++ ".dat"
 mapGraphs :: (Graph.T -> Graph.T) -> T -> T
 mapGraphs f (Cons mp) =
    Cons $
-   fmap
-      (\(Plan files) ->
-          Plan (map (\file -> file{graphs_ = map f $ graphs_ file}) files))
+   fmap (map (\file -> file{graphs_ = map f $ graphs_ file}))
    mp
 
 
