@@ -250,7 +250,7 @@ attribute3dToString (CornersToColor c2c) =
 -}
 
 
-plot2d :: [Attribute] -> Plot.T -> IO ExitCode
+plot2d :: [Attribute] -> Plot.T Graph.T -> IO ExitCode
 plot2d attrs (Plot.Cons mp) =
    let files = State.evaluate 0 mp
    in  do mapM_ Plot.writeData files

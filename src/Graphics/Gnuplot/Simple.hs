@@ -121,6 +121,9 @@ data LineSpec =
 
 data PlotStyle = PlotStyle { plotType :: PlotType, lineSpec :: LineSpec }
 
+type Plot = Plot.T Graph.T
+
+
 
 defaultStyle :: PlotStyle
 defaultStyle = PlotStyle Lines (CustomStyle [])
@@ -201,7 +204,7 @@ plotParamFuncs attrs args fs =
 
 plotDots :: Show a => [Attribute] -> [(a,a)] -> IO ()
 plotDots attrs xs =
-   plot2d attrs (Plot.typ Graph.Dots $ PlotE.path xs)
+   plot2d attrs (fmap (Graph.typ Graph.Dots) $ PlotE.path xs)
 
 
 
@@ -372,7 +375,7 @@ attribute3dToString (CornersToColor c2c) =
 
 
 
-plot2d :: [Attribute] -> Plot.T -> IO ()
+plot2d :: [Attribute] -> Plot -> IO ()
 plot2d attrs (Plot.Cons mp) =
    let files = State.evaluate 0 mp
    in  do mapM_ Plot.writeData files
@@ -381,10 +384,10 @@ plot2d attrs (Plot.Cons mp) =
                 map (\gr -> quote filename ++ " " ++ Graph.toString gr) grs) $
              files
 
-setPlotStyle :: PlotStyle -> Plot.T -> Plot.T
+setPlotStyle :: PlotStyle -> Plot -> Plot
 setPlotStyle ps =
-   Plot.typ (plotType ps) .
-   Plot.lineSpec (lineSpecRecord $ lineSpec ps)
+   fmap (Graph.typ (plotType ps) .
+         Graph.lineSpec (lineSpecRecord $ lineSpec ps))
 
 lineSpecRecord :: LineSpec -> LineSpec.T
 lineSpecRecord (DefaultStyle n) =
