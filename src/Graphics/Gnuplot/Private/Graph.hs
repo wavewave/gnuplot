@@ -2,6 +2,8 @@ module Graphics.Gnuplot.Private.Graph where
 
 import qualified Graphics.Gnuplot.Private.LineSpecification as LineSpec
 
+import Prelude hiding (lines, )
+
 
 data T =
    Cons {
@@ -15,62 +17,62 @@ data Column =
    | Dim2 {columnX, columnY :: Int}
 
 
--- | in the future, Type should become the enumeration and PlotType should disappear
-type Type = PlotType
+newtype Type = Type String
 
-data PlotType =
-     Lines
-   | Points
-   | LinesPoints
-   | Impulses
-   | Dots
-   | Steps
-   | FSteps
-   | HiSteps
-   | ErrorBars
-   | XErrorBars
-   | YErrorBars
-   | XYErrorBars
-   | ErrorLines
-   | XErrorLines
-   | YErrorLines
-   | XYErrorLines
-   | Boxes
-   | FilledCurves
-   | BoxErrorBars
-   | BoxXYErrorBars
-   | FinanceBars
-   | CandleSticks
-   | Vectors
-   | PM3d
+
+lines          :: Type
+points         :: Type
+linesPoints    :: Type
+impulses       :: Type
+dots           :: Type
+steps          :: Type
+fSteps         :: Type
+hiSteps        :: Type
+errorBars      :: Type
+xErrorBars     :: Type
+yErrorBars     :: Type
+xyErrorBars    :: Type
+errorLines     :: Type
+xErrorLines    :: Type
+yErrorLines    :: Type
+xyErrorLines   :: Type
+boxes          :: Type
+filledCurves   :: Type
+boxErrorBars   :: Type
+boxXYErrorBars :: Type
+financeBars    :: Type
+candleSticks   :: Type
+vectors        :: Type
+pm3d           :: Type
+
+lines          = Type "lines"
+points         = Type "points"
+linesPoints    = Type "linespoints"
+impulses       = Type "impulses"
+dots           = Type "dots"
+steps          = Type "steps"
+fSteps         = Type "fsteps"
+hiSteps        = Type "histeps"
+errorBars      = Type "errorbars"
+xErrorBars     = Type "xerrorbars"
+yErrorBars     = Type "yerrorbars"
+xyErrorBars    = Type "xyerrorbars"
+errorLines     = Type "errorlines"
+xErrorLines    = Type "xerrorlines"
+yErrorLines    = Type "yerrorlines"
+xyErrorLines   = Type "xyerrorlines"
+boxes          = Type "boxes"
+filledCurves   = Type "filledcurves"
+boxErrorBars   = Type "boxerrorbars"
+boxXYErrorBars = Type "boxxyerrorbars"
+financeBars    = Type "financebars"
+candleSticks   = Type "candlesticks"
+vectors        = Type "vectors"
+pm3d           = Type "pm3d"
+
 
 typeToString :: Type -> String
-typeToString t =
-   case t of
-      Lines          -> "lines"
-      Points         -> "points"
-      LinesPoints    -> "linespoints"
-      Impulses       -> "impulses"
-      Dots           -> "dots"
-      Steps          -> "steps"
-      FSteps         -> "fsteps"
-      HiSteps        -> "histeps"
-      ErrorBars      -> "errorbars"
-      XErrorBars     -> "xerrorbars"
-      YErrorBars     -> "yerrorbars"
-      XYErrorBars    -> "xyerrorbars"
-      ErrorLines     -> "errorlines"
-      XErrorLines    -> "xerrorlines"
-      YErrorLines    -> "yerrorlines"
-      XYErrorLines   -> "xyerrorlines"
-      Boxes          -> "boxes"
-      FilledCurves   -> "filledcurves"
-      BoxErrorBars   -> "boxerrorbars"
-      BoxXYErrorBars -> "boxxyerrorbars"
-      FinanceBars    -> "financebars"
-      CandleSticks   -> "candlesticks"
-      Vectors        -> "vectors"
-      PM3d           -> "pm3d"
+typeToString (Type t) = t
 
 
 columnToString :: Column -> String
@@ -88,7 +90,7 @@ toString (Cons c t l) =
 
 
 defaultType :: Type
-defaultType = Lines
+defaultType = lines
 
 deflt :: Column -> T
 deflt c = Cons c defaultType LineSpec.deflt

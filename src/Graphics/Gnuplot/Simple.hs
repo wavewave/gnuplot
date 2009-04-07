@@ -47,7 +47,6 @@ module Graphics.Gnuplot.Simple (
   ) where
 
 import Graphics.Gnuplot.Advanced (linearScale, )
-import Graphics.Gnuplot.Private.Graph (PlotType(..), )
 import qualified Graphics.Gnuplot.Private.LineSpecification as LineSpec
 import qualified Graphics.Gnuplot.Private.Graph as Graph
 import qualified Graphics.Gnuplot.Private.Plot  as Plot
@@ -118,6 +117,32 @@ data LineAttr =
 data LineSpec =
      DefaultStyle Int
    | CustomStyle  [LineAttr]
+
+data PlotType =
+     Lines
+   | Points
+   | LinesPoints
+   | Impulses
+   | Dots
+   | Steps
+   | FSteps
+   | HiSteps
+   | ErrorBars
+   | XErrorBars
+   | YErrorBars
+   | XYErrorBars
+   | ErrorLines
+   | XErrorLines
+   | YErrorLines
+   | XYErrorLines
+   | Boxes
+   | FilledCurves
+   | BoxErrorBars
+   | BoxXYErrorBars
+   | FinanceBars
+   | CandleSticks
+   | Vectors
+   | PM3d
 
 data PlotStyle = PlotStyle { plotType :: PlotType, lineSpec :: LineSpec }
 
@@ -204,7 +229,7 @@ plotParamFuncs attrs args fs =
 
 plotDots :: Show a => [Attribute] -> [(a,a)] -> IO ()
 plotDots attrs xs =
-   plot2d attrs (fmap (Graph.typ Graph.Dots) $ PlotE.path xs)
+   plot2d attrs (fmap (Graph.typ Graph.dots) $ PlotE.path xs)
 
 
 
@@ -355,6 +380,36 @@ extractRanges attrs =
    in  unwords (map (maybe "[:]" showRng) (dropWhileRev isNothing ranges))
 
 
+
+plotTypeToGraph :: PlotType -> Graph.Type
+plotTypeToGraph t =
+   case t of
+      Lines          -> Graph.lines
+      Points         -> Graph.points
+      LinesPoints    -> Graph.linesPoints
+      Impulses       -> Graph.impulses
+      Dots           -> Graph.dots
+      Steps          -> Graph.steps
+      FSteps         -> Graph.fSteps
+      HiSteps        -> Graph.hiSteps
+      ErrorBars      -> Graph.errorBars
+      XErrorBars     -> Graph.xErrorBars
+      YErrorBars     -> Graph.yErrorBars
+      XYErrorBars    -> Graph.xyErrorBars
+      ErrorLines     -> Graph.errorLines
+      XErrorLines    -> Graph.xErrorLines
+      YErrorLines    -> Graph.yErrorLines
+      XYErrorLines   -> Graph.xyErrorLines
+      Boxes          -> Graph.boxes
+      FilledCurves   -> Graph.filledCurves
+      BoxErrorBars   -> Graph.boxErrorBars
+      BoxXYErrorBars -> Graph.boxXYErrorBars
+      FinanceBars    -> Graph.financeBars
+      CandleSticks   -> Graph.candleSticks
+      Vectors        -> Graph.vectors
+      PM3d           -> Graph.pm3d
+
+
 plot3dTypeToString :: Plot3dType -> String
 plot3dTypeToString Surface  = ""
 plot3dTypeToString ColorMap = "map"
@@ -386,7 +441,7 @@ plot2d attrs (Plot.Cons mp) =
 
 setPlotStyle :: PlotStyle -> Plot -> Plot
 setPlotStyle ps =
-   fmap (Graph.typ (plotType ps) .
+   fmap (Graph.typ (plotTypeToGraph $ plotType ps) .
          Graph.lineSpec (lineSpecRecord $ lineSpec ps))
 
 lineSpecRecord :: LineSpec -> LineSpec.T
