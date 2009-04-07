@@ -11,12 +11,12 @@ import qualified Data.List.Match as Match
 
 -- * computed plots
 
-type Plot = Plot.T Graph.T
+type T = Plot.T Graph.T
 
 {- |
 > list (take 30 (let fibs = 0 : 1 : zipWith (+) fibs (tail fibs) in fibs))
 -}
-list :: Show a => [a] -> Plot
+list :: Show a => [a] -> T
 list dat =
    Plot.withUniqueFile
       (unlines (map show dat))
@@ -25,14 +25,14 @@ list dat =
 {- |
 > function (linearScale 1000 (-10,10)) sin
 -}
-function :: Show a => [a] -> (a -> a) -> Plot
+function :: Show a => [a] -> (a -> a) -> T
 function args f =
    path (functionToGraph args f)
 
 {- |
 > functions (linearScale 1000 (-10,10)) [sin, cos]
 -}
-functions :: Show a => [a] -> [a -> a] -> Plot
+functions :: Show a => [a] -> [a -> a] -> T
 functions args fs =
    let dat = map (\x -> (x, map ($ x) fs)) args
    in  Plot.withUniqueFile
@@ -40,7 +40,7 @@ functions args fs =
           (Match.take fs $
            map (Graph.deflt . Graph.Dim2 1) [2..])
 
-path :: Show a => [(a,a)] -> Plot
+path :: Show a => [(a,a)] -> T
 path dat =
    Plot.withUniqueFile
       (unlines (map (\(x,y) -> show x ++ " " ++ show y) dat))
@@ -49,17 +49,17 @@ path dat =
 {- |
 > parameterFunction (linearScale 1000 (0,2*pi)) (\t -> (sin (2*t), cos t))
 -}
-parameterFunction :: Show a => [a] -> (a -> (a,a)) -> Plot
+parameterFunction :: Show a => [a] -> (a -> (a,a)) -> T
 parameterFunction args f = path (map f args)
 
 
 
 -- * plot stored data
 
-listFromFile :: FilePath -> Int -> Plot
+listFromFile :: FilePath -> Int -> T
 listFromFile filename column =
    Plot.fromGraphs filename [Graph.deflt (Graph.Dim1 column)]
 
-pathFromFile :: FilePath -> Int -> Int -> Plot
+pathFromFile :: FilePath -> Int -> Int -> T
 pathFromFile filename columnX columnY =
    Plot.fromGraphs filename [Graph.deflt (Graph.Dim2 columnX columnY)]

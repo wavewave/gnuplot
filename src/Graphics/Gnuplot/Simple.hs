@@ -50,7 +50,7 @@ import Graphics.Gnuplot.Advanced (linearScale, )
 import qualified Graphics.Gnuplot.Private.LineSpecification as LineSpec
 import qualified Graphics.Gnuplot.Private.Graph as Graph
 import qualified Graphics.Gnuplot.Private.Plot  as Plot
-import qualified Graphics.Gnuplot.Plot as PlotE
+import qualified Graphics.Gnuplot.Plot as Plot2D
 
 {-
 import qualified Graphics.Gnuplot.Terminal.PostScript as PS
@@ -146,8 +146,6 @@ data PlotType =
 
 data PlotStyle = PlotStyle { plotType :: PlotType, lineSpec :: LineSpec }
 
-type Plot = Plot.T Graph.T
-
 
 
 defaultStyle :: PlotStyle
@@ -166,70 +164,70 @@ terminal =
 -}
 plotList :: Show a => [Attribute] -> [a] -> IO ()
 plotList attrs =
-   plot2d attrs . PlotE.list
+   plot2d attrs . Plot2D.list
 
 plotListStyle :: Show a => [Attribute] -> PlotStyle -> [a] -> IO ()
 plotListStyle attrs style =
-   plot2d attrs . setPlotStyle style . PlotE.list
+   plot2d attrs . setPlotStyle style . Plot2D.list
 
 plotLists :: Show a => [Attribute] -> [[a]] -> IO ()
 plotLists attrs xss =
-   plot2d attrs (mconcat $ map PlotE.list xss)
+   plot2d attrs (mconcat $ map Plot2D.list xss)
 
 plotListsStyle :: Show a => [Attribute] -> [(PlotStyle, [a])] -> IO ()
 plotListsStyle attrs =
    plot2d attrs . mconcat .
-   map (\(style,xs) -> setPlotStyle style $ PlotE.list xs)
+   map (\(style,xs) -> setPlotStyle style $ Plot2D.list xs)
 
 {- |
 > plotFunc [] (linearScale 1000 (-10,10)) sin
 -}
 plotFunc :: Show a => [Attribute] -> [a] -> (a -> a) -> IO ()
 plotFunc attrs args f =
-   plot2d attrs (PlotE.function args f)
+   plot2d attrs (Plot2D.function args f)
 
 {- |
 > plotFuncs [] (linearScale 1000 (-10,10)) [sin, cos]
 -}
 plotFuncs :: Show a => [Attribute] -> [a] -> [a -> a] -> IO ()
 plotFuncs attrs args fs =
-   plot2d attrs (PlotE.functions args fs)
+   plot2d attrs (Plot2D.functions args fs)
 
 plotPath :: Show a => [Attribute] -> [(a,a)] -> IO ()
 plotPath attrs =
-   plot2d attrs . PlotE.path
+   plot2d attrs . Plot2D.path
 
 plotPaths :: Show a => [Attribute] -> [[(a,a)]] -> IO ()
 plotPaths attrs xss =
-   plot2d attrs (mconcat $ map PlotE.path xss)
+   plot2d attrs (mconcat $ map Plot2D.path xss)
 
 plotPathStyle :: Show a => [Attribute] -> PlotStyle -> [(a,a)] -> IO ()
 plotPathStyle attrs style =
-   plot2d attrs . setPlotStyle style . PlotE.path
+   plot2d attrs . setPlotStyle style . Plot2D.path
 
 plotPathsStyle :: Show a => [Attribute] -> [(PlotStyle, [(a,a)])] -> IO ()
 plotPathsStyle attrs =
    plot2d attrs . mconcat .
-   map (\(style,xs) -> setPlotStyle style $ PlotE.list xs)
+   map (\(style,xs) -> setPlotStyle style $ Plot2D.list xs)
 
 {- |
 > plotParamFunc [] (linearScale 1000 (0,2*pi)) (\t -> (sin (2*t), cos t))
 -}
 plotParamFunc :: Show a => [Attribute] -> [a] -> (a -> (a,a)) -> IO ()
 plotParamFunc attrs args f =
-   plot2d attrs (PlotE.parameterFunction args f)
+   plot2d attrs (Plot2D.parameterFunction args f)
 
 {- |
 > plotParamFuncs [] (linearScale 1000 (0,2*pi)) [\t -> (sin (2*t), cos t), \t -> (cos t, sin (2*t))]
 -}
 plotParamFuncs :: Show a => [Attribute] -> [a] -> [a -> (a,a)] -> IO ()
 plotParamFuncs attrs args fs =
-   plot2d attrs (mconcat $ map (PlotE.parameterFunction args) fs)
+   plot2d attrs (mconcat $ map (Plot2D.parameterFunction args) fs)
 
 
 plotDots :: Show a => [Attribute] -> [(a,a)] -> IO ()
 plotDots attrs xs =
-   plot2d attrs (fmap (Graph.typ Graph.dots) $ PlotE.path xs)
+   plot2d attrs (fmap (Graph.typ Graph.dots) $ Plot2D.path xs)
 
 
 
@@ -430,7 +428,7 @@ attribute3dToString (CornersToColor c2c) =
 
 
 
-plot2d :: [Attribute] -> Plot -> IO ()
+plot2d :: [Attribute] -> Plot2D.T -> IO ()
 plot2d attrs (Plot.Cons mp) =
    let files = State.evaluate 0 mp
    in  do mapM_ Plot.writeData files
@@ -439,7 +437,7 @@ plot2d attrs (Plot.Cons mp) =
                 map (\gr -> quote filename ++ " " ++ Graph.toString gr) grs) $
              files
 
-setPlotStyle :: PlotStyle -> Plot -> Plot
+setPlotStyle :: PlotStyle -> Plot2D.T -> Plot2D.T
 setPlotStyle ps =
    fmap (Graph.typ (plotTypeToGraph $ plotType ps) .
          Graph.lineSpec (lineSpecRecord $ lineSpec ps))
