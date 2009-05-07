@@ -208,7 +208,7 @@ plotPathStyle attrs style =
 plotPathsStyle :: Show a => [Attribute] -> [(PlotStyle, [(a,a)])] -> IO ()
 plotPathsStyle attrs =
    plot2d attrs . mconcat .
-   map (\(style,xs) -> setPlotStyle style $ Plot2D.list xs)
+   map (\(style,xs) -> setPlotStyle style $ Plot2D.path xs)
 
 {- |
 > plotParamFunc [] (linearScale 1000 (0,2*pi)) (\t -> (sin (2*t), cos t))
