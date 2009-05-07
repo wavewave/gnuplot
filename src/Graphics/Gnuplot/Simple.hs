@@ -51,6 +51,7 @@ import qualified Graphics.Gnuplot.Private.LineSpecification as LineSpec
 import qualified Graphics.Gnuplot.Private.Graph as Graph
 import qualified Graphics.Gnuplot.Private.Plot  as Plot
 import qualified Graphics.Gnuplot.Plot as Plot2D
+import Graphics.Gnuplot.Private.Plot (tmpFile, )
 
 {-
 import qualified Graphics.Gnuplot.Terminal.PostScript as PS
@@ -303,12 +304,6 @@ inclPlot filename plot =
 
 
 -- * Internal functions
-
-tmpFileStem, tmpFile :: FilePath
-
-tmpFileStem = "curve"
-tmpFile = tmpFileStem ++ ".dat"
-
 
 attrToProg :: Attribute -> String
 attrToProg (Custom attribute parameters) =
