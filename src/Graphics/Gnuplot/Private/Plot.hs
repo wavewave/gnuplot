@@ -9,6 +9,10 @@ Plots can be assembled using 'mappend' or 'mconcat'.
 -}
 newtype T graph = Cons (State.T Int [File graph])
 
+{-
+Could also be implemented with Control.Monad.Trans.State:
+mappend = liftA2 mappend
+-}
 instance Monoid (T graph) where
    mempty = Cons mempty
    mappend (Cons s0) (Cons s1) =
@@ -18,7 +22,7 @@ instance Monoid (T graph) where
 withUniqueFile :: String -> [graph] -> T graph
 withUniqueFile content graphs =
    Cons (State.Cons $ \n ->
-      ([File (tmpFileStem ++ show n ++ ".dat") (Just content) graphs],
+      ([File (tmpFileStem ++ show n ++ ".csv") (Just content) graphs],
        succ n))
 
 fromGraphs :: FilePath -> [graph] -> T graph
@@ -41,8 +45,7 @@ writeData (File fn cont _) =
 tmpFileStem, tmpFile :: FilePath
 
 tmpFileStem = "curve"
-tmpFile = tmpFileStem ++ ".dat"
-
+tmpFile = tmpFileStem ++ ".csv"
 
 
 instance Functor T where
