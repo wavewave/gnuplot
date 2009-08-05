@@ -29,7 +29,7 @@ module Graphics.Gnuplot.Advanced (
   ) where
 
 import qualified Graphics.Gnuplot.Private.LineSpecification as LineSpec
-import qualified Graphics.Gnuplot.Private.Graph as Graph
+import qualified Graphics.Gnuplot.Private.Graph2D as Graph
 import qualified Graphics.Gnuplot.Private.Plot  as Plot
 
 import qualified Graphics.Gnuplot.Terminal.PostScript as PS

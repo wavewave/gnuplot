@@ -1,8 +1,8 @@
 -- shall this also export Graph.Type, set plotType and so on?
 module Graphics.Gnuplot.Plot.TwoDimensional where
 
-import qualified Graphics.Gnuplot.Private.Graph as Graph
-import qualified Graphics.Gnuplot.Private.Plot  as Plot
+import qualified Graphics.Gnuplot.Private.Graph2D as Graph
+import qualified Graphics.Gnuplot.Private.Plot    as Plot
 
 import Graphics.Gnuplot.Utility
    (functionToGraph, commaConcat, )

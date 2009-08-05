@@ -1,4 +1,4 @@
-module Graphics.Gnuplot.Private.Graph where
+module Graphics.Gnuplot.Private.Graph2D where
 
 import qualified Graphics.Gnuplot.Private.LineSpecification as LineSpec
 

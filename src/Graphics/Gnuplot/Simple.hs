@@ -47,10 +47,10 @@ module Graphics.Gnuplot.Simple (
   ) where
 
 import Graphics.Gnuplot.Advanced (linearScale, )
-import qualified Graphics.Gnuplot.Private.LineSpecification as LineSpec
-import qualified Graphics.Gnuplot.Private.Graph as Graph
-import qualified Graphics.Gnuplot.Private.Plot  as Plot
 import qualified Graphics.Gnuplot.Plot.TwoDimensional as Plot2D
+import qualified Graphics.Gnuplot.Private.LineSpecification as LineSpec
+import qualified Graphics.Gnuplot.Private.Graph2D as Graph2D
+import qualified Graphics.Gnuplot.Private.Plot as Plot
 import Graphics.Gnuplot.Private.Plot (tmpFile, )
 
 {-
@@ -228,7 +228,7 @@ plotParamFuncs attrs args fs =
 
 plotDots :: Show a => [Attribute] -> [(a,a)] -> IO ()
 plotDots attrs xs =
-   plot2d attrs (fmap (Graph.typ Graph.dots) $ Plot2D.path xs)
+   plot2d attrs (fmap (Graph2D.typ Graph2D.dots) $ Plot2D.path xs)
 
 
 
@@ -374,33 +374,33 @@ extractRanges attrs =
 
 
 
-plotTypeToGraph :: PlotType -> Graph.Type
+plotTypeToGraph :: PlotType -> Graph2D.Type
 plotTypeToGraph t =
    case t of
-      Lines          -> Graph.lines
-      Points         -> Graph.points
-      LinesPoints    -> Graph.linesPoints
-      Impulses       -> Graph.impulses
-      Dots           -> Graph.dots
-      Steps          -> Graph.steps
-      FSteps         -> Graph.fSteps
-      HiSteps        -> Graph.hiSteps
-      ErrorBars      -> Graph.errorBars
-      XErrorBars     -> Graph.xErrorBars
-      YErrorBars     -> Graph.yErrorBars
-      XYErrorBars    -> Graph.xyErrorBars
-      ErrorLines     -> Graph.errorLines
-      XErrorLines    -> Graph.xErrorLines
-      YErrorLines    -> Graph.yErrorLines
-      XYErrorLines   -> Graph.xyErrorLines
-      Boxes          -> Graph.boxes
-      FilledCurves   -> Graph.filledCurves
-      BoxErrorBars   -> Graph.boxErrorBars
-      BoxXYErrorBars -> Graph.boxXYErrorBars
-      FinanceBars    -> Graph.financeBars
-      CandleSticks   -> Graph.candleSticks
-      Vectors        -> Graph.vectors
-      PM3d           -> Graph.pm3d
+      Lines          -> Graph2D.lines
+      Points         -> Graph2D.points
+      LinesPoints    -> Graph2D.linesPoints
+      Impulses       -> Graph2D.impulses
+      Dots           -> Graph2D.dots
+      Steps          -> Graph2D.steps
+      FSteps         -> Graph2D.fSteps
+      HiSteps        -> Graph2D.hiSteps
+      ErrorBars      -> Graph2D.errorBars
+      XErrorBars     -> Graph2D.xErrorBars
+      YErrorBars     -> Graph2D.yErrorBars
+      XYErrorBars    -> Graph2D.xyErrorBars
+      ErrorLines     -> Graph2D.errorLines
+      XErrorLines    -> Graph2D.xErrorLines
+      YErrorLines    -> Graph2D.yErrorLines
+      XYErrorLines   -> Graph2D.xyErrorLines
+      Boxes          -> Graph2D.boxes
+      FilledCurves   -> Graph2D.filledCurves
+      BoxErrorBars   -> Graph2D.boxErrorBars
+      BoxXYErrorBars -> Graph2D.boxXYErrorBars
+      FinanceBars    -> Graph2D.financeBars
+      CandleSticks   -> Graph2D.candleSticks
+      Vectors        -> Graph2D.vectors
+      PM3d           -> Graph2D.pm3d
 
 
 plot3dTypeToString :: Plot3dType -> String
@@ -429,13 +429,13 @@ plot2d attrs (Plot.Cons mp) =
    in  do mapM_ Plot.writeData files
           callGnuplot attrs "plot" $
              concatMap (\(Plot.File filename _ grs) ->
-                map (\gr -> quote filename ++ " " ++ Graph.toString gr) grs) $
+                map (\gr -> quote filename ++ " " ++ Graph2D.toString gr) grs) $
              files
 
 setPlotStyle :: PlotStyle -> Plot2D.T -> Plot2D.T
 setPlotStyle ps =
-   fmap (Graph.typ (plotTypeToGraph $ plotType ps) .
-         Graph.lineSpec (lineSpecRecord $ lineSpec ps))
+   fmap (Graph2D.typ (plotTypeToGraph $ plotType ps) .
+         Graph2D.lineSpec (lineSpecRecord $ lineSpec ps))
 
 lineSpecRecord :: LineSpec -> LineSpec.T
 lineSpecRecord (DefaultStyle n) =
