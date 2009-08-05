@@ -1,0 +1,14 @@
+module Graphics.Gnuplot.LineSpecification (
+   T,
+
+   deflt,
+
+   lineStyle,
+   lineType,
+   lineWidth,
+   pointType,
+   pointSize,
+   title,
+   ) where
+
+import Graphics.Gnuplot.Private.LineSpecification
