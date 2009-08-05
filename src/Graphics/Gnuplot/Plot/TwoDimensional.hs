@@ -1,4 +1,5 @@
-module Graphics.Gnuplot.Plot where
+-- shall this also export Graph.Type, set plotType and so on?
+module Graphics.Gnuplot.Plot.TwoDimensional where
 
 import qualified Graphics.Gnuplot.Private.Graph as Graph
 import qualified Graphics.Gnuplot.Private.Plot  as Plot

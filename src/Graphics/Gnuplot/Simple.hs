@@ -50,7 +50,7 @@ import Graphics.Gnuplot.Advanced (linearScale, )
 import qualified Graphics.Gnuplot.Private.LineSpecification as LineSpec
 import qualified Graphics.Gnuplot.Private.Graph as Graph
 import qualified Graphics.Gnuplot.Private.Plot  as Plot
-import qualified Graphics.Gnuplot.Plot as Plot2D
+import qualified Graphics.Gnuplot.Plot.TwoDimensional as Plot2D
 import Graphics.Gnuplot.Private.Plot (tmpFile, )
 
 {-
@@ -439,7 +439,7 @@ setPlotStyle ps =
 
 lineSpecRecord :: LineSpec -> LineSpec.T
 lineSpecRecord (DefaultStyle n) =
-   (LineSpec.lineStyle n LineSpec.deflt)
+   LineSpec.lineStyle n LineSpec.deflt
 lineSpecRecord (CustomStyle ls) =
    lineAttrRecord ls LineSpec.deflt
 
