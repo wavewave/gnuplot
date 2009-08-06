@@ -31,8 +31,10 @@ module Graphics.Gnuplot.Graph.TwoDimensional (
    financeBars,
    candleSticks,
    vectors,
+   -- pm3d,
    ) where
 
 import Graphics.Gnuplot.Private.Graph2D
+import Graphics.Gnuplot.Private.GraphType hiding (T, )
 
 import Prelude hiding (lines, )

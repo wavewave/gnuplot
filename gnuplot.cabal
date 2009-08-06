@@ -77,6 +77,7 @@ Library
     Graphics.Gnuplot.Advanced
     Graphics.Gnuplot.Private.LineSpecification
     Graphics.Gnuplot.Private.Plot
+    Graphics.Gnuplot.Private.GraphType
     Graphics.Gnuplot.Private.Graph2D
     Graphics.Gnuplot.Utility
     Graphics.Gnuplot.Execute

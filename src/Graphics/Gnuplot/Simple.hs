@@ -50,6 +50,7 @@ import Graphics.Gnuplot.Advanced (linearScale, )
 import qualified Graphics.Gnuplot.Plot.TwoDimensional as Plot2D
 import qualified Graphics.Gnuplot.Private.LineSpecification as LineSpec
 import qualified Graphics.Gnuplot.Private.Graph2D as Graph2D
+import qualified Graphics.Gnuplot.Private.GraphType as GraphType
 import qualified Graphics.Gnuplot.Private.Plot as Plot
 import Graphics.Gnuplot.Private.Plot (tmpFile, )
 
@@ -228,7 +229,7 @@ plotParamFuncs attrs args fs =
 
 plotDots :: Show a => [Attribute] -> [(a,a)] -> IO ()
 plotDots attrs xs =
-   plot2d attrs (fmap (Graph2D.typ Graph2D.dots) $ Plot2D.path xs)
+   plot2d attrs (fmap (Graph2D.typ GraphType.dots) $ Plot2D.path xs)
 
 
 
@@ -374,33 +375,33 @@ extractRanges attrs =
 
 
 
-plotTypeToGraph :: PlotType -> Graph2D.Type
+plotTypeToGraph :: PlotType -> GraphType.T
 plotTypeToGraph t =
    case t of
-      Lines          -> Graph2D.lines
-      Points         -> Graph2D.points
-      LinesPoints    -> Graph2D.linesPoints
-      Impulses       -> Graph2D.impulses
-      Dots           -> Graph2D.dots
-      Steps          -> Graph2D.steps
-      FSteps         -> Graph2D.fSteps
-      HiSteps        -> Graph2D.hiSteps
-      ErrorBars      -> Graph2D.errorBars
-      XErrorBars     -> Graph2D.xErrorBars
-      YErrorBars     -> Graph2D.yErrorBars
-      XYErrorBars    -> Graph2D.xyErrorBars
-      ErrorLines     -> Graph2D.errorLines
-      XErrorLines    -> Graph2D.xErrorLines
-      YErrorLines    -> Graph2D.yErrorLines
-      XYErrorLines   -> Graph2D.xyErrorLines
-      Boxes          -> Graph2D.boxes
-      FilledCurves   -> Graph2D.filledCurves
-      BoxErrorBars   -> Graph2D.boxErrorBars
-      BoxXYErrorBars -> Graph2D.boxXYErrorBars
-      FinanceBars    -> Graph2D.financeBars
-      CandleSticks   -> Graph2D.candleSticks
-      Vectors        -> Graph2D.vectors
-      PM3d           -> Graph2D.pm3d
+      Lines          -> GraphType.lines
+      Points         -> GraphType.points
+      LinesPoints    -> GraphType.linesPoints
+      Impulses       -> GraphType.impulses
+      Dots           -> GraphType.dots
+      Steps          -> GraphType.steps
+      FSteps         -> GraphType.fSteps
+      HiSteps        -> GraphType.hiSteps
+      ErrorBars      -> GraphType.errorBars
+      XErrorBars     -> GraphType.xErrorBars
+      YErrorBars     -> GraphType.yErrorBars
+      XYErrorBars    -> GraphType.xyErrorBars
+      ErrorLines     -> GraphType.errorLines
+      XErrorLines    -> GraphType.xErrorLines
+      YErrorLines    -> GraphType.yErrorLines
+      XYErrorLines   -> GraphType.xyErrorLines
+      Boxes          -> GraphType.boxes
+      FilledCurves   -> GraphType.filledCurves
+      BoxErrorBars   -> GraphType.boxErrorBars
+      BoxXYErrorBars -> GraphType.boxXYErrorBars
+      FinanceBars    -> GraphType.financeBars
+      CandleSticks   -> GraphType.candleSticks
+      Vectors        -> GraphType.vectors
+      PM3d           -> GraphType.pm3d
 
 
 plot3dTypeToString :: Plot3dType -> String
