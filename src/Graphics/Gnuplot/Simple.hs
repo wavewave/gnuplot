@@ -48,11 +48,12 @@ module Graphics.Gnuplot.Simple (
 
 import Graphics.Gnuplot.Advanced (linearScale, )
 import qualified Graphics.Gnuplot.Plot.TwoDimensional as Plot2D
+import qualified Graphics.Gnuplot.Plot.ThreeDimensional as Plot3D
 import qualified Graphics.Gnuplot.Private.LineSpecification as LineSpec
 import qualified Graphics.Gnuplot.Private.Graph2D as Graph2D
+import qualified Graphics.Gnuplot.Private.Graph3D as Graph3D
 import qualified Graphics.Gnuplot.Private.GraphType as GraphType
 import qualified Graphics.Gnuplot.Private.Plot as Plot
-import Graphics.Gnuplot.Private.Plot (tmpFile, )
 
 {-
 import qualified Graphics.Gnuplot.Terminal.PostScript as PS
@@ -257,11 +258,7 @@ data Attribute3d =
 plotMesh3d :: (Show a, Show b, Show c) =>
    [Attribute] -> [Attribute3d] -> [[(a,b,c)]] -> IO ()
 plotMesh3d attrs pt dat =
-   do writeFile tmpFile (unlines (map (unlines . map showTriplet) dat))
-      callGnuplot
-         (attrs ++ [Custom "pm3d" (map attribute3dToString pt)])
-         "splot"
-         [quote tmpFile ++ " using 1:2:3 with pm3"]
+   plot3d attrs pt (Plot3D.mesh dat)
 
 {- |
 > let xs = [-2,-1.8..2::Double] in plotFunc3d [] [] xs xs (\x y -> exp(-(x*x+y*y)))
@@ -269,7 +266,7 @@ plotMesh3d attrs pt dat =
 plotFunc3d :: (Show a, Show b, Show c) =>
    [Attribute] -> [Attribute3d] -> [b] -> [c] -> (b -> c -> a) -> IO ()
 plotFunc3d attrs pt xArgs yArgs f =
-   plotMesh3d attrs pt (map (map (\(x,y) -> (x, y, f x y)) . flip map yArgs . (,)) xArgs)
+   plot3d attrs pt (Plot3D.function xArgs yArgs f)
 
 
 
@@ -437,6 +434,18 @@ setPlotStyle :: PlotStyle -> Plot2D.T -> Plot2D.T
 setPlotStyle ps =
    fmap (Graph2D.typ (plotTypeToGraph $ plotType ps) .
          Graph2D.lineSpec (lineSpecRecord $ lineSpec ps))
+
+
+plot3d :: [Attribute] -> [Attribute3d] -> Plot3D.T -> IO ()
+plot3d attrs pt (Plot.Cons mp) =
+   let files = State.evaluate 0 mp
+   in  do mapM_ Plot.writeData files
+          callGnuplot
+             (attrs ++ [Custom "pm3d" (map attribute3dToString pt)]) "splot" $
+             concatMap (\(Plot.File filename _ grs) ->
+                map (\gr -> quote filename ++ " " ++ Graph3D.toString gr) grs) $
+             files
+
 
 lineSpecRecord :: LineSpec -> LineSpec.T
 lineSpecRecord (DefaultStyle n) =

@@ -42,10 +42,13 @@ writeData (File fn cont _) =
    maybe (return ()) (writeFile fn) cont
 
 
-tmpFileStem, tmpFile :: FilePath
-
+tmpFileStem :: FilePath
 tmpFileStem = "curve"
+
+{-
+tmpFile :: FilePath
 tmpFile = tmpFileStem ++ ".csv"
+-}
 
 
 instance Functor T where

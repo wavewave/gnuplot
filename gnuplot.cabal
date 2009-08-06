@@ -71,7 +71,9 @@ Library
     Graphics.Gnuplot.Terminal.PNG
     Graphics.Gnuplot.Terminal.SVG
     Graphics.Gnuplot.Plot.TwoDimensional
+    Graphics.Gnuplot.Plot.ThreeDimensional
     Graphics.Gnuplot.Graph.TwoDimensional
+    Graphics.Gnuplot.Graph.ThreeDimensional
     Graphics.Gnuplot.LineSpecification
   Other-Modules:
     Graphics.Gnuplot.Advanced
@@ -79,6 +81,7 @@ Library
     Graphics.Gnuplot.Private.Plot
     Graphics.Gnuplot.Private.GraphType
     Graphics.Gnuplot.Private.Graph2D
+    Graphics.Gnuplot.Private.Graph3D
     Graphics.Gnuplot.Utility
     Graphics.Gnuplot.Execute
     Graphics.Gnuplot.Terminal
