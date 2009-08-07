@@ -72,5 +72,5 @@ instance Terminal.C T where
                (fmap (\b -> if b then "color" else "monochrome") $ color_ term) :
                []),
          Terminal.commands =
-            "set" : "output" : (quote $ filename_ term) : []
+            ["set output " ++ (quote $ filename_ term)]
       }

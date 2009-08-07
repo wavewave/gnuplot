@@ -28,5 +28,5 @@ instance Terminal.C T where
             "svg" :
             [],
          Terminal.commands =
-            "set" : "output" : (quote $ filename_ term) : []
+            ["set output " ++ (quote $ filename_ term)]
       }

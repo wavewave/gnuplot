@@ -70,6 +70,7 @@ import Graphics.Gnuplot.Utility
 import qualified Data.Monoid.State as State
 import Data.Maybe (listToMaybe, mapMaybe, isNothing, )
 import Data.List.HT (dropWhileRev, )
+import Data.List (intersperse, )
 import Data.Monoid (mconcat, )
 
 
@@ -308,11 +309,12 @@ attrToProg (Custom attribute parameters) =
    "set " ++ attribute ++ " " ++ unwords parameters
 
 attrToProg (Terminal (Terminal.Cons options commands)) =
-   "set terminal " ++ unwords options ++ ";" ++
-   unwords commands
+   concat $
+   intersperse "; " $
+   ("set terminal " ++ unwords options) : commands
 
 attrToProg (EPS filename) =
-   "set terminal postscript eps;" ++  -- latex
+   "set terminal postscript eps; " ++  -- latex
    "set output " ++ quote filename
 
 attrToProg (PNG filename) =
