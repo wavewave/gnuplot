@@ -46,6 +46,7 @@ Flag executeShell
 
 Library
   Build-Depends:
+    containers >= 0.1 && <0.3,
     utility-ht >= 0.0.1 && < 0.1,
     monoid-transformer >= 0.0.2 && <0.1
   If flag(splitBase)
@@ -67,19 +68,25 @@ Library
   Exposed-Modules:
     Graphics.Gnuplot.Simple
     Graphics.Gnuplot.Time
+    Graphics.Gnuplot.Advanced
     Graphics.Gnuplot.Terminal.PostScript
     Graphics.Gnuplot.Terminal.PNG
     Graphics.Gnuplot.Terminal.SVG
     Graphics.Gnuplot.Terminal.X11
+    Graphics.Gnuplot.Frame
+    Graphics.Gnuplot.Frame.Option
+    Graphics.Gnuplot.Frame.OptionSet
     Graphics.Gnuplot.Plot.TwoDimensional
     Graphics.Gnuplot.Plot.ThreeDimensional
     Graphics.Gnuplot.Graph.TwoDimensional
     Graphics.Gnuplot.Graph.ThreeDimensional
     Graphics.Gnuplot.LineSpecification
   Other-Modules:
-    Graphics.Gnuplot.Advanced
     Graphics.Gnuplot.Private.LineSpecification
     Graphics.Gnuplot.Private.Plot
+    Graphics.Gnuplot.Private.Frame
+    Graphics.Gnuplot.Private.FrameOption
+    Graphics.Gnuplot.Private.FrameOptionSet
     Graphics.Gnuplot.Private.GraphType
     Graphics.Gnuplot.Private.Graph2D
     Graphics.Gnuplot.Private.Graph3D
