@@ -4,8 +4,6 @@ which is nice for programming
 but ugly for interactive GHCi sessions.
 -}
 module Graphics.Gnuplot.Advanced (
-    linearScale,
-
     plot2d,
   ) where
 
@@ -33,12 +31,6 @@ import Data.List (intersperse, )
 
 
 -- * User front-end
-
-
-linearScale :: Fractional a => Integer -> (a,a) -> [a]
-linearScale n (x0,x1) =
-   map (\m -> x0 + (x1-x0) * fromIntegral m / fromIntegral n) [0..n]
-
 
 
 plot2d ::

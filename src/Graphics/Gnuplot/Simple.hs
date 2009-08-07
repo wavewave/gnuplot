@@ -46,7 +46,6 @@ module Graphics.Gnuplot.Simple (
     inclPlot,
   ) where
 
-import Graphics.Gnuplot.Advanced (linearScale, )
 import qualified Graphics.Gnuplot.Plot.TwoDimensional as Plot2D
 import qualified Graphics.Gnuplot.Plot.ThreeDimensional as Plot3D
 import qualified Graphics.Gnuplot.Private.LineSpecification as LineSpec
@@ -66,7 +65,7 @@ import qualified Graphics.Gnuplot.Execute as Exec
 
 import System.Cmd (rawSystem, )
 import Graphics.Gnuplot.Utility
-   (quote, commaConcat, showTriplet, )
+   (quote, commaConcat, showTriplet, linearScale, )
 import qualified Data.Monoid.State as State
 import Data.Maybe (listToMaybe, mapMaybe, isNothing, )
 import Data.List.HT (dropWhileRev, )

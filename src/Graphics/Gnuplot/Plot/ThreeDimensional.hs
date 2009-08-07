@@ -1,10 +1,13 @@
-module Graphics.Gnuplot.Plot.ThreeDimensional where
+module Graphics.Gnuplot.Plot.ThreeDimensional (
+   module Graphics.Gnuplot.Plot.ThreeDimensional,
+   linearScale,
+   ) where
 
 import qualified Graphics.Gnuplot.Private.Graph3D as Graph
 import qualified Graphics.Gnuplot.Private.Plot    as Plot
 
 import Graphics.Gnuplot.Utility
-   (showTriplet, )
+   (showTriplet, linearScale, )
 
 import Data.List.HT (outerProduct, )
 
