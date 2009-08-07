@@ -88,6 +88,7 @@ Library
     Graphics.Gnuplot.Private.FrameOption
     Graphics.Gnuplot.Private.FrameOptionSet
     Graphics.Gnuplot.Private.GraphType
+    Graphics.Gnuplot.Private.Graph
     Graphics.Gnuplot.Private.Graph2D
     Graphics.Gnuplot.Private.Graph3D
     Graphics.Gnuplot.Utility

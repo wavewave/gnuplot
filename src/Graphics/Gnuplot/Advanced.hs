@@ -4,11 +4,10 @@ which is nice for programming
 but ugly for interactive GHCi sessions.
 -}
 module Graphics.Gnuplot.Advanced (
-    plot2d,
+    plot,
   ) where
 
-import qualified Graphics.Gnuplot.Private.Graph2D as Graph2D
--- import qualified Graphics.Gnuplot.Private.Graph3D as Graph3D
+import qualified Graphics.Gnuplot.Private.Graph as Graph
 import qualified Graphics.Gnuplot.Private.Plot as Plot
 import qualified Graphics.Gnuplot.Private.Frame as Frame
 import qualified Graphics.Gnuplot.Private.FrameOptionSet as OptionSet
@@ -33,10 +32,10 @@ import Data.List (intersperse, )
 -- * User front-end
 
 
-plot2d ::
-   (Terminal.C terminal) =>
-   terminal -> Frame.T Graph2D.T -> IO ExitCode
-plot2d term (Frame.Cons frameOptions (Plot.Cons mp)) =
+plot ::
+   (Terminal.C terminal, Graph.C graph) =>
+   terminal -> Frame.T graph -> IO ExitCode
+plot term frame@(Frame.Cons frameOptions (Plot.Cons mp)) =
    let files = State.evaluate 0 mp
    in  do mapM_ Plot.writeData files
           callGnuplot
@@ -44,10 +43,15 @@ plot2d term (Frame.Cons frameOptions (Plot.Cons mp)) =
                in  concat $ intersperse "; " $
                    ("set terminal " ++ unwords options) : commands) :
               OptionSet.diffToString OptionSet.deflt frameOptions)
-                "plot" $
+              (plotCmd frame undefined) $
              concatMap (\(Plot.File filename _ grs) ->
-                map (\gr -> quote filename ++ " " ++ Graph2D.toString gr) grs) $
+                map (\gr -> quote filename ++ " " ++ Graph.toString gr) grs) $
              files
+
+plotCmd ::
+   Graph.C graph =>
+   Frame.T graph -> graph -> String
+plotCmd _frame = Graph.command
 
 
 --------------

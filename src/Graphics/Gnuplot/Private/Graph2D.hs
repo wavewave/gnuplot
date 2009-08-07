@@ -2,6 +2,7 @@ module Graphics.Gnuplot.Private.Graph2D where
 
 import qualified Graphics.Gnuplot.Private.LineSpecification as LineSpec
 import qualified Graphics.Gnuplot.Private.GraphType as GraphType
+import qualified Graphics.Gnuplot.Private.Graph as Graph
 
 import Prelude hiding (lines, )
 
@@ -33,6 +34,9 @@ toString (Cons c t l) =
    " with " ++ GraphType.toString t ++
    " " ++ LineSpec.toString l
 
+instance Graph.C T where
+   command _ = "plot"
+   toString = toString
 
 
 defaultType :: Type

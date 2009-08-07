@@ -2,6 +2,7 @@ module Graphics.Gnuplot.Private.Graph3D where
 
 import qualified Graphics.Gnuplot.Private.LineSpecification as LineSpec
 import qualified Graphics.Gnuplot.Private.GraphType as GraphType
+import qualified Graphics.Gnuplot.Private.Graph as Graph
 
 import Prelude hiding (lines, )
 
@@ -32,6 +33,10 @@ toString (Cons c t l) =
    "using " ++ columnToString c ++
    " with " ++ GraphType.toString t ++
    " " ++ LineSpec.toString l
+
+instance Graph.C T where
+   command _ = "splot"
+   toString = toString
 
 
 defaultType :: Type
