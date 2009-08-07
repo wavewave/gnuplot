@@ -11,6 +11,7 @@ grid   :: T; grid   = Cons "grid"
 size   :: T; size   = Cons "size"
 key    :: T; key    = Cons "key"
 border :: T; border = Cons "border"
+pm3d   :: T; pm3d   = Cons "pm3d"
 
 xRange :: T; xRange = Cons "xrange"
 yRange :: T; yRange = Cons "yrange"
