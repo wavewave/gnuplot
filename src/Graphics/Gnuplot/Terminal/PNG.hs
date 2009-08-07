@@ -7,6 +7,7 @@ module Graphics.Gnuplot.Terminal.PNG (
    ) where
 
 import qualified Graphics.Gnuplot.Terminal as Terminal
+import Graphics.Gnuplot.Terminal (formatBool, )
 import Data.Maybe (catMaybes, )
 import Graphics.Gnuplot.Utility (quote, )
 
@@ -72,10 +73,6 @@ formatFontSize size =
 setFontSize :: FontSize -> T -> T
 setFontSize size term =
    term{fontSize_ = Just size}
-
-formatBool :: String -> Bool -> String
-formatBool name b =
-   if b then name else "no"++name
 
 
 instance Terminal.C T where

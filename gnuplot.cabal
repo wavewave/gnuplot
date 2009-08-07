@@ -70,6 +70,7 @@ Library
     Graphics.Gnuplot.Terminal.PostScript
     Graphics.Gnuplot.Terminal.PNG
     Graphics.Gnuplot.Terminal.SVG
+    Graphics.Gnuplot.Terminal.X11
     Graphics.Gnuplot.Plot.TwoDimensional
     Graphics.Gnuplot.Plot.ThreeDimensional
     Graphics.Gnuplot.Graph.TwoDimensional
