@@ -94,3 +94,8 @@ Library
     Graphics.Gnuplot.Utility
     Graphics.Gnuplot.Execute
     Graphics.Gnuplot.Terminal
+
+Executable gnuplot-demo
+  GHC-Options: -Wall
+  Hs-Source-Dirs: src, execute/tmp
+  Main-Is: Demo.hs

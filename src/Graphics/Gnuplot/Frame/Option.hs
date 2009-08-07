@@ -1,8 +1,8 @@
 module Graphics.Gnuplot.Frame.Option (
-   OptionSet.T,
-   module Graphics.Gnuplot.Private.FrameOptionSet,
+   Option.T,
+   module Graphics.Gnuplot.Private.FrameOption,
    ) where
 
 -- exclude Cons constructor
-import Graphics.Gnuplot.Private.FrameOptionSet hiding (T)
-import qualified Graphics.Gnuplot.Private.FrameOptionSet as OptionSet
+import Graphics.Gnuplot.Private.FrameOption hiding (T)
+import qualified Graphics.Gnuplot.Private.FrameOption as Option
