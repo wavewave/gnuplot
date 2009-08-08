@@ -82,6 +82,7 @@ Library
     Graphics.Gnuplot.Graph.TwoDimensional
     Graphics.Gnuplot.Graph.ThreeDimensional
     Graphics.Gnuplot.LineSpecification
+    Graphics.Gnuplot.MultiPlot
   Other-Modules:
     Graphics.Gnuplot.Private.LineSpecification
     Graphics.Gnuplot.Private.Plot

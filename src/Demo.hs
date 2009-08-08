@@ -3,6 +3,8 @@ module Main where
 import qualified Graphics.Gnuplot.Advanced as Plot
 import qualified Graphics.Gnuplot.Terminal.X11 as X11
 
+import qualified Graphics.Gnuplot.MultiPlot as MultiPlot
+
 import qualified Graphics.Gnuplot.Frame as Frame
 import qualified Graphics.Gnuplot.Frame.Option as Opt
 import qualified Graphics.Gnuplot.Frame.OptionSet as Opts
@@ -11,7 +13,7 @@ import qualified Graphics.Gnuplot.Plot.TwoDimensional as Plot2D
 import qualified Graphics.Gnuplot.Graph.TwoDimensional as Graph2D
 import Graphics.Gnuplot.Plot.TwoDimensional (linearScale, )
 
-import Data.Array (Array, listArray, )
+import Data.Array (listArray, )
 import Data.Monoid (mappend, )
 
 
@@ -34,7 +36,7 @@ overlay2d =
    `mappend`
    circle2d
 
-multiplot2d :: Array (Int,Int) (Frame.T Graph2D.T)
+multiplot2d :: MultiPlot.T
 multiplot2d =
    let opts =
           Opts.remove Opt.key $
@@ -57,7 +59,8 @@ multiplot2d =
           (Plot2D.parameterFunction
              (linearScale 24 (-pi,pi::Double))
              (\t -> (0.7*cos t, 0.7*sin t)))
-   in  listArray ((0,0), (2,4)) $
+   in  MultiPlot.simpleFromFrameArray $
+       listArray ((0::Int,0::Int), (2,4)) $
        prefix ++ center : suffix
 
 
@@ -65,5 +68,5 @@ main :: IO ()
 main =
    do Plot.plot X11.cons simple2d
       Plot.plot X11.cons overlay2d
-      Plot.plotMulti X11.cons multiplot2d
+      Plot.plot X11.cons multiplot2d
       return ()
