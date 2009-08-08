@@ -1,10 +1,9 @@
 {- |
-This is a simple monolithic interface to Gnuplot
+This is a simple monolithic interface to gnuplot
 that can be used as is in GHCi or Hugs.
-We do not plan to support every feature of Gnuplot,
-instead we will develop an advanced modularized interface.
-That will however be designed for non-interactive use,
-e.g. scripts for plotting statistics.
+We do not plan to support every feature of gnuplot here,
+instead we provide an advanced modularized interface
+in "Graphics.Gnuplot.Advanced".
 -}
 module Graphics.Gnuplot.Simple (
     Attribute(..),

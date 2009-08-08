@@ -12,12 +12,19 @@ Description:
    This is a wrapper to gnuplot
    which lets you create 2D and 3D plots.
    .
+   Start a simple session with @make ghci@.
+   This loads the module "Graphics.Gnuplot.Simple"
+   which is ready for use in GHCi.
+   It does not address all fancy gnuplot features
+   in order to stay simple.
+   For more sophisticated plots,
+   especially batch generated graphics,
+   I recommend "Graphics.Gnuplot.Advanced".
+   .
    With the Cabal flags executePipe and executeShell
    you can switch to more convenient
    but probably less portable ways
    of running gnuplot.
-   .
-   Start a simple session with @make ghci@.
    .
    In the past this was part of the htam package.
 Tested-With:       GHC==6.8.2

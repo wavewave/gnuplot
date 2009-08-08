@@ -1,6 +1,6 @@
 module Graphics.Gnuplot.Plot.ThreeDimensional (
-   module Graphics.Gnuplot.Plot.ThreeDimensional,
    linearScale,
+   module Graphics.Gnuplot.Plot.ThreeDimensional,
    ) where
 
 import qualified Graphics.Gnuplot.Private.Graph3D as Graph

@@ -1,7 +1,7 @@
 -- shall this also export Graph.Type, set plotType and so on?
 module Graphics.Gnuplot.Plot.TwoDimensional (
-   module Graphics.Gnuplot.Plot.TwoDimensional,
    linearScale,
+   module Graphics.Gnuplot.Plot.TwoDimensional,
    ) where
 
 import qualified Graphics.Gnuplot.Private.Graph2D as Graph
