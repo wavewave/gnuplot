@@ -46,6 +46,7 @@ Flag executeShell
 
 Library
   Build-Depends:
+    array >= 0.1 && <0.3,
     containers >= 0.1 && <0.3,
     utility-ht >= 0.0.1 && < 0.1,
     monoid-transformer >= 0.0.2 && <0.1
