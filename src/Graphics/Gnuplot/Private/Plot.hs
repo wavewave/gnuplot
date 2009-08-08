@@ -3,6 +3,12 @@ module Graphics.Gnuplot.Private.Plot where
 import qualified Data.Monoid.State as State
 import Data.Monoid (Monoid, mempty, mappend, )
 
+import qualified Graphics.Gnuplot.Display as Display
+import qualified Graphics.Gnuplot.Private.Graph as Graph
+import Graphics.Gnuplot.Utility (quote, commaConcat, )
+
+import Data.Maybe (mapMaybe, )
+
 
 {- |
 Plots can be assembled using 'mappend' or 'mconcat'.
@@ -56,3 +62,25 @@ instance Functor T where
       Cons $
       fmap (map (\file -> file{graphs_ = map f $ graphs_ file}))
       mp
+
+instance Graph.C graph => Display.C (T graph) where
+   toScript p@(Cons mp) =
+      Display.Script $ State.Cons $
+         \(n0, opts) ->
+            let (blocks, n1) = State.run mp n0
+                files =
+                   mapMaybe
+                      (\blk -> fmap (Display.File (filename_ blk)) (content_ blk))
+                      blocks
+                graphs =
+                   concatMap (\blk ->
+                      map (\gr -> quote (filename_ blk) ++ " " ++ Graph.toString gr) $ graphs_ blk) $
+                      blocks
+            in  (Display.Body files
+                    [plotCmd p undefined ++ " " ++ commaConcat graphs],
+                 (n1, opts))
+
+plotCmd ::
+   Graph.C graph =>
+   T graph -> graph -> String
+plotCmd _plot = Graph.command

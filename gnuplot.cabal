@@ -94,6 +94,7 @@ Library
     Graphics.Gnuplot.Private.Graph3D
     Graphics.Gnuplot.Utility
     Graphics.Gnuplot.Execute
+    Graphics.Gnuplot.Display
     Graphics.Gnuplot.Terminal
 
 Executable gnuplot-demo

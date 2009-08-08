@@ -15,9 +15,8 @@ import Data.Array (Array, listArray, )
 import Data.Monoid (mappend, )
 
 
-simple2d :: Frame.T Graph2D.T
+simple2d :: Plot2D.T
 simple2d =
-   Frame.simple $
    Plot2D.function (linearScale 100 (-10,10::Double)) sin
 
 circle2d :: Plot2D.T
