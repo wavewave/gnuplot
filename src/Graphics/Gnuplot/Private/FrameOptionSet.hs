@@ -21,11 +21,22 @@ import Data.Maybe (mapMaybe, )
 newtype T graph =
    Cons {decons :: Map.Map Option.T [String]}
 
+{- |
+The default options contain what we expect as default value in gnuplot.
+We need an entry for every option
+that cannot be reset by @unset@.
+-}
 deflt :: T graph
 deflt =
    Cons $ Map.fromList $
    (Option.key, []) :
    (Option.border, []) :
+   (Option.xLabel, []) :
+   (Option.yLabel, []) :
+   (Option.zLabel, []) :
+   (Option.xRange, ["[*:*]"]) :
+   (Option.yRange, ["[*:*]"]) :
+   (Option.zRange, ["[*:*]"]) :
    (Option.xTicks, []) :
    (Option.yTicks, []) :
    (Option.zTicks, []) :

@@ -37,18 +37,18 @@ title text =
    OptionSet.add Option.title [quote text]
 
 
-xRange :: Graph.C graph => Double -> Double -> T graph -> T graph
+xRange :: Graph.C graph => (Double, Double) -> T graph -> T graph
 xRange = range Option.xRange
 
-yRange :: Graph.C graph => Double -> Double -> T graph -> T graph
+yRange :: Graph.C graph => (Double, Double) -> T graph -> T graph
 yRange = range Option.yRange
 
-zRange :: Double -> Double -> T Graph3D.T -> T Graph3D.T
+zRange :: (Double, Double) -> T Graph3D.T -> T Graph3D.T
 zRange = range Option.zRange
 
-range :: Graph.C graph => Option.T -> Double -> Double -> T graph -> T graph
-range opt x y =
-   OptionSet.add opt [show x ++ ":" ++ show y]
+range :: Graph.C graph => Option.T -> (Double, Double) -> T graph -> T graph
+range opt (x,y) =
+   OptionSet.add opt ["[" ++ show x ++ ":" ++ show y ++ "]"]
 
 
 xLabel :: Graph.C graph => String -> T graph -> T graph
