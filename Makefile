@@ -8,3 +8,7 @@ ghci-pipe:
 
 ghci-shell:
 	ghci -Wall -i:src:execute/shell src/Graphics/Gnuplot/Simple.hs
+
+ghci-demo:
+	ghci -Wall -i:src:execute/tmp src/Demo.hs
+
