@@ -9,6 +9,8 @@ import qualified Graphics.Gnuplot.Frame as Frame
 import qualified Graphics.Gnuplot.Frame.Option as Opt
 import qualified Graphics.Gnuplot.Frame.OptionSet as Opts
 
+import qualified Graphics.Gnuplot.Plot.ThreeDimensional as Plot3D
+
 import qualified Graphics.Gnuplot.Plot.TwoDimensional as Plot2D
 import qualified Graphics.Gnuplot.Graph.TwoDimensional as Graph2D
 import Graphics.Gnuplot.Plot.TwoDimensional (linearScale, )
@@ -38,28 +40,30 @@ overlay2d =
 
 multiplot2d :: MultiPlot.T
 multiplot2d =
-   let opts =
+   let opts :: Opts.T graph
+       opts =
           Opts.remove Opt.key $
           Opts.deflt
        (prefix,suffix) =
           splitAt 7 $
+          map MultiPlot.partFromFrame $
           map (\k ->
-             Frame.cons opts $
+             Frame.cons (Opts.xRange (-1,1) opts) $
              Plot2D.parameterFunction
                 (linearScale 48 (-pi,pi::Double))
                 (\t -> (cos (t + pi/7*fromInteger k), sin (2*t)))) $
           [0..13]
+       meshNodes = linearScale 20 (-2,2::Double)
        center =
+          MultiPlot.partFromFrame $
           Frame.cons
-             (Opts.xRange (-1.5,1.5) $
-              Opts.yRange (-1.5,1.5) $
+             (Opts.xRange (-2.5,2.5) $
+              Opts.yRange (-2.5,2.5) $
               opts) $
-          circle2d
-          `mappend`
-          (Plot2D.parameterFunction
-             (linearScale 24 (-pi,pi::Double))
-             (\t -> (0.7*cos t, 0.7*sin t)))
-   in  MultiPlot.simpleFromFrameArray $
+          (Plot3D.function
+             meshNodes meshNodes
+             (\x y -> cos(x*x+y*y)))
+   in  MultiPlot.simpleFromPartArray $
        listArray ((0::Int,0::Int), (2,4)) $
        prefix ++ center : suffix
 
