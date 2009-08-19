@@ -62,7 +62,11 @@ Library
     utility-ht >= 0.0.1 && < 0.1,
     monoid-transformer >= 0.0.2 && <0.1
   If flag(splitBase)
-    Build-Depends: base >= 2, process >= 1.0 && < 1.1, time >= 1.1 && < 1.2, old-locale >= 1.0 && < 1.1
+    Build-Depends:
+      base >= 2 && <5,
+      process >= 1.0 && < 1.1,
+      time >= 1.1 && < 1.2,
+      old-locale >= 1.0 && < 1.1
   Else
     Build-Depends: base >= 1.0 && < 2
 
