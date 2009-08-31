@@ -54,6 +54,11 @@ multiplot2d =
                 (\t -> (cos (t + pi/7*fromInteger k), sin (2*t)))) $
           [0..13]
        meshNodes = linearScale 20 (-2,2::Double)
+{-
+       center =
+          MultiPlot.partFromFrame $
+          Frame.empty
+-}
        center =
           MultiPlot.partFromFrame $
           Frame.cons

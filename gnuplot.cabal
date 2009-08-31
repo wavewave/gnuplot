@@ -108,6 +108,7 @@ Library
     Graphics.Gnuplot.Private.Graph
     Graphics.Gnuplot.Private.Graph2D
     Graphics.Gnuplot.Private.Graph3D
+    Graphics.Gnuplot.Private.GraphEmpty
     Graphics.Gnuplot.Utility
     Graphics.Gnuplot.Execute
     Graphics.Gnuplot.Display
