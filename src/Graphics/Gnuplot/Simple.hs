@@ -4,6 +4,8 @@ that can be used as is in GHCi or Hugs.
 We do not plan to support every feature of gnuplot here,
 instead we provide an advanced modularized interface
 in "Graphics.Gnuplot.Advanced".
+
+This was formerly part of the htam package.
 -}
 module Graphics.Gnuplot.Simple (
     Attribute(..),

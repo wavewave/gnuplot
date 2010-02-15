@@ -20,13 +20,14 @@ Description:
    For more sophisticated plots,
    especially batch generated graphics,
    I recommend "Graphics.Gnuplot.Advanced".
+   This module contains also an overview
+   of the hierarchy of objects.
+   Examples for using this interface can be found in the "Demo" module.
    .
    With the Cabal flags executePipe and executeShell
    you can switch to more convenient
    but probably less portable ways
-   of running gnuplot.
-   .
-   In the past this was part of the htam package.
+   of feeding gnuplot with a script.
 Tested-With:       GHC==6.8.2
 Cabal-Version:     >=1.2
 Build-Type:        Simple
