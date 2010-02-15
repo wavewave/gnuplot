@@ -13,6 +13,9 @@ module Graphics.Gnuplot.Frame.OptionSet (
    xLabel,
    yLabel,
    zLabel,
+
+   view,
+   viewMap,
    ) where
 
 
@@ -64,6 +67,26 @@ label :: Graph.C graph => Option.T -> String -> T graph -> T graph
 label opt x =
    OptionSet.add opt [quote x]
 
+
+{- |
+Set parameters of viewing a surface graph.
+See <info:gnuplot/view>
+-}
+view ::
+   Double {- ^ rotateX -} ->
+   Double {- ^ rotateZ -} ->
+   Double {- ^ scale -} ->
+   Double {- ^ scaleZ -} ->
+   T Graph3D.T -> T Graph3D.T
+view rotateX rotateZ scale scaleZ =
+   OptionSet.add Option.view [show rotateX, show rotateZ, show scale, show scaleZ]
+
+{- |
+Show flat pixel map.
+-}
+viewMap :: T Graph3D.T -> T Graph3D.T
+viewMap =
+   OptionSet.add Option.view ["map"]
 
 {-
 xTicks :: Graph.C graph => Double -> Double -> T graph -> T graph
