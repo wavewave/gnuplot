@@ -3,6 +3,7 @@ module Graphics.Gnuplot.Private.Graph2D where
 import qualified Graphics.Gnuplot.Private.LineSpecification as LineSpec
 import qualified Graphics.Gnuplot.Private.GraphType as GraphType
 import qualified Graphics.Gnuplot.Private.Graph as Graph
+import qualified Data.List as List
 
 import Prelude hiding (lines, )
 
@@ -14,19 +15,14 @@ data T =
       lineSpec_ :: LineSpec.T
    }
 
-data Column =
-     Dim1 {columnX :: Int}
-   | Dim2 {columnX, columnY :: Int}
-
+type Column = [Int]
 
 type Type = GraphType.T
 
 
 columnToString :: Column -> String
-columnToString c =
-   case c of
-      Dim1 x -> show x
-      Dim2 x y -> show x ++ ":" ++ show y
+columnToString =
+   concat . List.intersperse ":" . map show
 
 toString :: T -> String
 toString (Cons c t l) =

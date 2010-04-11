@@ -4,6 +4,8 @@ import qualified Graphics.Gnuplot.Private.LineSpecification as LineSpec
 import qualified Graphics.Gnuplot.Private.GraphType as GraphType
 import qualified Graphics.Gnuplot.Private.Graph as Graph
 
+import Graphics.Gnuplot.Private.Graph2D (Column, columnToString, )
+
 import Prelude hiding (lines, )
 
 
@@ -14,19 +16,8 @@ data T =
       lineSpec_ :: LineSpec.T
    }
 
-data Column =
-     Dim3 {columnX, columnY, columnZ :: Int}
-   | Dim4 {columnX, columnY, columnZ, columnC :: Int}
-
-
 type Type = GraphType.T
 
-
-columnToString :: Column -> String
-columnToString col =
-   case col of
-      Dim3 x y z -> show x ++ ":" ++ show y ++ ":" ++ show z
-      Dim4 x y z c -> show x ++ ":" ++ show y ++ ":" ++ show z ++ ":" ++ show c
 
 toString :: T -> String
 toString (Cons c t l) =

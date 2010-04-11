@@ -26,7 +26,7 @@ mesh ::
 mesh dat =
    Plot.withUniqueFile
       (unlines (map (unlines . map showTriplet) dat))
-      [Graph.deflt (Graph.Dim3 1 2 3)]
+      [Graph.deflt (1:2:3:[])]
 
 function ::
    (Show a, Show b, Show c) =>
