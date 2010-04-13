@@ -1,7 +1,7 @@
 module Graphics.Gnuplot.Private.Graph2D where
 
 import qualified Graphics.Gnuplot.Private.LineSpecification as LineSpec
-import qualified Graphics.Gnuplot.Private.GraphType as GraphType
+import qualified Graphics.Gnuplot.Private.Graph2DType as GraphType
 import qualified Graphics.Gnuplot.Private.Graph as Graph
 import qualified Data.List as List
 
@@ -17,7 +17,7 @@ data T =
 
 type Column = [Int]
 
-type Type = GraphType.T
+type Type = String
 
 
 columnToString :: Column -> String
@@ -27,7 +27,7 @@ columnToString =
 toString :: T -> String
 toString (Cons c t l) =
    "using " ++ columnToString c ++
-   " with " ++ GraphType.toString t ++
+   " with " ++ t ++
    " " ++ LineSpec.toString l
 
 instance Graph.C T where
@@ -35,12 +35,8 @@ instance Graph.C T where
    toString = toString
 
 
-defaultType :: Type
-defaultType = GraphType.lines
-
-deflt :: Column -> T
-deflt c = Cons c defaultType LineSpec.deflt
-
+deflt :: GraphType.T a -> Column -> T
+deflt t c = Cons c (GraphType.toString t) LineSpec.deflt
 
 typ :: Type -> T -> T
 typ t gr = gr{type_ = t}

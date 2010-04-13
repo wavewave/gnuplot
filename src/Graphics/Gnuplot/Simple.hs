@@ -52,8 +52,11 @@ import qualified Graphics.Gnuplot.Plot.ThreeDimensional as Plot3D
 import qualified Graphics.Gnuplot.Private.LineSpecification as LineSpec
 import qualified Graphics.Gnuplot.Private.Graph2D as Graph2D
 import qualified Graphics.Gnuplot.Private.Graph3D as Graph3D
-import qualified Graphics.Gnuplot.Private.GraphType as GraphType
+import qualified Graphics.Gnuplot.Private.Graph2DType as GraphType
 import qualified Graphics.Gnuplot.Private.Plot as Plot
+
+import qualified Graphics.Gnuplot.Value.Tuple as Tuple
+import qualified Graphics.Gnuplot.Value.Atom as Atom
 
 {-
 import qualified Graphics.Gnuplot.Terminal.PostScript as PS
@@ -163,75 +166,109 @@ terminal =
 
 -- * plot functions
 
+list :: (Tuple.C a) => [a] -> Plot2D.T
+list = Plot2D.list (GraphType.Cons "lines")
+-- list = Plot2D.list GraphType.listLines
+
 {- |
 > plotList [] (take 30 (let fibs = 0 : 1 : zipWith (+) fibs (tail fibs) in fibs))
 -}
-plotList :: Show a => [Attribute] -> [a] -> IO ()
+plotList ::
+   (Tuple.C a) =>
+   [Attribute] -> [a] -> IO ()
 plotList attrs =
-   plot2d attrs . Plot2D.list
+   plot2d attrs . list
 
-plotListStyle :: Show a => [Attribute] -> PlotStyle -> [a] -> IO ()
+{- |
+> plotListStyle [] (defaultStyle{plotType = CandleSticks}) (Plot2D.functionToGraph (linearScale 32 (0,2*pi::Double)) (\t -> (-sin t, -2*sin t, 2*sin t, sin t)))
+-}
+plotListStyle ::
+   (Tuple.C a) =>
+   [Attribute] -> PlotStyle -> [a] -> IO ()
 plotListStyle attrs style =
-   plot2d attrs . setPlotStyle style . Plot2D.list
+   plot2d attrs . setPlotStyle style . list
 
-plotLists :: Show a => [Attribute] -> [[a]] -> IO ()
+plotLists ::
+   (Tuple.C a) =>
+   [Attribute] -> [[a]] -> IO ()
 plotLists attrs xss =
-   plot2d attrs (mconcat $ map Plot2D.list xss)
+   plot2d attrs (mconcat $ map list xss)
 
-plotListsStyle :: Show a => [Attribute] -> [(PlotStyle, [a])] -> IO ()
+plotListsStyle ::
+   (Tuple.C a) =>
+   [Attribute] -> [(PlotStyle, [a])] -> IO ()
 plotListsStyle attrs =
    plot2d attrs . mconcat .
-   map (\(style,xs) -> setPlotStyle style $ Plot2D.list xs)
+   map (\(style,xs) -> setPlotStyle style $ list xs)
 
 {- |
 > plotFunc [] (linearScale 1000 (-10,10)) sin
 -}
-plotFunc :: Show a => [Attribute] -> [a] -> (a -> a) -> IO ()
+plotFunc ::
+   (Atom.C a, Tuple.C a) =>
+   [Attribute] -> [a] -> (a -> a) -> IO ()
 plotFunc attrs args f =
-   plot2d attrs (Plot2D.function args f)
+   plot2d attrs (Plot2D.function GraphType.lines args f)
 
 {- |
 > plotFuncs [] (linearScale 1000 (-10,10)) [sin, cos]
 -}
-plotFuncs :: Show a => [Attribute] -> [a] -> [a -> a] -> IO ()
+plotFuncs ::
+   (Atom.C a, Tuple.C a) =>
+   [Attribute] -> [a] -> [a -> a] -> IO ()
 plotFuncs attrs args fs =
-   plot2d attrs (Plot2D.functions args fs)
+   plot2d attrs (Plot2D.functions GraphType.lines args fs)
 
-plotPath :: Show a => [Attribute] -> [(a,a)] -> IO ()
+plotPath ::
+   (Tuple.C a) =>
+   [Attribute] -> [(a,a)] -> IO ()
 plotPath attrs =
-   plot2d attrs . Plot2D.path
+   plot2d attrs . list
 
-plotPaths :: Show a => [Attribute] -> [[(a,a)]] -> IO ()
+plotPaths ::
+   (Tuple.C a) =>
+   [Attribute] -> [[(a,a)]] -> IO ()
 plotPaths attrs xss =
-   plot2d attrs (mconcat $ map Plot2D.path xss)
+   plot2d attrs (mconcat $ map list xss)
 
-plotPathStyle :: Show a => [Attribute] -> PlotStyle -> [(a,a)] -> IO ()
+plotPathStyle ::
+   (Tuple.C a) =>
+   [Attribute] -> PlotStyle -> [(a,a)] -> IO ()
 plotPathStyle attrs style =
-   plot2d attrs . setPlotStyle style . Plot2D.path
+   plot2d attrs . setPlotStyle style . list
 
-plotPathsStyle :: Show a => [Attribute] -> [(PlotStyle, [(a,a)])] -> IO ()
+plotPathsStyle ::
+   (Tuple.C a) =>
+   [Attribute] -> [(PlotStyle, [(a,a)])] -> IO ()
 plotPathsStyle attrs =
    plot2d attrs . mconcat .
-   map (\(style,xs) -> setPlotStyle style $ Plot2D.path xs)
+   map (\(style,xs) -> setPlotStyle style $ list xs)
 
 {- |
 > plotParamFunc [] (linearScale 1000 (0,2*pi)) (\t -> (sin (2*t), cos t))
 -}
-plotParamFunc :: Show a => [Attribute] -> [a] -> (a -> (a,a)) -> IO ()
+plotParamFunc ::
+   (Atom.C a, Tuple.C a) =>
+   [Attribute] -> [a] -> (a -> (a,a)) -> IO ()
 plotParamFunc attrs args f =
-   plot2d attrs (Plot2D.parameterFunction args f)
+   plot2d attrs (Plot2D.parameterFunction GraphType.lines args f)
 
 {- |
 > plotParamFuncs [] (linearScale 1000 (0,2*pi)) [\t -> (sin (2*t), cos t), \t -> (cos t, sin (2*t))]
 -}
-plotParamFuncs :: Show a => [Attribute] -> [a] -> [a -> (a,a)] -> IO ()
+plotParamFuncs ::
+   (Atom.C a, Tuple.C a) =>
+   [Attribute] -> [a] -> [a -> (a,a)] -> IO ()
 plotParamFuncs attrs args fs =
-   plot2d attrs (mconcat $ map (Plot2D.parameterFunction args) fs)
+   plot2d attrs (mconcat $
+      map (Plot2D.parameterFunction GraphType.lines args) fs)
 
 
-plotDots :: Show a => [Attribute] -> [(a,a)] -> IO ()
+plotDots ::
+   (Atom.C a, Tuple.C a) =>
+   [Attribute] -> [(a,a)] -> IO ()
 plotDots attrs xs =
-   plot2d attrs (fmap (Graph2D.typ GraphType.dots) $ Plot2D.path xs)
+   plot2d attrs (Plot2D.list GraphType.dots xs)
 
 
 
@@ -256,18 +293,22 @@ data Attribute3d =
 {- |
 > let xs = [-2,-1.8..2::Double] in plotMesh3d [] [] (do x <- xs; return (do y <- xs; return (x,y,cos(x*x+y*y))))
 -}
-plotMesh3d :: (Show a, Show b, Show c) =>
-   [Attribute] -> [Attribute3d] -> [[(a,b,c)]] -> IO ()
+plotMesh3d ::
+   (Atom.C x, Atom.C y, Atom.C z,
+    Tuple.C x, Tuple.C y, Tuple.C z) =>
+   [Attribute] -> [Attribute3d] -> [[(x,y,z)]] -> IO ()
 plotMesh3d attrs pt dat =
    plot3d attrs pt (Plot3D.mesh dat)
 
 {- |
 > let xs = [-2,-1.8..2::Double] in plotFunc3d [] [] xs xs (\x y -> exp(-(x*x+y*y)))
 -}
-plotFunc3d :: (Show a, Show b, Show c) =>
-   [Attribute] -> [Attribute3d] -> [b] -> [c] -> (b -> c -> a) -> IO ()
+plotFunc3d ::
+   (Atom.C x, Atom.C y, Atom.C z,
+    Tuple.C x, Tuple.C y, Tuple.C z) =>
+   [Attribute] -> [Attribute3d] -> [x] -> [y] -> (x -> y -> z) -> IO ()
 plotFunc3d attrs pt xArgs yArgs f =
-   plot3d attrs pt (Plot3D.function xArgs yArgs f)
+   plot3d attrs pt (Plot3D.surface xArgs yArgs f)
 
 
 
@@ -374,33 +415,33 @@ extractRanges attrs =
 
 
 
-plotTypeToGraph :: PlotType -> GraphType.T
+plotTypeToGraph :: PlotType -> Graph2D.Type -- GraphType.T
 plotTypeToGraph t =
    case t of
-      Lines          -> GraphType.lines
-      Points         -> GraphType.points
-      LinesPoints    -> GraphType.linesPoints
-      Impulses       -> GraphType.impulses
-      Dots           -> GraphType.dots
-      Steps          -> GraphType.steps
-      FSteps         -> GraphType.fSteps
-      HiSteps        -> GraphType.hiSteps
-      ErrorBars      -> GraphType.errorBars
-      XErrorBars     -> GraphType.xErrorBars
-      YErrorBars     -> GraphType.yErrorBars
-      XYErrorBars    -> GraphType.xyErrorBars
-      ErrorLines     -> GraphType.errorLines
-      XErrorLines    -> GraphType.xErrorLines
-      YErrorLines    -> GraphType.yErrorLines
-      XYErrorLines   -> GraphType.xyErrorLines
-      Boxes          -> GraphType.boxes
-      FilledCurves   -> GraphType.filledCurves
-      BoxErrorBars   -> GraphType.boxErrorBars
-      BoxXYErrorBars -> GraphType.boxXYErrorBars
-      FinanceBars    -> GraphType.financeBars
-      CandleSticks   -> GraphType.candleSticks
-      Vectors        -> GraphType.vectors
-      PM3d           -> GraphType.pm3d
+      Lines          -> "lines"
+      Points         -> "points"
+      LinesPoints    -> "linespoints"
+      Impulses       -> "impulses"
+      Dots           -> "dots"
+      Steps          -> "steps"
+      FSteps         -> "fsteps"
+      HiSteps        -> "histeps"
+      ErrorBars      -> "errorbars"
+      XErrorBars     -> "xerrorbars"
+      YErrorBars     -> "yerrorbars"
+      XYErrorBars    -> "xyerrorbars"
+      ErrorLines     -> "errorlines"
+      XErrorLines    -> "xerrorlines"
+      YErrorLines    -> "yerrorlines"
+      XYErrorLines   -> "xyerrorlines"
+      Boxes          -> "boxes"
+      FilledCurves   -> "filledcurves"
+      BoxErrorBars   -> "boxerrorbars"
+      BoxXYErrorBars -> "boxxyerrorbars"
+      FinanceBars    -> "financebars"
+      CandleSticks   -> "candlesticks"
+      Vectors        -> "vectors"
+      PM3d           -> "pm3d"
 
 
 plot3dTypeToString :: Plot3dType -> String

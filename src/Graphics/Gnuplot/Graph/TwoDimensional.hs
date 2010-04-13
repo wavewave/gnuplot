@@ -2,11 +2,29 @@ module Graphics.Gnuplot.Graph.TwoDimensional (
    T,
    Type,
 
-   defaultType,
-   deflt,
+--   deflt,
 
-   typ,
    lineSpec,
+
+   listLines,
+   listPoints,
+   listLinesPoints,
+   listImpulses,
+   listDots,
+
+   xErrorBarsRelative,
+   yErrorBarsRelative,
+   xyErrorBarsRelative,
+   xErrorBarsAbsolute,
+   yErrorBarsAbsolute,
+   xyErrorBarsAbsolute,
+
+   xErrorLinesRelative,
+   yErrorLinesRelative,
+   xyErrorLinesRelative,
+   xErrorLinesAbsolute,
+   yErrorLinesAbsolute,
+   xyErrorLinesAbsolute,
 
    lines,
    points,
@@ -17,24 +35,19 @@ module Graphics.Gnuplot.Graph.TwoDimensional (
    fSteps,
    hiSteps,
    errorBars,
-   xErrorBars,
-   yErrorBars,
-   xyErrorBars,
    errorLines,
-   xErrorLines,
-   yErrorLines,
-   xyErrorLines,
    boxes,
    filledCurves,
+{-
    boxErrorBars,
    boxXYErrorBars,
+-}
    financeBars,
    candleSticks,
    vectors,
-   -- pm3d,
    ) where
 
 import Graphics.Gnuplot.Private.Graph2D
-import Graphics.Gnuplot.Private.GraphType hiding (T, )
+import Graphics.Gnuplot.Private.Graph2DType hiding (T, )
 
 import Prelude hiding (lines, )

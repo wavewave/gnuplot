@@ -1,16 +1,31 @@
 -- shall this also export Graph.Type, set plotType and so on?
 module Graphics.Gnuplot.Plot.TwoDimensional (
+   T,
+
+   list,
+   function,
+   functions,
+   parameterFunction,
+
+   listFromFile,
+   pathFromFile,
+
    linearScale,
-   module Graphics.Gnuplot.Plot.TwoDimensional,
+   functionToGraph,
    ) where
 
+import qualified Graphics.Gnuplot.Private.Graph2DType as Type
 import qualified Graphics.Gnuplot.Private.Graph2D as Graph
 import qualified Graphics.Gnuplot.Private.Plot    as Plot
+import qualified Graphics.Gnuplot.Value.ColumnSet as Col
+import qualified Graphics.Gnuplot.Value.Tuple as Tuple
+import qualified Graphics.Gnuplot.Value.Atom  as Atom
 
 import Graphics.Gnuplot.Utility
-   (functionToGraph, commaConcat, linearScale, )
+   (functionToGraph, linearScale, assembleCells, )
 
 import qualified Data.List.Match as Match
+import qualified Data.List.HT as ListHT
 
 
 {- |
@@ -22,52 +37,62 @@ type T = Plot.T Graph.T
 -- * computed plots
 
 {- |
-> list (take 30 (let fibs = 0 : 1 : zipWith (+) fibs (tail fibs) in fibs))
+> list Type.listLines (take 30 (let fibs = 0 : 1 : zipWith (+) fibs (tail fibs) in fibs))
+> list Type.lines (take 30 (let fibs0 = 0 : fibs1; fibs1 = 1 : zipWith (+) fibs0 fibs1 in zip fibs0 fibs1))
 -}
-list :: Show a => [a] -> T
-list dat =
+list :: Tuple.C a => Type.T a -> [a] -> T
+list typ ps =
    Plot.withUniqueFile
-      (unlines (map show dat))
-      [Graph.deflt (1:[])]
+      (assembleCells (map Tuple.text ps))
+      [Graph.deflt typ [1 .. Type.tupleSize typ]]
 
 {- |
-> function (linearScale 1000 (-10,10)) sin
+> function Type.line (linearScale 1000 (-10,10)) sin
 -}
-function :: Show a => [a] -> (a -> a) -> T
-function args f =
-   path (functionToGraph args f)
+function :: (Tuple.C x, Tuple.C y) => Type.T (x,y) -> [x] -> (x -> y) -> T
+function typ args f =
+   list typ (functionToGraph args f)
 
 {- |
-> functions (linearScale 1000 (-10,10)) [sin, cos]
+> functions Type.line (linearScale 1000 (-10,10)) [sin, cos]
 -}
-functions :: Show a => [a] -> [a -> a] -> T
-functions args fs =
+functions :: (Tuple.C x, Tuple.C y) => Type.T (x,y) -> [x] -> [x -> y] -> T
+functions typ args fs =
    let dat = map (\x -> (x, map ($ x) fs)) args
+       typX :: Type.T (x,y) -> Type.T x
+       typX = undefined
+       typY :: Type.T (x,y) -> Type.T y
+       typY = undefined
+       nx = Type.tupleSize (typX typ)
    in  Plot.withUniqueFile
-          (unlines (map (commaConcat . map show . uncurry (:)) dat))
+          (assembleCells
+             (map (\(x,y) -> Tuple.text x ++ concatMap Tuple.text y) dat))
           (Match.take fs $
-           map (\n -> Graph.deflt (1:n:[])) [2..])
+           map (\ns -> Graph.deflt typ ([1..nx] ++ ns)) $
+           ListHT.sliceVertical (Type.tupleSize (typY typ)) [(nx+1)..])
 
-path :: Show a => [(a,a)] -> T
-path dat =
-   Plot.withUniqueFile
-      (unlines (map (\(x,y) -> show x ++ ", " ++ show y) dat))
-      [Graph.deflt (1:2:[])]
 
 {- |
-> parameterFunction (linearScale 1000 (0,2*pi)) (\t -> (sin (2*t), cos t))
+> parameterFunction Type.line (linearScale 1000 (0,2*pi)) (\t -> (sin (2*t), cos t))
 -}
-parameterFunction :: Show a => [a] -> (a -> (a,a)) -> T
-parameterFunction args f = path (map f args)
+parameterFunction :: Tuple.C a => Type.T a -> [t] -> (t -> a) -> T
+parameterFunction typ args f = list typ (map f args)
 
 
 
 -- * plot stored data
 
-listFromFile :: FilePath -> Int -> T
-listFromFile filename column =
-   Plot.fromGraphs filename [Graph.deflt (column:[])]
+fromFile ::
+   Type.T y -> FilePath -> Col.T y -> T
+fromFile typ filename (Col.Cons cs) =
+   Plot.fromGraphs filename [Graph.deflt typ cs]
 
-pathFromFile :: FilePath -> Int -> Int -> T
-pathFromFile filename columnX columnY =
-   Plot.fromGraphs filename [Graph.deflt (columnX:columnY:[])]
+listFromFile :: Atom.C y =>
+   Type.T y -> FilePath -> Int -> T
+listFromFile typ filename column =
+   fromFile typ filename (Col.atom column)
+
+pathFromFile :: (Atom.C x, Atom.C y) =>
+   Type.T (x,y) -> FilePath -> Int -> Int -> T
+pathFromFile typ filename columnX columnY =
+   fromFile typ filename (Col.pair (Col.atom columnX) (Col.atom columnY))

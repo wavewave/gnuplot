@@ -1,7 +1,7 @@
 module Graphics.Gnuplot.Private.Graph3D where
 
 import qualified Graphics.Gnuplot.Private.LineSpecification as LineSpec
-import qualified Graphics.Gnuplot.Private.GraphType as GraphType
+import qualified Graphics.Gnuplot.Private.Graph3DType as GraphType
 import qualified Graphics.Gnuplot.Private.Graph as Graph
 
 import Graphics.Gnuplot.Private.Graph2D (Column, columnToString, )
@@ -16,13 +16,13 @@ data T =
       lineSpec_ :: LineSpec.T
    }
 
-type Type = GraphType.T
+type Type = String
 
 
 toString :: T -> String
 toString (Cons c t l) =
    "using " ++ columnToString c ++
-   " with " ++ GraphType.toString t ++
+   " with " ++ t ++
    " " ++ LineSpec.toString l
 
 instance Graph.C T where
@@ -30,12 +30,8 @@ instance Graph.C T where
    toString = toString
 
 
-defaultType :: Type
-defaultType = GraphType.pm3d
-
-deflt :: Column -> T
-deflt c = Cons c defaultType LineSpec.deflt
-
+deflt :: GraphType.T a -> Column -> T
+deflt t c = Cons c (GraphType.toString t) LineSpec.deflt
 
 typ :: Type -> T -> T
 typ t gr = gr{type_ = t}

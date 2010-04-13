@@ -100,16 +100,20 @@ Library
     Graphics.Gnuplot.Graph.ThreeDimensional
     Graphics.Gnuplot.LineSpecification
     Graphics.Gnuplot.MultiPlot
+    Graphics.Gnuplot.Value.Atom
+    Graphics.Gnuplot.Value.Tuple
+    Graphics.Gnuplot.Value.ColumnSet
   Other-Modules:
     Graphics.Gnuplot.Private.LineSpecification
     Graphics.Gnuplot.Private.Plot
     Graphics.Gnuplot.Private.Frame
     Graphics.Gnuplot.Private.FrameOption
     Graphics.Gnuplot.Private.FrameOptionSet
-    Graphics.Gnuplot.Private.GraphType
     Graphics.Gnuplot.Private.Graph
     Graphics.Gnuplot.Private.Graph2D
     Graphics.Gnuplot.Private.Graph3D
+    Graphics.Gnuplot.Private.Graph2DType
+    Graphics.Gnuplot.Private.Graph3DType
     Graphics.Gnuplot.Private.GraphEmpty
     Graphics.Gnuplot.Utility
     Graphics.Gnuplot.Execute

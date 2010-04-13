@@ -3,7 +3,7 @@ module Graphics.Gnuplot.Utility where
 import Data.List (intersperse, )
 
 
-functionToGraph :: [a] -> (a -> a) -> [(a,a)]
+functionToGraph :: [x] -> (x -> y) -> [(x,y)]
 functionToGraph args f = map (\x -> (x, f x)) args
 -- functionToGraph args f = map swap $ attachKey f args
 
@@ -24,3 +24,12 @@ semiColonConcat = concat . intersperse "; "
 
 quote :: String -> String
 quote = show
+
+assembleCells :: [[ShowS]] -> String
+assembleCells ps =
+   foldr ($) ""
+      (concatMap
+         (\p ->
+            intersperse (showString ", ") p ++
+            [showString "\n"])
+         ps)
