@@ -25,14 +25,15 @@ import Data.List.HT (outerProduct, )
 {- |
 Plots can be assembled using 'mappend' or 'mconcat'.
 -}
-type T = Plot.T Graph.T
+type T x y z = Plot.T (Graph.T x y z)
 
 
 -- * computed plots
 
 cloud ::
-   (Tuple.C a) =>
-   Type.T a -> [a] -> T
+   (Atom.C x, Atom.C y, Atom.C z,
+    Tuple.C a) =>
+   Type.T x y z a -> [a] -> T x y z
 cloud typ ps =
    Plot.withUniqueFile
       (assembleCells (map Tuple.text ps))
@@ -50,9 +51,9 @@ function xArgs yArgs f =
 mesh ::
    (Atom.C x, Atom.C y, Atom.C z,
     Tuple.C x, Tuple.C y, Tuple.C z) =>
-   [[(x,y,z)]] -> T
+   [[(x,y,z)]] -> T x y z
 mesh pss =
-   let typ :: [[a]] -> Type.T a -> Type.T a
+   let typ :: [[a]] -> Type.T x y z a -> Type.T x y z a
        typ _ = id
    in  Plot.withUniqueFile
           (assembleCells (concat (map (\ps -> map Tuple.text ps ++ [[]]) pss)))
@@ -61,6 +62,6 @@ mesh pss =
 surface ::
    (Atom.C x, Atom.C y, Atom.C z,
     Tuple.C x, Tuple.C y, Tuple.C z) =>
-   [x] -> [y] -> (x -> y -> z) -> T
+   [x] -> [y] -> (x -> y -> z) -> T x y z
 surface xArgs yArgs f =
    mesh (outerProduct (\x y -> (x, y, f x y)) xArgs yArgs)

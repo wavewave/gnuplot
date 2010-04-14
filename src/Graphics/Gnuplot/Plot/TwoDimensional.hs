@@ -31,7 +31,7 @@ import qualified Data.List.HT as ListHT
 {- |
 Plots can be assembled using 'mappend' or 'mconcat'.
 -}
-type T = Plot.T Graph.T
+type T x y = Plot.T (Graph.T x y)
 
 
 -- * computed plots
@@ -40,7 +40,9 @@ type T = Plot.T Graph.T
 > list Type.listLines (take 30 (let fibs = 0 : 1 : zipWith (+) fibs (tail fibs) in fibs))
 > list Type.lines (take 30 (let fibs0 = 0 : fibs1; fibs1 = 1 : zipWith (+) fibs0 fibs1 in zip fibs0 fibs1))
 -}
-list :: Tuple.C a => Type.T a -> [a] -> T
+list ::
+   (Atom.C x, Atom.C y, Tuple.C a) =>
+   Type.T x y a -> [a] -> T x y
 list typ ps =
    Plot.withUniqueFile
       (assembleCells (map Tuple.text ps))
@@ -49,33 +51,42 @@ list typ ps =
 {- |
 > function Type.line (linearScale 1000 (-10,10)) sin
 -}
-function :: (Tuple.C x, Tuple.C y) => Type.T (x,y) -> [x] -> (x -> y) -> T
+function ::
+   (Atom.C x, Atom.C y,
+    Tuple.C a, Tuple.C b) =>
+   Type.T x y (a,b) -> [a] -> (a -> b) -> T x y
 function typ args f =
    list typ (functionToGraph args f)
 
 {- |
 > functions Type.line (linearScale 1000 (-10,10)) [sin, cos]
 -}
-functions :: (Tuple.C x, Tuple.C y) => Type.T (x,y) -> [x] -> [x -> y] -> T
+functions ::
+   (Atom.C x, Atom.C y,
+    Tuple.C a, Tuple.C b) =>
+   Type.T x y (a,b) -> [a] -> [a -> b] -> T x y
 functions typ args fs =
    let dat = map (\x -> (x, map ($ x) fs)) args
-       typX :: Type.T (x,y) -> Type.T x
-       typX = undefined
-       typY :: Type.T (x,y) -> Type.T y
-       typY = undefined
-       nx = Type.tupleSize (typX typ)
+       typA :: Type.T x y (a,b) -> Type.T x y a
+       typA = undefined
+       typB :: Type.T x y (a,b) -> Type.T x y b
+       typB = undefined
+       na = Type.tupleSize (typA typ)
    in  Plot.withUniqueFile
           (assembleCells
-             (map (\(x,y) -> Tuple.text x ++ concatMap Tuple.text y) dat))
+             (map (\(a,b) -> Tuple.text a ++ concatMap Tuple.text b) dat))
           (Match.take fs $
-           map (\ns -> Graph.deflt typ ([1..nx] ++ ns)) $
-           ListHT.sliceVertical (Type.tupleSize (typY typ)) [(nx+1)..])
+           map (\ns -> Graph.deflt typ ([1..na] ++ ns)) $
+           ListHT.sliceVertical (Type.tupleSize (typB typ)) [(na+1)..])
 
 
 {- |
 > parameterFunction Type.line (linearScale 1000 (0,2*pi)) (\t -> (sin (2*t), cos t))
 -}
-parameterFunction :: Tuple.C a => Type.T a -> [t] -> (t -> a) -> T
+parameterFunction ::
+   (Atom.C x, Atom.C y,
+    Tuple.C a) =>
+   Type.T x y a -> [t] -> (t -> a) -> T x y
 parameterFunction typ args f = list typ (map f args)
 
 
@@ -83,16 +94,19 @@ parameterFunction typ args f = list typ (map f args)
 -- * plot stored data
 
 fromFile ::
-   Type.T y -> FilePath -> Col.T y -> T
+   (Atom.C x, Atom.C y) =>
+   Type.T x y a -> FilePath -> Col.T a -> T x y
 fromFile typ filename (Col.Cons cs) =
    Plot.fromGraphs filename [Graph.deflt typ cs]
 
-listFromFile :: Atom.C y =>
-   Type.T y -> FilePath -> Int -> T
+listFromFile ::
+   (Atom.C i, Atom.C y) =>
+   Type.T i y y -> FilePath -> Int -> T i y
 listFromFile typ filename column =
    fromFile typ filename (Col.atom column)
 
-pathFromFile :: (Atom.C x, Atom.C y) =>
-   Type.T (x,y) -> FilePath -> Int -> Int -> T
+pathFromFile ::
+   (Atom.C x, Atom.C y) =>
+   Type.T x y (x,y) -> FilePath -> Int -> Int -> T x y
 pathFromFile typ filename columnX columnY =
    fromFile typ filename (Col.pair (Col.atom columnX) (Col.atom columnY))

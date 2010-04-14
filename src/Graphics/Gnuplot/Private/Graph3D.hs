@@ -9,7 +9,7 @@ import Graphics.Gnuplot.Private.Graph2D (Column, columnToString, )
 import Prelude hiding (lines, )
 
 
-data T =
+data T x y z =
    Cons {
       column_   :: Column,
       type_     :: Type,
@@ -19,22 +19,22 @@ data T =
 type Type = String
 
 
-toString :: T -> String
+toString :: T x y z -> String
 toString (Cons c t l) =
    "using " ++ columnToString c ++
    " with " ++ t ++
    " " ++ LineSpec.toString l
 
-instance Graph.C T where
+instance Graph.C (T x y z) where
    command _ = "splot"
    toString = toString
 
 
-deflt :: GraphType.T a -> Column -> T
+deflt :: GraphType.T x y z a -> Column -> T x y z
 deflt t c = Cons c (GraphType.toString t) LineSpec.deflt
 
-typ :: Type -> T -> T
+typ :: Type -> T x y z -> T x y z
 typ t gr = gr{type_ = t}
 
-lineSpec :: LineSpec.T -> T -> T
+lineSpec :: LineSpec.T -> T x y z -> T x y z
 lineSpec ls gr = gr{lineSpec_ = ls}

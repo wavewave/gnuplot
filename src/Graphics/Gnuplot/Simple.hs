@@ -166,7 +166,7 @@ terminal =
 
 -- * plot functions
 
-list :: (Tuple.C a) => [a] -> Plot2D.T
+list :: (Tuple.C a) => [a] -> Plot2D.T Double Double
 list = Plot2D.list (GraphType.Cons "lines")
 -- list = Plot2D.list GraphType.listLines
 
@@ -464,7 +464,7 @@ attribute3dToString (CornersToColor c2c) =
 
 
 
-plot2d :: [Attribute] -> Plot2D.T -> IO ()
+plot2d :: [Attribute] -> Plot2D.T x y -> IO ()
 plot2d attrs (Plot.Cons mp) =
    let files = State.evaluate 0 mp
    in  do mapM_ Plot.writeData files
@@ -473,13 +473,13 @@ plot2d attrs (Plot.Cons mp) =
                 map (\gr -> quote filename ++ " " ++ Graph2D.toString gr) grs) $
              files
 
-setPlotStyle :: PlotStyle -> Plot2D.T -> Plot2D.T
+setPlotStyle :: PlotStyle -> Plot2D.T x y -> Plot2D.T x y
 setPlotStyle ps =
    fmap (Graph2D.typ (plotTypeToGraph $ plotType ps) .
          Graph2D.lineSpec (lineSpecRecord $ lineSpec ps))
 
 
-plot3d :: [Attribute] -> [Attribute3d] -> Plot3D.T -> IO ()
+plot3d :: [Attribute] -> [Attribute3d] -> Plot3D.T x y z -> IO ()
 plot3d attrs pt (Plot.Cons mp) =
    let files = State.evaluate 0 mp
    in  do mapM_ Plot.writeData files

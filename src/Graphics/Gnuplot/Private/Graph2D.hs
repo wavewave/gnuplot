@@ -8,7 +8,7 @@ import qualified Data.List as List
 import Prelude hiding (lines, )
 
 
-data T =
+data T x y =
    Cons {
       column_   :: Column,
       type_     :: Type,
@@ -24,22 +24,22 @@ columnToString :: Column -> String
 columnToString =
    concat . List.intersperse ":" . map show
 
-toString :: T -> String
+toString :: T x y -> String
 toString (Cons c t l) =
    "using " ++ columnToString c ++
    " with " ++ t ++
    " " ++ LineSpec.toString l
 
-instance Graph.C T where
+instance Graph.C (T x y) where
    command _ = "plot"
    toString = toString
 
 
-deflt :: GraphType.T a -> Column -> T
+deflt :: GraphType.T x y a -> Column -> T x y
 deflt t c = Cons c (GraphType.toString t) LineSpec.deflt
 
-typ :: Type -> T -> T
+typ :: Type -> T x y -> T x y
 typ t gr = gr{type_ = t}
 
-lineSpec :: LineSpec.T -> T -> T
+lineSpec :: LineSpec.T -> T x y -> T x y
 lineSpec ls gr = gr{lineSpec_ = ls}

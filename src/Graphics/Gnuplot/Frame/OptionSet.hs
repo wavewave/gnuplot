@@ -7,9 +7,11 @@ module Graphics.Gnuplot.Frame.OptionSet (
 
    size,
    title,
-   xRange,
-   yRange,
-   zRange,
+   xRange2d,
+   yRange2d,
+   xRange3d,
+   yRange3d,
+   zRange3d,
    xLabel,
    yLabel,
    zLabel,
@@ -20,10 +22,14 @@ module Graphics.Gnuplot.Frame.OptionSet (
 
 
 import qualified Graphics.Gnuplot.Graph.ThreeDimensional as Graph3D
+import qualified Graphics.Gnuplot.Graph.TwoDimensional as Graph2D
 
 import qualified Graphics.Gnuplot.Private.FrameOptionSet as OptionSet
 import qualified Graphics.Gnuplot.Private.FrameOption as Option
 import qualified Graphics.Gnuplot.Private.Graph as Graph
+
+import qualified Graphics.Gnuplot.Value.Atom as Atom
+import qualified Graphics.Gnuplot.Value.Tuple as Tuple
 
 import Graphics.Gnuplot.Private.FrameOptionSet (T, )
 
@@ -40,18 +46,53 @@ title text =
    OptionSet.add Option.title [quote text]
 
 
+{-
 xRange :: Graph.C graph => (Double, Double) -> T graph -> T graph
 xRange = range Option.xRange
 
 yRange :: Graph.C graph => (Double, Double) -> T graph -> T graph
 yRange = range Option.yRange
 
-zRange :: (Double, Double) -> T Graph3D.T -> T Graph3D.T
+zRange :: (Double, Double) -> T (Graph3D.T x y z) -> T (Graph3D.T x y z)
 zRange = range Option.zRange
+-}
 
-range :: Graph.C graph => Option.T -> (Double, Double) -> T graph -> T graph
+xRange2d ::
+   (Atom.C x, Tuple.C x) =>
+   (x, x) -> T (Graph2D.T x y) -> T (Graph2D.T x y)
+xRange2d = range Option.xRange
+
+yRange2d ::
+   (Atom.C y, Tuple.C y) =>
+   (y, y) -> T (Graph2D.T x y) -> T (Graph2D.T x y)
+yRange2d = range Option.yRange
+
+
+xRange3d ::
+   (Atom.C x, Tuple.C x) =>
+   (x, x) -> T (Graph3D.T x y z) -> T (Graph3D.T x y z)
+xRange3d = range Option.xRange
+
+yRange3d ::
+   (Atom.C y, Tuple.C y) =>
+   (y, y) -> T (Graph3D.T x y z) -> T (Graph3D.T x y z)
+yRange3d = range Option.yRange
+
+zRange3d ::
+   (Atom.C z, Tuple.C z) =>
+   (z, z) -> T (Graph3D.T x y z) -> T (Graph3D.T x y z)
+zRange3d = range Option.zRange
+
+
+range ::
+   (Atom.C a, Tuple.C a, Graph.C graph) =>
+   Option.T -> (a, a) -> T graph -> T graph
 range opt (x,y) =
-   OptionSet.add opt ["[" ++ show x ++ ":" ++ show y ++ "]"]
+   let fromSingleton = \[s] -> s
+   in  OptionSet.add opt
+          [showString "[" . fromSingleton (Tuple.text x) .
+           showString ":" . fromSingleton (Tuple.text y) $
+           "]"]
 
 
 xLabel :: Graph.C graph => String -> T graph -> T graph
@@ -60,7 +101,7 @@ xLabel = label Option.xLabel
 yLabel :: Graph.C graph => String -> T graph -> T graph
 yLabel = label Option.yLabel
 
-zLabel :: String -> T Graph3D.T -> T Graph3D.T
+zLabel :: String -> T (Graph3D.T x y z) -> T (Graph3D.T x y z)
 zLabel = label Option.zLabel
 
 label :: Graph.C graph => Option.T -> String -> T graph -> T graph
@@ -77,14 +118,14 @@ view ::
    Double {- ^ rotateZ -} ->
    Double {- ^ scale -} ->
    Double {- ^ scaleZ -} ->
-   T Graph3D.T -> T Graph3D.T
+   T (Graph3D.T x y z) -> T (Graph3D.T x y z)
 view rotateX rotateZ scale scaleZ =
    OptionSet.add Option.view [show rotateX, show rotateZ, show scale, show scaleZ]
 
 {- |
 Show flat pixel map.
 -}
-viewMap :: T Graph3D.T -> T Graph3D.T
+viewMap :: T (Graph3D.T x y z) -> T (Graph3D.T x y z)
 viewMap =
    OptionSet.add Option.view ["map"]
 
@@ -95,7 +136,7 @@ xTicks = ticks Option.xTicks
 yTicks :: Graph.C graph => Double -> Double -> T graph -> T graph
 yTicks = ticks Option.yTicks
 
-zTicks :: Double -> Double -> T Graph3D.T -> T Graph3D.T
+zTicks :: Double -> Double -> T (Graph3D.T x y z) -> T (Graph3D.T x y z)
 zTicks = ticks Option.zTicks
 
 ticks :: Graph.C graph => Option.T -> Double -> Double -> T graph -> T graph
@@ -104,7 +145,7 @@ ticks opt x y =
 -}
 
 {-
-cornerToColor :: CornersToColor -> T Graph3D.T -> T Graph3D.T
+cornerToColor :: CornersToColor -> T (Graph3D.T x y z) -> T (Graph3D.T x y z)
 
-type3d :: Plot3dType -> T Graph3D.T -> T Graph3D.T
+type3d :: Plot3dType -> T (Graph3D.T x y z) -> T (Graph3D.T x y z)
 -}
