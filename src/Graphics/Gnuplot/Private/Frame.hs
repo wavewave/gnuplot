@@ -20,9 +20,9 @@ instance Graph.C graph => Display.C (T graph) where
    toScript frame =
       (Display.Script $
          State.Cons $ \(n, opts0) ->
-            let opts1 = option frame
+            let opts1 = OptionSet.decons $ option frame
             in  (Display.Body [] $
-                 OptionSet.diffToString (OptionSet.Cons opts0) opts1,
-                 (n, OptionSet.decons opts1)))
+                 OptionSet.diffToString opts0 opts1,
+                 (n, opts1)))
       `mappend`
       (Plot.toScript $ plot frame)

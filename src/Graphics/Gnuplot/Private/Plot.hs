@@ -92,10 +92,10 @@ instance Graph.C graph => Display.C (T graph) where
    toScript plot =
       (Display.Script $
          State.Cons $ \(n, opts0) ->
-            let opts1 = OptionSet.deflt
+            let opts1 = OptionSet.decons OptionSet.deflt
             in  (Display.Body [] $
-                 OptionSet.diffToString (OptionSet.Cons opts0) opts1,
-                 (n, OptionSet.decons opts1)))
+                 OptionSet.diffToString opts0 opts1,
+                 (n, opts1)))
       `mappend`
       toScript plot
 

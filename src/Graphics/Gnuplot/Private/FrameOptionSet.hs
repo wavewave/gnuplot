@@ -18,8 +18,10 @@ import Data.Maybe.HT (toMaybe, )
 import Data.Maybe (mapMaybe, )
 
 
+type Plain = Map.Map Option.T [String]
+
 newtype T graph =
-   Cons {decons :: Map.Map Option.T [String]}
+   Cons {decons :: Plain}
 
 {- |
 The default options contain what we expect as default value in gnuplot.
@@ -64,8 +66,8 @@ remove opt (Cons m) =
 Convert the difference between the first and the second option set
 into a sequence of 'set' and 'unset' commands.
 -}
-diffToString :: T graph -> T graph -> [String]
-diffToString (Cons m0) (Cons m1) =
+diffToString :: Plain -> Plain -> [String]
+diffToString m0 m1 =
    mapMaybe
       (\(Option.Cons opt, (old,new)) ->
          toMaybe (old/=new) $
