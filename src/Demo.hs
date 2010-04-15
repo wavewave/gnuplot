@@ -48,6 +48,22 @@ overlay2d =
    `mappend`
    circle2d
 
+mixed2d :: MultiPlot.T
+mixed2d =
+   MultiPlot.simpleFromPartArray $
+   listArray ((0::Int,0::Int), (0,2)) $
+   MultiPlot.partFromPlot candle2d :
+   {-
+   The size settings of overlay2d interfer badly with the other plots,
+   because 'unset' does not restore the size to the multiplot settings.   
+
+   MultiPlot.partFromFrame overlay2d :
+   -}
+   MultiPlot.partFromFrame
+      (Frame.cons (Opts.yLabel "Fibonacci" $ Opts.remove Opt.key $ Opts.deflt) list2d) :
+   MultiPlot.partFromPlot candle2d :
+   []
+
 defltOpts :: Opts.T graph
 defltOpts =
    Opts.remove Opt.key $
@@ -64,8 +80,8 @@ wave3d =
           meshNodes meshNodes
           (\x y -> cos(x*x+y*y))
 
-multiplot2d :: MultiPlot.T
-multiplot2d =
+multiplot :: MultiPlot.T
+multiplot =
    let opts :: Opts.T graph
        opts =
           Opts.remove Opt.key $
@@ -96,6 +112,7 @@ main =
       Plot.plot X11.cons list2d
       Plot.plot X11.cons candle2d
       Plot.plot X11.cons overlay2d
+      Plot.plot X11.cons mixed2d
       Plot.plot X11.cons wave3d
-      Plot.plot X11.cons multiplot2d
+      Plot.plot X11.cons multiplot
       return ()

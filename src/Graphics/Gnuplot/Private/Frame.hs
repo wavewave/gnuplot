@@ -25,4 +25,4 @@ instance Graph.C graph => Display.C (T graph) where
                  OptionSet.diffToString (OptionSet.Cons opts0) opts1,
                  (n, OptionSet.decons opts1)))
       `mappend`
-      (Display.toScript $ plot frame)
+      (Plot.toScript $ plot frame)
