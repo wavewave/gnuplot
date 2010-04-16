@@ -96,6 +96,7 @@ Library
     Graphics.Gnuplot.Frame.OptionSet
     Graphics.Gnuplot.Plot.TwoDimensional
     Graphics.Gnuplot.Plot.ThreeDimensional
+    Graphics.Gnuplot.Graph
     Graphics.Gnuplot.Graph.TwoDimensional
     Graphics.Gnuplot.Graph.ThreeDimensional
     Graphics.Gnuplot.LineSpecification
