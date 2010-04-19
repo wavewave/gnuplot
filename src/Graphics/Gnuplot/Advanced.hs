@@ -101,7 +101,7 @@ plot ::
    terminal -> gfx -> IO ExitCode
 plot term gfx =
    let body =
-          State.evaluate (0, OptionSet.decons OptionSet.deflt) $
+          State.evaluate (0, OptionSet.initial) $
           Display.runScript $
           Display.toScript gfx
    in  do mapM_ Display.writeData (Display.files body)

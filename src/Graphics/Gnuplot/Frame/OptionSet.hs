@@ -1,6 +1,6 @@
 module Graphics.Gnuplot.Frame.OptionSet (
    OptionSet.T,
-   OptionSet.deflt,
+   deflt,
 
    OptionSet.add,
    OptionSet.remove,
@@ -15,6 +15,9 @@ module Graphics.Gnuplot.Frame.OptionSet (
    xLabel,
    yLabel,
    zLabel,
+   xFormat,
+   yFormat,
+   zFormat,
 
    view,
    viewMap,
@@ -35,6 +38,10 @@ import Graphics.Gnuplot.Private.FrameOptionSet (T, )
 
 import Graphics.Gnuplot.Utility
    (quote, )
+
+
+deflt :: Graph.C graph => T graph
+deflt = Graph.defltOptions
 
 
 size :: Graph.C graph => Double -> Double -> T graph -> T graph
@@ -58,28 +65,28 @@ zRange = range Option.zRange
 -}
 
 xRange2d ::
-   (Atom.C x, Tuple.C x) =>
+   (Atom.C x, Atom.C y, Tuple.C x) =>
    (x, x) -> T (Graph2D.T x y) -> T (Graph2D.T x y)
 xRange2d = range Option.xRange
 
 yRange2d ::
-   (Atom.C y, Tuple.C y) =>
+   (Atom.C x, Atom.C y, Tuple.C y) =>
    (y, y) -> T (Graph2D.T x y) -> T (Graph2D.T x y)
 yRange2d = range Option.yRange
 
 
 xRange3d ::
-   (Atom.C x, Tuple.C x) =>
+   (Atom.C x, Atom.C y, Atom.C z, Tuple.C x) =>
    (x, x) -> T (Graph3D.T x y z) -> T (Graph3D.T x y z)
 xRange3d = range Option.xRange
 
 yRange3d ::
-   (Atom.C y, Tuple.C y) =>
+   (Atom.C x, Atom.C y, Atom.C z, Tuple.C y) =>
    (y, y) -> T (Graph3D.T x y z) -> T (Graph3D.T x y z)
 yRange3d = range Option.yRange
 
 zRange3d ::
-   (Atom.C z, Tuple.C z) =>
+   (Atom.C x, Atom.C y, Atom.C z, Tuple.C z) =>
    (z, z) -> T (Graph3D.T x y z) -> T (Graph3D.T x y z)
 zRange3d = range Option.zRange
 
@@ -101,11 +108,29 @@ xLabel = label Option.xLabel
 yLabel :: Graph.C graph => String -> T graph -> T graph
 yLabel = label Option.yLabel
 
-zLabel :: String -> T (Graph3D.T x y z) -> T (Graph3D.T x y z)
+zLabel ::
+   (Atom.C x, Atom.C y, Atom.C z) =>
+   String -> T (Graph3D.T x y z) -> T (Graph3D.T x y z)
 zLabel = label Option.zLabel
 
 label :: Graph.C graph => Option.T -> String -> T graph -> T graph
 label opt x =
+   OptionSet.add opt [quote x]
+
+
+xFormat :: Graph.C graph => String -> T graph -> T graph
+xFormat = format Option.xFormat
+
+yFormat :: Graph.C graph => String -> T graph -> T graph
+yFormat = format Option.yFormat
+
+zFormat ::
+   (Atom.C x, Atom.C y, Atom.C z) =>
+   String -> T (Graph3D.T x y z) -> T (Graph3D.T x y z)
+zFormat = format Option.zFormat
+
+format :: Graph.C graph => Option.T -> String -> T graph -> T graph
+format opt x =
    OptionSet.add opt [quote x]
 
 

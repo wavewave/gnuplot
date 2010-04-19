@@ -11,6 +11,7 @@ from smaller option setters.)
 module Graphics.Gnuplot.Private.FrameOptionSet where
 
 import qualified Graphics.Gnuplot.Private.FrameOption as Option
+-- import Graphics.Gnuplot.Utility (quote, )
 
 import qualified Data.Map as Map
 
@@ -23,14 +24,14 @@ type Plain = Map.Map Option.T [String]
 newtype T graph =
    Cons {decons :: Plain}
 
+
 {- |
 The default options contain what we expect as default value in gnuplot.
-We need an entry for every option
-that cannot be reset by @unset@.
+We need an entry for every option that cannot be reset by @unset@.
 -}
-deflt :: T graph
+deflt :: Plain
 deflt =
-   Cons $ Map.fromList $
+   Map.fromList $
    (Option.key, []) :
    (Option.border, []) :
    (Option.xLabel, []) :
@@ -42,8 +43,21 @@ deflt =
    (Option.xTicks, []) :
    (Option.yTicks, []) :
    (Option.zTicks, []) :
+   (Option.xFormat, []) :
+   (Option.yFormat, []) :
+   (Option.zFormat, []) :
+--   (Option.timeFmt, [quote "%s"]) :
    []
 
+initial :: Plain
+initial =
+   flip Map.union deflt $
+   Map.fromList $
+   (Option.xData, []) :
+   (Option.yData, []) :
+   (Option.zData, []) :
+--   (Option.timeFmt, []) :
+   []
 
 {- |
 Add an option with arguments as plain strings.
@@ -73,7 +87,7 @@ diffToString m0 m1 =
          toMaybe (old/=new) $
          maybe
             ("unset " ++ opt)
-            (\args -> "set " ++ opt ++ " " ++ unwords args)
+            (\args -> "set " ++ opt ++ concatMap (' ':) args)
             new) $
    Map.toList $
    Map.unionWith

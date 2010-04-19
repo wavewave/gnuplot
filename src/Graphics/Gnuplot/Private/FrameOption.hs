@@ -25,3 +25,13 @@ zLabel :: T; zLabel = Cons "zlabel"
 xTicks :: T; xTicks = Cons "xtics"
 yTicks :: T; yTicks = Cons "ytics"
 zTicks :: T; zTicks = Cons "ztics"
+
+xData  :: T; xData  = Cons "xdata"
+yData  :: T; yData  = Cons "ydata"
+zData  :: T; zData  = Cons "zdata"
+
+xFormat :: T; xFormat = Cons "format x"
+yFormat :: T; yFormat = Cons "format y"
+zFormat :: T; zFormat = Cons "format z"
+
+timeFmt :: T; timeFmt = Cons "timefmt"

@@ -9,12 +9,16 @@ import qualified Graphics.Gnuplot.Frame as Frame
 import qualified Graphics.Gnuplot.Frame.Option as Opt
 import qualified Graphics.Gnuplot.Frame.OptionSet as Opts
 
+import qualified Graphics.Gnuplot.Graph as Graph
+
 import qualified Graphics.Gnuplot.Plot.ThreeDimensional as Plot3D
 import qualified Graphics.Gnuplot.Graph.ThreeDimensional as Graph3D
 
 import qualified Graphics.Gnuplot.Plot.TwoDimensional as Plot2D
 import qualified Graphics.Gnuplot.Graph.TwoDimensional as Graph2D
 import Graphics.Gnuplot.Plot.TwoDimensional (linearScale, )
+
+import qualified Data.Time as Time
 
 import Data.Array (listArray, )
 import Data.Monoid (mappend, )
@@ -35,10 +39,11 @@ list2d :: Plot2D.T Int Integer
 list2d =
    Plot2D.list Graph2D.listPoints [0,1,1,2,3,5,8,13::Integer]
 
-candle2d :: Plot2D.T Double Double
+candle2d :: Plot2D.T Time.Day Double
 candle2d =
    Plot2D.list Graph2D.candleSticks $
-   Plot2D.functionToGraph (linearScale 32 (0,2*pi)) $
+   zip [(Time.fromGregorian 2008 01 01) ..] $
+   flip map (linearScale 32 (0,2*pi)) $
    \t -> (-sin t, -2*sin t, 2*sin t, sin t)
 
 overlay2d :: Frame.T (Graph2D.T Double Double)
@@ -52,19 +57,29 @@ mixed2d :: MultiPlot.T
 mixed2d =
    MultiPlot.simpleFromPartArray $
    listArray ((0::Int,0::Int), (0,2)) $
-   MultiPlot.partFromPlot candle2d :
-   {-
-   The size settings of overlay2d interfer badly with the other plots,
-   because 'unset' does not restore the size to the multiplot settings.   
-
-   MultiPlot.partFromFrame overlay2d :
-   -}
+   MultiPlot.partFromPlot circle2d :
    MultiPlot.partFromFrame
-      (Frame.cons (Opts.yLabel "Fibonacci" $ Opts.remove Opt.key $ Opts.deflt) list2d) :
+      (Frame.cons (Opts.xFormat "%m-%d" $ Opts.remove Opt.key $ Opts.deflt) $
+       candle2d) :
+   MultiPlot.partFromPlot list2d :
+   []
+
+{-
+The size settings of overlay2d interfer badly with the other plots,
+because 'unset' does not restore the size to the multiplot settings.
+-}
+size2d :: MultiPlot.T
+size2d =
+   MultiPlot.simpleFromPartArray $
+   listArray ((0::Int,0::Int), (0,2)) $
+   MultiPlot.partFromPlot candle2d :
+   MultiPlot.partFromFrame
+      (Frame.cons (Opts.yLabel "Fibonacci" $ Opts.remove Opt.key $ Opts.deflt)
+       list2d) :
    MultiPlot.partFromPlot candle2d :
    []
 
-defltOpts :: Opts.T graph
+defltOpts :: Graph.C graph => Opts.T graph
 defltOpts =
    Opts.remove Opt.key $
    Opts.deflt
@@ -82,15 +97,11 @@ wave3d =
 
 multiplot :: MultiPlot.T
 multiplot =
-   let opts :: Opts.T graph
-       opts =
-          Opts.remove Opt.key $
-          Opts.deflt
-       (prefix,suffix) =
+   let (prefix,suffix) =
           splitAt 7 $
           map MultiPlot.partFromFrame $
           map (\k ->
-             Frame.cons (Opts.xRange2d (-1,1) opts) $
+             Frame.cons (Opts.xRange2d (-1,1) defltOpts) $
              Plot2D.parameterFunction Graph2D.lines
                 (linearScale 48 (-pi,pi::Double))
                 (\t -> (cos (t + pi/7*fromInteger k), sin (2*t)))) $
@@ -113,6 +124,7 @@ main =
       Plot.plot X11.cons candle2d
       Plot.plot X11.cons overlay2d
       Plot.plot X11.cons mixed2d
+      Plot.plot X11.cons size2d
       Plot.plot X11.cons wave3d
       Plot.plot X11.cons multiplot
       return ()

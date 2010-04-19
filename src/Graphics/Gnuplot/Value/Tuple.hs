@@ -8,6 +8,9 @@ module Graphics.Gnuplot.Value.Tuple
    (C(text, number),
    ) where
 
+import System.Locale (defaultTimeLocale, )
+import qualified Data.Time as Time
+
 import Data.Word (Word8, Word16, Word32, Word64, )
 import Data.Int (Int8, Int16, Int32, Int64, )
 import Data.Ratio (Ratio, )
@@ -21,7 +24,7 @@ class C a where
    Expect that it is undefined
    -}
    number :: (Int, a)
-   number = (1, error "gnuplot: dummy atomic value")
+   number = (1, error "gnuplot: dummy tuple value")
 
 
 singleton :: a -> [a]
@@ -43,6 +46,12 @@ instance C Word8  where text = singleton . shows
 instance C Word16 where text = singleton . shows
 instance C Word32 where text = singleton . shows
 instance C Word64 where text = singleton . shows
+
+instance C Time.Day where
+   text d = text $ Time.UTCTime d 0
+instance C Time.UTCTime where
+   text = singleton . showString . Time.formatTime defaultTimeLocale "%s"
+
 
 instance (C a, C b) => C (a,b) where
    text (a,b) = text a ++ text b

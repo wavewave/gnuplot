@@ -92,7 +92,9 @@ instance Graph.C graph => Display.C (T graph) where
    toScript plot =
       (Display.Script $
          State.Cons $ \(n, opts0) ->
-            let opts1 = OptionSet.decons OptionSet.deflt
+            let defltOpts :: Graph.C graph => T graph -> OptionSet.T graph
+                defltOpts _ = Graph.defltOptions
+                opts1 = OptionSet.decons (defltOpts plot)
             in  (Display.Body [] $
                  OptionSet.diffToString opts0 opts1,
                  (n, opts1)))
