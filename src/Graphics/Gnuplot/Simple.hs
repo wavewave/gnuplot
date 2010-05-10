@@ -112,8 +112,23 @@ data Aspect =
      Ratio Double
    | NoRatio
 
-{- The Int types would be better enumerations
-   but their interpretations depend on the gnuplot output type. :-( -}
+{- |
+Be careful with 'LineTitle'
+which can only be used as part of gnuplot's @plot@ command
+but not as part of @set@.
+That is,
+
+> plotList [LineStyle 0 [LineTitle "foobar"]] [0,5..100::Double]
+
+will leave you with an invalid gnuplot script, whereas
+
+> plotListStyle [] (defaultStyle {lineSpec = CustomStyle [LineTitle "foobar"]}) [0,5..100::Double]
+
+does what you want.
+
+The 'Int' types would be better enumerations
+but their interpretations depend on the gnuplot output type. :-(
+-}
 data LineAttr =
      LineType  Int
    | LineWidth Double
