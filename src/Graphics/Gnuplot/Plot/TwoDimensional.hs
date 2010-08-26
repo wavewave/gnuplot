@@ -30,6 +30,7 @@ import qualified Data.List.HT as ListHT
 
 {- |
 Plots can be assembled using 'mappend' or 'mconcat'.
+You can alter attributes of embedded graphs using 'fmap'.
 -}
 type T x y = Plot.T (Graph.T x y)
 

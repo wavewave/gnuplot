@@ -75,5 +75,8 @@ deflt t c = Cons c (GraphType.toString t) LineSpec.deflt
 typ :: Type -> T x y -> T x y
 typ t gr = gr{type_ = t}
 
+{- |
+You can alter the line specification of graphs in a plot using 'fmap'.
+-}
 lineSpec :: LineSpec.T -> T x y -> T x y
 lineSpec ls gr = gr{lineSpec_ = ls}
