@@ -36,6 +36,8 @@ Extra-Source-Files:
   execute/tmp/Graphics/Gnuplot/Execute.hs
   execute/pipe/Graphics/Gnuplot/Execute.hs
   execute/shell/Graphics/Gnuplot/Execute.hs
+Data-Files:
+  data/runtime.data
 
 Flag splitBase
   description: Choose the new smaller, split-up base package.
@@ -122,7 +124,9 @@ Library
     Graphics.Gnuplot.Terminal
 
 Executable gnuplot-demo
-  If !flag(buildExamples)
+  If flag(buildExamples)
+    Build-Depends: filepath >=1.1 && <1.2
+  Else
     Buildable: False
   GHC-Options: -Wall
   Hs-Source-Dirs: src, execute/tmp

@@ -18,7 +18,12 @@ import qualified Graphics.Gnuplot.Plot.TwoDimensional as Plot2D
 import qualified Graphics.Gnuplot.Graph.TwoDimensional as Graph2D
 import Graphics.Gnuplot.Plot.TwoDimensional (linearScale, )
 
+import qualified Graphics.Gnuplot.LineSpecification as LineSpec
+
 import qualified Data.Time as Time
+
+import qualified Paths_gnuplot as Path
+import System.FilePath ((</>), )
 
 import Data.Array (listArray, )
 import Data.Monoid (mappend, )
@@ -52,6 +57,21 @@ overlay2d =
    Plot2D.function Graph2D.lines (linearScale 100 (-pi,pi)) cos
    `mappend`
    circle2d
+
+file2d :: FilePath -> FilePath -> Frame.T (Graph2D.T Int Double)
+file2d path file =
+   let lineSpec =
+          Graph2D.lineSpec $
+          LineSpec.title "runtimes" $
+          LineSpec.lineWidth 2.5 $
+          LineSpec.deflt
+       frameOpts =
+          Opts.xLabel "input size" $
+          Opts.yLabel "runtime (ms)" $
+          Opts.title ("Graph from " ++ file) $
+          Opts.deflt
+   in  Frame.cons frameOpts $ fmap lineSpec $
+       Plot2D.pathFromFile Graph2D.lines (path </> file) 1 2
 
 mixed2d :: MultiPlot.T
 mixed2d =
@@ -123,6 +143,8 @@ main =
       Plot.plot X11.cons list2d
       Plot.plot X11.cons candle2d
       Plot.plot X11.cons overlay2d
+      Plot.plot X11.cons . flip file2d "runtime.data"
+         =<< fmap (</> "data") Path.getDataDir
       Plot.plot X11.cons mixed2d
       Plot.plot X11.cons size2d
       Plot.plot X11.cons wave3d
