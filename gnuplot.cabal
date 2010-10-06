@@ -66,10 +66,10 @@ Library
     monoid-transformer >= 0.0.2 && <0.1
   If flag(splitBase)
     Build-Depends:
-      base >= 2 && <6,
       process >= 1.0 && < 1.1,
       time >= 1.1 && < 1.2,
-      old-locale >= 1.0 && < 1.1
+      old-locale >= 1.0 && < 1.1,
+      base >= 2 && <5
   Else
     Build-Depends:
       base >= 1.0 && < 2
