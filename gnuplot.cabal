@@ -22,7 +22,12 @@ Description:
    I recommend "Graphics.Gnuplot.Advanced".
    This module contains also an overview
    of the hierarchy of objects.
+   .
    Examples for using this interface can be found in the "Demo" module.
+   In order to compile this and install an example data file,
+   use the Cabal flag @buildExamples@:
+   .
+   > $ cabal install -fbuildExamples gnuplot
    .
    With the Cabal flags executePipe and executeShell
    you can switch to more convenient
