@@ -26,7 +26,7 @@ import qualified Paths_gnuplot as Path
 import System.FilePath ((</>), )
 
 import Data.Array (listArray, )
-import Data.Monoid (mappend, )
+import Data.Monoid (mappend, mconcat, )
 
 
 simple2d :: Plot2D.T Double Double
@@ -57,6 +57,25 @@ overlay2d =
    Plot2D.function Graph2D.lines (linearScale 100 (-pi,pi)) cos
    `mappend`
    circle2d
+
+names2d ::
+   Frame.T (Graph2D.T Double Double)
+names2d =
+   let domain = (-10,10)
+       frameOpts =
+          Opts.xRange2d domain $
+          Opts.yRange2d (-1.5,1.5) $
+          Opts.deflt
+   in Frame.cons frameOpts $ mconcat $
+      map (\(name,f) ->
+         fmap (Graph2D.lineSpec
+                  (LineSpec.title name $
+                   LineSpec.deflt)) $
+         Plot2D.function Graph2D.lines (linearScale 100 domain) f) $
+      ("sin", sin) :
+      ("cos", cos) :
+      ("tan", tan) :
+      []
 
 file2d :: FilePath -> FilePath -> Frame.T (Graph2D.T Int Double)
 file2d path file =
@@ -142,6 +161,7 @@ main = sequence_ $
    Plot.plot X11.cons simple2d :
    Plot.plot X11.cons list2d :
    Plot.plot X11.cons candle2d :
+   Plot.plot X11.cons names2d :
    Plot.plot X11.cons overlay2d :
    (Plot.plot X11.cons . flip file2d "runtime.data"
       =<< fmap (</> "data") Path.getDataDir) :
