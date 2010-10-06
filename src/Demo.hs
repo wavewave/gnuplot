@@ -138,15 +138,15 @@ multiplot =
 
 
 main :: IO ()
-main =
-   do Plot.plot X11.cons simple2d
-      Plot.plot X11.cons list2d
-      Plot.plot X11.cons candle2d
-      Plot.plot X11.cons overlay2d
-      Plot.plot X11.cons . flip file2d "runtime.data"
-         =<< fmap (</> "data") Path.getDataDir
-      Plot.plot X11.cons mixed2d
-      Plot.plot X11.cons size2d
-      Plot.plot X11.cons wave3d
-      Plot.plot X11.cons multiplot
-      return ()
+main = sequence_ $
+   Plot.plot X11.cons simple2d :
+   Plot.plot X11.cons list2d :
+   Plot.plot X11.cons candle2d :
+   Plot.plot X11.cons overlay2d :
+   (Plot.plot X11.cons . flip file2d "runtime.data"
+      =<< fmap (</> "data") Path.getDataDir) :
+   Plot.plot X11.cons mixed2d :
+   Plot.plot X11.cons size2d :
+   Plot.plot X11.cons wave3d :
+   Plot.plot X11.cons multiplot :
+   []

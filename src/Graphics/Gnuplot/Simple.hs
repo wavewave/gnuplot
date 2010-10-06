@@ -337,7 +337,7 @@ epspdfPlot ::
    -> IO ()
 epspdfPlot filename plot =
    do plot (EPS (filename++".eps") : Key Nothing : [])
-      rawSystem "epstopdf" [filename++".eps"]
+      _ <- rawSystem "epstopdf" [filename++".eps"]
       return ()
 
 {-| Creates an EPS and a PDF graphics
