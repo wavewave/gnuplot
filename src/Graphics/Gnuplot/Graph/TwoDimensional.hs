@@ -26,7 +26,7 @@ module Graphics.Gnuplot.Graph.TwoDimensional (
    yErrorLinesAbsolute,
    xyErrorLinesAbsolute,
 
-   lines,
+   Graph2DType.lines,
    points,
    linesPoints,
    impulses,
@@ -48,6 +48,4 @@ module Graphics.Gnuplot.Graph.TwoDimensional (
    ) where
 
 import Graphics.Gnuplot.Private.Graph2D
-import Graphics.Gnuplot.Private.Graph2DType hiding (T, )
-
-import Prelude hiding (lines, )
+import Graphics.Gnuplot.Private.Graph2DType as Graph2DType hiding (T, )

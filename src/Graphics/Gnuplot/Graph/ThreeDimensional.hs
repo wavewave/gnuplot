@@ -13,5 +13,3 @@ module Graphics.Gnuplot.Graph.ThreeDimensional (
 
 import Graphics.Gnuplot.Private.Graph3D
 import Graphics.Gnuplot.Private.Graph3DType hiding (T, )
-
-import Prelude hiding (lines, )
