@@ -54,10 +54,10 @@ toString linespec =
    let showField :: String -> (a -> String) -> (T -> Maybe a) -> Maybe [String]
        showField s f access = fmap (\a -> [s, f a]) $ access linespec
    in  unwords $ concat $ catMaybes $
+       showField "linestyle" show  lineStyle_ :
        showField "linetype"  show  lineType_  :
        showField "linewidth" show  lineWidth_ :
        showField "pointtype" show  pointType_ :
        showField "pointsize" show  pointSize_ :
        showField "title"     quote title_     :
-       showField "linestyle" show  lineStyle_ :
        []
