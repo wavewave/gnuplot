@@ -95,11 +95,18 @@ range ::
    (Atom.C a, Tuple.C a, Graph.C graph) =>
    Option.T -> (a, a) -> T graph -> T graph
 range opt (x,y) =
-   let fromSingleton = \[s] -> s
-   in  OptionSet.add opt
-          [showString "[" . fromSingleton (Tuple.text x) .
-           showString ":" . fromSingleton (Tuple.text y) $
-           "]"]
+   OptionSet.add opt
+      [showString "[" . atomText x .
+       showString ":" . atomText y $
+       "]"]
+
+atomText ::
+   (Atom.C a, Tuple.C a) =>
+   a -> ShowS
+atomText x =
+   case Tuple.text x of
+      [s] -> s
+      _ -> error "OptionSet.fromSingleton: types of Atom class must generate single representation texts"
 
 
 xLabel :: Graph.C graph => String -> T graph -> T graph
