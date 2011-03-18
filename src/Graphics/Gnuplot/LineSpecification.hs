@@ -6,6 +6,7 @@ module Graphics.Gnuplot.LineSpecification (
    lineStyle,
    lineType,
    lineWidth,
+   lineColor,
    pointType,
    pointSize,
    title,

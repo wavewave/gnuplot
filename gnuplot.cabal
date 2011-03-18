@@ -33,7 +33,7 @@ Description:
    you can switch to more convenient
    but probably less portable ways
    of feeding gnuplot with a script.
-Tested-With:       GHC==6.8.2, GHC==7.0.1
+Tested-With:       GHC==6.8.2, GHC==6.12.3, GHC==7.0.2
 Cabal-Version:     >=1.2
 Build-Type:        Simple
 Extra-Source-Files:
@@ -107,12 +107,14 @@ Library
     Graphics.Gnuplot.Graph.TwoDimensional
     Graphics.Gnuplot.Graph.ThreeDimensional
     Graphics.Gnuplot.LineSpecification
+    Graphics.Gnuplot.ColorSpecification
     Graphics.Gnuplot.MultiPlot
     Graphics.Gnuplot.Value.Atom
     Graphics.Gnuplot.Value.Tuple
     Graphics.Gnuplot.Value.ColumnSet
   Other-Modules:
     Graphics.Gnuplot.Private.LineSpecification
+    Graphics.Gnuplot.Private.ColorSpecification
     Graphics.Gnuplot.Private.Plot
     Graphics.Gnuplot.Private.Frame
     Graphics.Gnuplot.Private.FrameOption
