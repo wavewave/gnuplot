@@ -31,32 +31,32 @@ toString (Cons c t l) =
 
 
 type AxisOption x y z a =
-   OptionSet.T (T x y z) -> (Atom.OptionSet, a)
+   OptionSet.T (T x y z) -> Atom.OptionSet a
 
 defltOptions :: (Atom.C x, Atom.C y, Atom.C z) => OptionSet.T (T x y z)
 defltOptions =
-   let optX :: Atom.C x => AxisOption x y z x
-       optX _ = Atom.options
-       optY :: Atom.C y => AxisOption x y z y
-       optY _ = Atom.options
-       optZ :: Atom.C z => AxisOption x y z z
-       optZ _ = Atom.options
-       mk :: Option.T -> Option.T ->
-             (Atom.OptionSet, a) -> [(Option.T, [String])]
-       mk optData optFormat op =
-          let opts = fst op
-          in  (optData, Atom.optData opts) :
-              (optFormat, Atom.optFormat opts) :
-              Atom.optOthers opts
-       result =
+   let mk ::
+          Option.T -> Option.T ->
+          Atom.OptionSet a ->
+          [(Option.T, [String])]
+       mk optData optFormat opts =
+          (optData, Atom.optData opts) :
+          (optFormat, Atom.optFormat opts) :
+          Atom.optOthers opts
+       result ::
+          Atom.OptionSet x ->
+          Atom.OptionSet y ->
+          Atom.OptionSet z ->
+          OptionSet.T (T x y z)
+       result optX optY optZ =
           OptionSet.Cons $
           flip Map.union OptionSet.deflt $
           Map.fromList $
-          mk Option.xData Option.xFormat (optX result) ++
-          mk Option.yData Option.yFormat (optY result) ++
-          mk Option.yData Option.yFormat (optZ result) ++
+          mk Option.xData Option.xFormat optX ++
+          mk Option.yData Option.yFormat optY ++
+          mk Option.yData Option.yFormat optZ ++
           []
-   in  result
+   in  result Atom.options Atom.options Atom.options
 
 
 instance (Atom.C x, Atom.C y, Atom.C z) => Graph.C (T x y z) where
