@@ -34,7 +34,7 @@ Description:
    but probably less portable ways
    of feeding gnuplot with a script.
 Tested-With:       GHC==6.8.2, GHC==6.12.3, GHC==7.0.2
-Cabal-Version:     >=1.2
+Cabal-Version:     >=1.6
 Build-Type:        Simple
 Extra-Source-Files:
   Makefile
@@ -43,6 +43,15 @@ Extra-Source-Files:
   execute/shell/Graphics/Gnuplot/Execute.hs
 Data-Files:
   data/runtime.data
+
+Source-Repository this
+  Tag:         0.4.2
+  Type:        darcs
+  Location:    http://code.haskell.org/gnuplot/
+
+Source-Repository head
+  Type:        darcs
+  Location:    http://code.haskell.org/gnuplot/
 
 Flag splitBase
   description: Choose the new smaller, split-up base package.
