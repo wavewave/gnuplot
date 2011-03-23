@@ -1,5 +1,5 @@
 Name:             gnuplot
-Version:          0.4.2
+Version:          0.5
 License:          BSD3
 License-File:     LICENSE
 Author:           Henning Thielemann <haskell@henning-thielemann.de>
@@ -45,7 +45,7 @@ Data-Files:
   data/runtime.data
 
 Source-Repository this
-  Tag:         0.4.2
+  Tag:         0.5
   Type:        darcs
   Location:    http://code.haskell.org/gnuplot/
 
