@@ -8,14 +8,14 @@ import qualified Graphics.Gnuplot.Private.Graph as Graph
 import qualified Graphics.Gnuplot.Value.Atom as Atom
 import qualified Data.Map as Map
 
-import Graphics.Gnuplot.Private.Graph2D (Column, columnToString, )
+import Graphics.Gnuplot.Private.Graph2D (Columns, columnToString, )
 
 import Prelude hiding (lines, )
 
 
 data T x y z =
    Cons {
-      column_   :: Column,
+      column_   :: Columns,
       type_     :: Type,
       lineSpec_ :: LineSpec.T
    }
@@ -65,7 +65,7 @@ instance (Atom.C x, Atom.C y, Atom.C z) => Graph.C (T x y z) where
    defltOptions = defltOptions
 
 
-deflt :: GraphType.T x y z a -> Column -> T x y z
+deflt :: GraphType.T x y z a -> Columns -> T x y z
 deflt t c = Cons c (GraphType.toString t) LineSpec.deflt
 
 typ :: Type -> T x y z -> T x y z

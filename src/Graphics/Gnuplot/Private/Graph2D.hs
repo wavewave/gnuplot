@@ -14,17 +14,17 @@ import Prelude hiding (lines, )
 
 data T x y =
    Cons {
-      column_   :: Column,
+      column_   :: Columns,
       type_     :: Type,
       lineSpec_ :: LineSpec.T
    }
 
-type Column = [Int]
+type Columns = [Int]
 
 type Type = String
 
 
-columnToString :: Column -> String
+columnToString :: Columns -> String
 columnToString =
    concat . List.intersperse ":" . map show
 
@@ -69,7 +69,7 @@ instance (Atom.C x, Atom.C y) => Graph.C (T x y) where
    defltOptions = defltOptions
 
 
-deflt :: GraphType.T x y a -> Column -> T x y
+deflt :: GraphType.T x y a -> Columns -> T x y
 deflt t c = Cons c (GraphType.toString t) LineSpec.deflt
 
 typ :: Type -> T x y -> T x y
