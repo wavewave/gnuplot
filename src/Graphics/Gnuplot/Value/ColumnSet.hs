@@ -11,6 +11,19 @@ import qualified Graphics.Gnuplot.Value.Atom  as Atom
 
 newtype T a = Cons [Int]
 
+{-
+Functor and Applicative instances would be useful
+for combining column sets,
+but they are dangerous, because they can bring
+type and column number out of sync.
+
+instance Functor Column where
+   fmap _ (Cons n) = Cons n
+
+instance Applicative Column where
+   pure _ = Cons []
+   Cons ns <*> Cons ms = Cons (ns++ms)
+-}
 
 atom :: Atom.C a => Int -> T a
 atom i = Cons [i]
