@@ -47,7 +47,8 @@ list ::
 list typ ps =
    Plot.withUniqueFile
       (assembleCells (map Tuple.text ps))
-      [Graph.deflt typ [1 .. Type.tupleSize typ]]
+      [Graph.deflt typ
+         [1 .. case Type.tupleSize typ of Tuple.ColumnCount n -> n]]
 
 {- |
 > function Type.line (linearScale 1000 (-10,10)) sin
@@ -72,13 +73,14 @@ functions typ args fs =
        typA = undefined
        typB :: Type.T x y (a,b) -> Type.T x y b
        typB = undefined
-       na = Type.tupleSize (typA typ)
+       Tuple.ColumnCount na = Type.tupleSize (typA typ)
+       Tuple.ColumnCount nb = Type.tupleSize (typB typ)
    in  Plot.withUniqueFile
           (assembleCells
-             (map (\(a,b) -> Tuple.text a ++ concatMap Tuple.text b) dat))
+              (map (\(a,b) -> Tuple.text a ++ concatMap Tuple.text b) dat))
           (Match.take fs $
            map (\ns -> Graph.deflt typ ([1..na] ++ ns)) $
-           ListHT.sliceVertical (Type.tupleSize (typB typ)) [(na+1)..])
+           ListHT.sliceVertical nb [(na+1)..])
 
 
 {- |

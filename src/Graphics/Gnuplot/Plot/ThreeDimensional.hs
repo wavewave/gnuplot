@@ -37,7 +37,8 @@ cloud ::
 cloud typ ps =
    Plot.withUniqueFile
       (assembleCells (map Tuple.text ps))
-      [Graph.deflt typ [1 .. Type.tupleSize typ]]
+      [Graph.deflt typ
+         [1 .. case Type.tupleSize typ of Tuple.ColumnCount n -> n]]
 
 {-
 function ::

@@ -7,11 +7,8 @@ import Prelude hiding (lines, )
 
 newtype T x y a = Cons String
 
-tupleSize :: (Tuple.C a) => T x y a -> Int
-tupleSize =
-   let size :: (Tuple.C a) => T x y a -> (Int, a)
-       size _ = Tuple.number
-   in  fst . size
+tupleSize :: (Tuple.C a) => T x y a -> Tuple.ColumnCount a
+tupleSize _ = Tuple.columnCount
 
 
 {-

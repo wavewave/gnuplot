@@ -4,8 +4,9 @@ that is accessible by gnuplot.
 
 Maybe we add a method for the binary interface to gnuplot later.
 -}
-module Graphics.Gnuplot.Value.Tuple
-   (C(text, number),
+module Graphics.Gnuplot.Value.Tuple (
+   C(text, columnCount),
+   ColumnCount(ColumnCount),
    ) where
 
 import System.Locale (defaultTimeLocale, )
@@ -17,14 +18,41 @@ import Data.Ratio (Ratio, )
 
 
 class C a where
-   text :: a -> [ShowS]
    {- |
-   The right pair member is a dummy result
-   that is needed only for type inference.
-   Expect that it is undefined
+   For values that are also in Atom class,
+   'text' must generate a singleton list.
    -}
-   number :: (Int, a)
-   number = (1, error "gnuplot: dummy tuple value")
+   text :: a -> [ShowS]
+
+   {- |
+   It must hold @ColumnCount (length (text x)) == columnCount@.
+   -}
+   columnCount :: ColumnCount a
+   columnCount = ColumnCount 1
+
+{- |
+Count numbers of gnuplot data columns for the respective type.
+
+Somehow a writer monad with respect to Sum monoid
+without material monadic result.
+
+Cf. ColumnSet module.
+-}
+newtype ColumnCount a = ColumnCount Int
+   deriving (Eq, Ord, Show)
+
+{-
+Functor and Applicative instances would be useful
+for combining column sets,
+but they are dangerous, because they can bring
+type and column columnCount out of sync.
+-}
+
+pure :: a -> ColumnCount a
+pure _ = ColumnCount 0
+
+(<*>) :: ColumnCount (a -> b) -> ColumnCount a -> ColumnCount b
+ColumnCount n <*> ColumnCount m = ColumnCount (n+m)
 
 
 singleton :: a -> [a]
@@ -55,24 +83,24 @@ instance C Time.UTCTime where
 
 instance (C a, C b) => C (a,b) where
    text (a,b) = text a ++ text b
-   number =
-      let (na,a) = number
-          (nb,b) = number
-      in  (na+nb, (a,b))
+   columnCount =
+      pure (,)
+         <*> columnCount
+         <*> columnCount
 
 instance (C a, C b, C c) => C (a,b,c) where
    text (a,b,c) = text a ++ text b ++ text c
-   number =
-      let (na,a) = number
-          (nb,b) = number
-          (nc,c) = number
-      in  (na+nb+nc, (a,b,c))
+   columnCount =
+      pure (,,)
+         <*> columnCount
+         <*> columnCount
+         <*> columnCount
 
 instance (C a, C b, C c, C d) => C (a,b,c,d) where
    text (a,b,c,d) = text a ++ text b ++ text c ++ text d
-   number =
-      let (na,a) = number
-          (nb,b) = number
-          (nc,c) = number
-          (nd,d) = number
-      in  (na+nb+nc+nd, (a,b,c,d))
+   columnCount =
+      pure (,,,)
+         <*> columnCount
+         <*> columnCount
+         <*> columnCount
+         <*> columnCount
