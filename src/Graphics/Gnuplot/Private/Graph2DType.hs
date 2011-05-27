@@ -5,6 +5,13 @@ import qualified Graphics.Gnuplot.Value.Tuple as Tuple
 import Prelude hiding (lines, )
 
 
+{- |
+The type parameter @x@ is for the values on the X axis,
+@y@ of the Y axis and
+@a@ is the type of the plotted data.
+The type @a@ is a pair in case of points in the plane,
+or a more complex tuple in case of error plots and the like.
+-}
 newtype T x y a = Cons String
 
 tupleSize :: (Tuple.C a) => T x y a -> Tuple.ColumnCount a
