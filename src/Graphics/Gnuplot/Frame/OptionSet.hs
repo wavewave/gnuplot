@@ -7,6 +7,7 @@ module Graphics.Gnuplot.Frame.OptionSet (
 
    size,
    title,
+   key,
    xRange2d,
    yRange2d,
    xRange3d,
@@ -36,8 +37,7 @@ import qualified Graphics.Gnuplot.Value.Tuple as Tuple
 
 import Graphics.Gnuplot.Private.FrameOptionSet (T, )
 
-import Graphics.Gnuplot.Utility
-   (quote, )
+import Graphics.Gnuplot.Utility (quote, )
 
 
 deflt :: Graph.C graph => T graph
@@ -46,12 +46,17 @@ deflt = Graph.defltOptions
 
 size :: Graph.C graph => Double -> Double -> T graph -> T graph
 size x y =
-   OptionSet.add Option.size [show x ++ ", " ++ show y]
+   OptionSet.add Option.sizeScale [show x ++ ", " ++ show y]
 
 title :: Graph.C graph => String -> T graph -> T graph
 title text =
    OptionSet.add Option.title [quote text]
 
+key :: Graph.C graph => Bool -> T graph -> T graph
+key on =
+   if on
+     then OptionSet.add Option.keyShow []
+     else OptionSet.remove Option.keyShow
 
 {-
 xRange :: Graph.C graph => (Double, Double) -> T graph -> T graph
@@ -67,28 +72,28 @@ zRange = range Option.zRange
 xRange2d ::
    (Atom.C x, Atom.C y, Tuple.C x) =>
    (x, x) -> T (Graph2D.T x y) -> T (Graph2D.T x y)
-xRange2d = range Option.xRange
+xRange2d = range Option.xRangeBounds
 
 yRange2d ::
    (Atom.C x, Atom.C y, Tuple.C y) =>
    (y, y) -> T (Graph2D.T x y) -> T (Graph2D.T x y)
-yRange2d = range Option.yRange
+yRange2d = range Option.yRangeBounds
 
 
 xRange3d ::
    (Atom.C x, Atom.C y, Atom.C z, Tuple.C x) =>
    (x, x) -> T (Graph3D.T x y z) -> T (Graph3D.T x y z)
-xRange3d = range Option.xRange
+xRange3d = range Option.xRangeBounds
 
 yRange3d ::
    (Atom.C x, Atom.C y, Atom.C z, Tuple.C y) =>
    (y, y) -> T (Graph3D.T x y z) -> T (Graph3D.T x y z)
-yRange3d = range Option.yRange
+yRange3d = range Option.yRangeBounds
 
 zRange3d ::
    (Atom.C x, Atom.C y, Atom.C z, Tuple.C z) =>
    (z, z) -> T (Graph3D.T x y z) -> T (Graph3D.T x y z)
-zRange3d = range Option.zRange
+zRange3d = range Option.zRangeBounds
 
 
 range ::
@@ -110,15 +115,15 @@ atomText x =
 
 
 xLabel :: Graph.C graph => String -> T graph -> T graph
-xLabel = label Option.xLabel
+xLabel = label Option.xLabelText
 
 yLabel :: Graph.C graph => String -> T graph -> T graph
-yLabel = label Option.yLabel
+yLabel = label Option.yLabelText
 
 zLabel ::
    (Atom.C x, Atom.C y, Atom.C z) =>
    String -> T (Graph3D.T x y z) -> T (Graph3D.T x y z)
-zLabel = label Option.zLabel
+zLabel = label Option.zLabelText
 
 label :: Graph.C graph => Option.T -> String -> T graph -> T graph
 label opt x =

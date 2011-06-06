@@ -6,7 +6,6 @@ import qualified Graphics.Gnuplot.Terminal.X11 as X11
 import qualified Graphics.Gnuplot.MultiPlot as MultiPlot
 
 import qualified Graphics.Gnuplot.Frame as Frame
-import qualified Graphics.Gnuplot.Frame.Option as Opt
 import qualified Graphics.Gnuplot.Frame.OptionSet as Opts
 
 import qualified Graphics.Gnuplot.Graph as Graph
@@ -53,7 +52,7 @@ candle2d =
 
 overlay2d :: Frame.T (Graph2D.T Double Double)
 overlay2d =
-   Frame.cons (Opts.size 1 0.4 $ Opts.remove Opt.key $ Opts.deflt) $
+   Frame.cons (Opts.size 1 0.4 $ Opts.key False $ Opts.deflt) $
    Plot2D.function Graph2D.lines (linearScale 100 (-pi,pi)) cos
    `mappend`
    circle2d
@@ -98,7 +97,7 @@ mixed2d =
    listArray ((0::Int,0::Int), (0,2)) $
    MultiPlot.partFromPlot circle2d :
    MultiPlot.partFromFrame
-      (Frame.cons (Opts.xFormat "%m-%d" $ Opts.remove Opt.key $ Opts.deflt) $
+      (Frame.cons (Opts.xFormat "%m-%d" $ Opts.key False $ Opts.deflt) $
        candle2d) :
    MultiPlot.partFromPlot list2d :
    []
@@ -113,14 +112,14 @@ size2d =
    listArray ((0::Int,0::Int), (0,2)) $
    MultiPlot.partFromPlot candle2d :
    MultiPlot.partFromFrame
-      (Frame.cons (Opts.yLabel "Fibonacci" $ Opts.remove Opt.key $ Opts.deflt)
+      (Frame.cons (Opts.yLabel "Fibonacci" $ Opts.key False $ Opts.deflt)
        list2d) :
    MultiPlot.partFromPlot candle2d :
    []
 
 defltOpts :: Graph.C graph => Opts.T graph
 defltOpts =
-   Opts.remove Opt.key $
+   Opts.key False $
    Opts.deflt
 
 wave3d :: Frame.T (Graph3D.T Double Double Double)

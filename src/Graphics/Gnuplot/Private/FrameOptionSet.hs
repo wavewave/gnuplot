@@ -32,20 +32,22 @@ We need an entry for every option that cannot be reset by @unset@.
 deflt :: Plain
 deflt =
    Map.fromList $
-   (Option.key, []) :
-   (Option.border, []) :
-   (Option.xLabel, []) :
-   (Option.yLabel, []) :
-   (Option.zLabel, []) :
-   (Option.xRange, ["[*:*]"]) :
-   (Option.yRange, ["[*:*]"]) :
-   (Option.zRange, ["[*:*]"]) :
-   (Option.xTicks, []) :
-   (Option.yTicks, []) :
-   (Option.zTicks, []) :
+   (Option.keyShow, []) :
+--   (Option.border, []) :
+   (Option.xLabelText, []) :
+   (Option.yLabelText, []) :
+   (Option.zLabelText, []) :
+   (Option.xRangeBounds, ["[*:*]"]) :
+   (Option.yRangeBounds, ["[*:*]"]) :
+   (Option.zRangeBounds, ["[*:*]"]) :
    (Option.xFormat, []) :
    (Option.yFormat, []) :
    (Option.zFormat, []) :
+{-
+   (Option.xTicks, []) :
+   (Option.yTicks, []) :
+   (Option.zTicks, []) :
+-}
 --   (Option.timeFmt, [quote "%s"]) :
    []
 
@@ -83,7 +85,7 @@ into a sequence of 'set' and 'unset' commands.
 diffToString :: Plain -> Plain -> [String]
 diffToString m0 m1 =
    mapMaybe
-      (\(Option.Cons opt, (old,new)) ->
+      (\(Option.Cons opt _, (old,new)) ->
          toMaybe (old/=new) $
          maybe
             ("unset " ++ opt)

@@ -1,37 +1,62 @@
 module Graphics.Gnuplot.Private.FrameOption where
 
-newtype T = Cons String
+{- |
+Every option represents an internal state in gnuplot.
+It is altered with gnuplot's set command.
+The first field in 'T' is the name of the option
+and the name of the according internal state in gnuplot.
+Sometimes the addressed state is not explicitly mentioned
+but is expressed by the syntax of the values.
+For this case we manage an identifier in the second field.
+It is only used for distinguishing between these states,
+but it is never written to a gnuplot script.
+-}
+data T = Cons String String
    deriving (Eq, Ord, Show)
 
-custom :: String -> T
+custom :: String -> String -> T
 custom = Cons
 
-title  :: T; title  = Cons "title"
-grid   :: T; grid   = Cons "grid"
-size   :: T; size   = Cons "size"
-key    :: T; key    = Cons "key"
-border :: T; border = Cons "border"
-pm3d   :: T; pm3d   = Cons "pm3d"
-view   :: T; view   = Cons "view"
+grid   :: String -> T; grid   = Cons "grid"
+size   :: String -> T; size   = Cons "size"
+key    :: String -> T; key    = Cons "key"
+border :: String -> T; border = Cons "border"
+pm3d   :: String -> T; pm3d   = Cons "pm3d"
 
-xRange :: T; xRange = Cons "xrange"
-yRange :: T; yRange = Cons "yrange"
-zRange :: T; zRange = Cons "zrange"
+xRange :: String -> T; xRange = Cons "xrange"
+yRange :: String -> T; yRange = Cons "yrange"
+zRange :: String -> T; zRange = Cons "zrange"
 
-xLabel :: T; xLabel = Cons "xlabel"
-yLabel :: T; yLabel = Cons "ylabel"
-zLabel :: T; zLabel = Cons "zlabel"
+xLabel :: String -> T; xLabel = Cons "xlabel"
+yLabel :: String -> T; yLabel = Cons "ylabel"
+zLabel :: String -> T; zLabel = Cons "zlabel"
 
-xTicks :: T; xTicks = Cons "xtics"
-yTicks :: T; yTicks = Cons "ytics"
-zTicks :: T; zTicks = Cons "ztics"
+xTicks :: String -> T; xTicks = Cons "xtics"
+yTicks :: String -> T; yTicks = Cons "ytics"
+zTicks :: String -> T; zTicks = Cons "ztics"
 
-xData  :: T; xData  = Cons "xdata"
-yData  :: T; yData  = Cons "ydata"
-zData  :: T; zData  = Cons "zdata"
 
-xFormat :: T; xFormat = Cons "format x"
-yFormat :: T; yFormat = Cons "format y"
-zFormat :: T; zFormat = Cons "format z"
+title :: T; title = Cons "title" ""
+view  :: T; view  = Cons "view" ""
 
-timeFmt :: T; timeFmt = Cons "timefmt"
+xFormat :: T; xFormat = Cons "format x" ""
+yFormat :: T; yFormat = Cons "format y" ""
+zFormat :: T; zFormat = Cons "format z" ""
+
+timeFmt :: T; timeFmt = Cons "timefmt" ""
+
+xData :: T; xData = Cons "xdata" ""
+yData :: T; yData = Cons "ydata" ""
+zData :: T; zData = Cons "zdata" ""
+
+
+sizeScale :: T; sizeScale = size "scale"
+keyShow   :: T; keyShow   = key "show"
+
+xRangeBounds :: T; xRangeBounds = xRange "bounds"
+yRangeBounds :: T; yRangeBounds = yRange "bounds"
+zRangeBounds :: T; zRangeBounds = zRange "bounds"
+
+xLabelText :: T; xLabelText = xLabel "text"
+yLabelText :: T; yLabelText = yLabel "text"
+zLabelText :: T; zLabelText = zLabel "text"
