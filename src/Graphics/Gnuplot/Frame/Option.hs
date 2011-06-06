@@ -1,9 +1,38 @@
 module Graphics.Gnuplot.Frame.Option (
-   Option.T,
-   module Graphics.Gnuplot.Private.FrameOption,
+   -- hide Cons constructor
+   T,
+
+   custom,
+
+   title,
+   grid,
+   size,
+   key,
+   border,
+   pm3d,
+   view,
+
+   xRange,
+   yRange,
+   zRange,
+
+   xLabel,
+   yLabel,
+   zLabel,
+
+   xTicks,
+   yTicks,
+   zTicks,
+
+   xData,
+   yData,
+   zData,
+
+   xFormat,
+   yFormat,
+   zFormat,
+
+   timeFmt,
    ) where
 
--- exclude Cons constructor
--- this does not work, Cons is exported anyway
-import Graphics.Gnuplot.Private.FrameOption hiding (T)
-import qualified Graphics.Gnuplot.Private.FrameOption as Option
+import Graphics.Gnuplot.Private.FrameOption
