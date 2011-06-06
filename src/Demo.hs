@@ -59,7 +59,12 @@ overlay2d =
 
 histogram2d :: Frame.T (Graph2D.T Int Double)
 histogram2d =
-   Frame.cons (Opts.deflt) $
+   Frame.cons (
+      Opts.title "Comparison of how well software revisions perform on each hardware version" $
+      Opts.xTicks2d
+         [("220", 0), ("320", 1), ("420", 2), ("520", 3), ("620", 4), ("720", 5)] $
+      Opts.yRange2d (0,3000) $
+      Opts.deflt) $
    mconcat $ map (Plot2D.list Graph2D.histograms) $
    [102, 213, 378, 408, 840,  920] :
    [152, 233, 388, 433, 850, 1200] :

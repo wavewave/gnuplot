@@ -60,3 +60,7 @@ zRangeBounds :: T; zRangeBounds = zRange "bounds"
 xLabelText :: T; xLabelText = xLabel "text"
 yLabelText :: T; yLabelText = yLabel "text"
 zLabelText :: T; zLabelText = zLabel "text"
+
+xTickLabels :: T; xTickLabels = xTicks "labels"
+yTickLabels :: T; yTickLabels = yTicks "labels"
+zTickLabels :: T; zTickLabels = zTicks "labels"

@@ -43,11 +43,9 @@ deflt =
    (Option.xFormat, []) :
    (Option.yFormat, []) :
    (Option.zFormat, []) :
-{-
-   (Option.xTicks, []) :
-   (Option.yTicks, []) :
-   (Option.zTicks, []) :
--}
+   (Option.xTickLabels, []) :
+   (Option.yTickLabels, []) :
+   (Option.zTickLabels, []) :
 --   (Option.timeFmt, [quote "%s"]) :
    []
 

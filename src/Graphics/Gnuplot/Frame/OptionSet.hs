@@ -16,6 +16,11 @@ module Graphics.Gnuplot.Frame.OptionSet (
    xLabel,
    yLabel,
    zLabel,
+   xTicks2d,
+   yTicks2d,
+   xTicks3d,
+   yTicks3d,
+   zTicks3d,
    xFormat,
    yFormat,
    zFormat,
@@ -38,6 +43,8 @@ import qualified Graphics.Gnuplot.Value.Tuple as Tuple
 import Graphics.Gnuplot.Private.FrameOptionSet (T, )
 
 import Graphics.Gnuplot.Utility (quote, )
+
+import qualified Data.List as List
 
 
 deflt :: Graph.C graph => T graph
@@ -166,20 +173,48 @@ viewMap :: T (Graph3D.T x y z) -> T (Graph3D.T x y z)
 viewMap =
    OptionSet.add Option.view ["map"]
 
-{-
-xTicks :: Graph.C graph => Double -> Double -> T graph -> T graph
-xTicks = ticks Option.xTicks
 
-yTicks :: Graph.C graph => Double -> Double -> T graph -> T graph
-yTicks = ticks Option.yTicks
+xTicks2d ::
+   (Atom.C x, Atom.C y, Tuple.C x) =>
+   [(String, x)] -> T (Graph2D.T x y) -> T (Graph2D.T x y)
+xTicks2d = ticks Option.xTickLabels
 
-zTicks :: Double -> Double -> T (Graph3D.T x y z) -> T (Graph3D.T x y z)
-zTicks = ticks Option.zTicks
+yTicks2d ::
+   (Atom.C x, Atom.C y, Tuple.C y) =>
+   [(String, y)] -> T (Graph2D.T x y) -> T (Graph2D.T x y)
+yTicks2d = ticks Option.yTickLabels
 
-ticks :: Graph.C graph => Option.T -> Double -> Double -> T graph -> T graph
-ticks opt x y =
-   OptionSet.add opt [show x ++ ":" ++ show y]
--}
+
+xTicks3d ::
+   (Atom.C x, Atom.C y, Atom.C z, Tuple.C x) =>
+   [(String, x)] -> T (Graph3D.T x y z) -> T (Graph3D.T x y z)
+xTicks3d = ticks Option.xTickLabels
+
+yTicks3d ::
+   (Atom.C x, Atom.C y, Atom.C z, Tuple.C y) =>
+   [(String, y)] -> T (Graph3D.T x y z) -> T (Graph3D.T x y z)
+yTicks3d = ticks Option.yTickLabels
+
+zTicks3d ::
+   (Atom.C x, Atom.C y, Atom.C z, Tuple.C z) =>
+   [(String, z)] -> T (Graph3D.T x y z) -> T (Graph3D.T x y z)
+zTicks3d = ticks Option.zTickLabels
+
+
+ticks ::
+   (Atom.C a, Tuple.C a, Graph.C graph) =>
+   Option.T -> [(String, a)] -> T graph -> T graph
+ticks opt labels =
+   OptionSet.add opt
+      [('(' :) $ foldr ($) ")" $
+       List.intersperse (showString ", ") $
+       map
+          (\(lab,pos) ->
+             showString (quote lab) .
+             showString " " .
+             atomText pos)
+          labels]
+
 
 {-
 cornerToColor :: CornersToColor -> T (Graph3D.T x y z) -> T (Graph3D.T x y z)
