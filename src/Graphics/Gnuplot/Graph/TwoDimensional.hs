@@ -11,6 +11,7 @@ module Graphics.Gnuplot.Graph.TwoDimensional (
    listLinesPoints,
    listImpulses,
    listDots,
+   histograms,
 
    xErrorBarsRelative,
    yErrorBarsRelative,

@@ -27,6 +27,7 @@ listPoints      :: (Atom.C y) => T Int y y
 listLinesPoints :: (Atom.C y) => T Int y y
 listImpulses    :: (Atom.C y) => T Int y y
 listDots        :: (Atom.C y) => T Int y y
+histograms      :: (Atom.C y) => T Int y y
 
 xErrorBarsRelative   :: (Atom.C x, Atom.C y) => T x y ((x,y),x)
 yErrorBarsRelative   :: (Atom.C x, Atom.C y) => T x y ((x,y),y)
@@ -68,6 +69,7 @@ listPoints      = Cons "points"
 listLinesPoints = Cons "linespoints"
 listImpulses    = Cons "impulses"
 listDots        = Cons "dots"
+histograms      = Cons "histograms"
 
 xErrorBarsRelative   = Cons "xerrorbars"
 yErrorBarsRelative   = Cons "yerrorbars"

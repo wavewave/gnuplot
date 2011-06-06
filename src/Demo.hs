@@ -57,6 +57,16 @@ overlay2d =
    `mappend`
    circle2d
 
+histogram2d :: Frame.T (Graph2D.T Int Double)
+histogram2d =
+   Frame.cons (Opts.deflt) $
+   mconcat $ map (Plot2D.list Graph2D.histograms) $
+   [102, 213, 378, 408, 840,  920] :
+   [152, 233, 388, 433, 850, 1200] :
+   [172, 263, 408, 463, 860, 1500] :
+   [192, 293, 458, 483, 890, 2000] :
+   []
+
 names2d ::
    Frame.T (Graph2D.T Double Double)
 names2d =
@@ -160,6 +170,7 @@ main = sequence_ $
    Plot.plot X11.cons simple2d :
    Plot.plot X11.cons list2d :
    Plot.plot X11.cons candle2d :
+   Plot.plot X11.cons histogram2d :
    Plot.plot X11.cons names2d :
    Plot.plot X11.cons overlay2d :
    (Plot.plot X11.cons . flip file2d "runtime.data"
