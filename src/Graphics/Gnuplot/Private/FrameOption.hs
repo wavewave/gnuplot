@@ -1,3 +1,7 @@
+{- |
+If you add a new option,
+please mind to add a default value to FrameOptionSet.deflt, too.
+-}
 module Graphics.Gnuplot.Private.FrameOption where
 
 {- |
