@@ -64,3 +64,6 @@ zLabelText :: T; zLabelText = zLabel "text"
 xTickLabels :: T; xTickLabels = xTicks "labels"
 yTickLabels :: T; yTickLabels = yTicks "labels"
 zTickLabels :: T; zTickLabels = zTicks "labels"
+
+styleFillSolid  :: T; styleFillSolid  = Cons "style fill" "solid"
+styleFillBorder :: T; styleFillBorder = Cons "style fill" "border"

@@ -7,6 +7,7 @@ import qualified Graphics.Gnuplot.MultiPlot as MultiPlot
 
 import qualified Graphics.Gnuplot.Frame as Frame
 import qualified Graphics.Gnuplot.Frame.OptionSet as Opts
+import qualified Graphics.Gnuplot.Frame.OptionSet.Style as OptsStyle
 
 import qualified Graphics.Gnuplot.Graph as Graph
 
@@ -61,6 +62,8 @@ histogram2d :: Frame.T (Graph2D.T Int Double)
 histogram2d =
    Frame.cons (
       Opts.title "Comparison of how well software revisions perform on each hardware version" $
+      OptsStyle.fillSolid $
+      OptsStyle.fillBorderLineType (-1) $
       Opts.xTicks2d
          [("220", 0), ("320", 1), ("420", 2), ("520", 3), ("620", 4), ("720", 5)] $
       Opts.yRange2d (0,3000) $

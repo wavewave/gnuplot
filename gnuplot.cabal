@@ -110,6 +110,7 @@ Library
     Graphics.Gnuplot.Frame
     Graphics.Gnuplot.Frame.Option
     Graphics.Gnuplot.Frame.OptionSet
+    Graphics.Gnuplot.Frame.OptionSet.Style
     Graphics.Gnuplot.Plot.TwoDimensional
     Graphics.Gnuplot.Plot.ThreeDimensional
     Graphics.Gnuplot.Graph
