@@ -62,6 +62,7 @@ histogram2d :: Frame.T (Graph2D.T Int Double)
 histogram2d =
    Frame.cons (
       Opts.title "Comparison of how well software revisions perform on each hardware version" $
+      Opts.boxwidthAbsolute 0.9 $
       OptsStyle.fillSolid $
       OptsStyle.fillBorderLineType (-1) $
       Opts.xTicks2d

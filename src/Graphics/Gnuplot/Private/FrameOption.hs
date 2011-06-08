@@ -69,5 +69,7 @@ xTickLabels :: T; xTickLabels = xTicks "labels"
 yTickLabels :: T; yTickLabels = yTicks "labels"
 zTickLabels :: T; zTickLabels = zTicks "labels"
 
+boxwidth :: T; boxwidth = Cons "boxwidth" ""
+
 styleFillSolid  :: T; styleFillSolid  = Cons "style fill" "solid"
 styleFillBorder :: T; styleFillBorder = Cons "style fill" "border"

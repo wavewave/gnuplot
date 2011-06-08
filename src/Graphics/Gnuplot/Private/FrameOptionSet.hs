@@ -49,6 +49,7 @@ deflt =
    (Option.styleFillSolid, ["0"]) :
    (Option.styleFillBorder, []) :
 --   (Option.timeFmt, [quote "%s"]) :
+   (Option.boxwidth, []) :
    []
 
 initial :: Plain

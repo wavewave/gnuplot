@@ -27,6 +27,9 @@ module Graphics.Gnuplot.Frame.OptionSet (
 
    view,
    viewMap,
+
+   boxwidthRelative,
+   boxwidthAbsolute,
    ) where
 
 
@@ -212,6 +215,18 @@ ticks opt labels =
              atomText pos)
           labels]
 
+
+boxwidthRelative ::
+   (Graph.C graph) =>
+   Double -> T graph -> T graph
+boxwidthRelative width =
+   OptionSet.add Option.boxwidth [show width, "relative"]
+
+boxwidthAbsolute ::
+   (Graph.C graph) =>
+   Double -> T graph -> T graph
+boxwidthAbsolute width =
+   OptionSet.add Option.boxwidth [show width, "absolute"]
 
 {-
 cornerToColor :: CornersToColor -> T (Graph3D.T x y z) -> T (Graph3D.T x y z)
