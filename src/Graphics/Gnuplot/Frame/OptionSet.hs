@@ -60,10 +60,7 @@ title text =
    OptionSet.add Option.title [quote text]
 
 key :: Graph.C graph => Bool -> T graph -> T graph
-key on =
-   if on
-     then OptionSet.add Option.keyShow []
-     else OptionSet.remove Option.keyShow
+key = OptionSet.boolean Option.keyShow
 
 {-
 xRange :: Graph.C graph => (Double, Double) -> T graph -> T graph

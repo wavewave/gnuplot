@@ -96,3 +96,9 @@ diffToString m0 m1 =
       (\(old,_) (_,new) -> (old,new))
       (fmap (\x -> (Just x, Nothing)) m0)
       (fmap (\x -> (Nothing, Just x)) m1)
+
+boolean :: Option.T -> Bool -> T graph -> T graph
+boolean opt on =
+   if on
+     then add opt []
+     else remove opt
