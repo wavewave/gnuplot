@@ -48,6 +48,7 @@ deflt =
    (Option.zTickLabels, []) :
    (Option.styleFillSolid, ["0"]) :
    (Option.styleFillBorder, []) :
+   (Option.styleHistogram, ["clustered"]) :
 --   (Option.timeFmt, [quote "%s"]) :
    (Option.boxwidth, []) :
    []
