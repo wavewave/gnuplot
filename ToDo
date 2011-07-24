@@ -1,0 +1,7 @@
+replace use of -persist option by persist flag in Terminal.X11
+
+combinable size handling within multiplots
+
+Can Atom.OptionsSet have a type parameter in order to make 'options' nicer?
+
+support of binary data formats
