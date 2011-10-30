@@ -5,6 +5,7 @@ module Graphics.Gnuplot.MultiPlot (
    partFromPlot,
    simpleFromFrameArray,
    simpleFromPartArray,
+   title,
    ) where
 
 import qualified Graphics.Gnuplot.Private.Frame as Frame
@@ -19,10 +20,12 @@ import Data.Monoid (mconcat, )
 import Data.Array (Array, elems, bounds, )
 import Data.Ix (Ix, rangeSize, )
 
+import Graphics.Gnuplot.Utility (quote, )
+
 
 data T =
    Cons {
-      _option :: (),  -- to be extended by multiplot options
+      title_ :: Maybe String,
       numRows, numColumns :: Int,
       parts :: [Part]
    }
@@ -60,19 +63,25 @@ simpleFromPartArray ::
    Array (i,j) Part -> T
 simpleFromPartArray arr =
    let ((r0,c0), (r1,c1)) = bounds arr
-   in  Cons ()
+   in  Cons Nothing
           (rangeSize (r0,r1))
           (rangeSize (c0,c1))
           (elems arr)
+
+
+title :: String -> T -> T
+title str mp =
+   mp {title_ = Just str}
 
 
 instance Display.C T where
    toScript mp =
       mconcat $
       (Display.Script $ State.pure $
-         Display.Body [] ["set multiplot layout " ++
-                      show (numRows mp) ++ ", " ++
-                      show (numColumns mp)]) :
+         Display.Body []
+            ["set multiplot layout " ++
+             show (numRows mp) ++ ", " ++ show (numColumns mp) ++
+             maybe "" ((" title " ++) . quote) (title_ mp)]) :
       (map scriptFromPart $ parts mp) ++
       (Display.Script $ State.pure $
          Display.Body [] ["unset multiplot"]) :

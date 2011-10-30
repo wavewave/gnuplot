@@ -174,7 +174,8 @@ multiplot =
 -}
        center =
           MultiPlot.partFromFrame wave3d
-   in  MultiPlot.simpleFromPartArray $
+   in  MultiPlot.title "multiplot of 2d and 3d graphics" $
+       MultiPlot.simpleFromPartArray $
        listArray ((0::Int,0::Int), (2,4)) $
        prefix ++ center : suffix
 
