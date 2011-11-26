@@ -74,7 +74,7 @@ module Graphics.Gnuplot.Advanced (
   ) where
 
 import qualified Graphics.Gnuplot.Private.FrameOptionSet as OptionSet
-import qualified Graphics.Gnuplot.Display as Display
+import qualified Graphics.Gnuplot.Private.Display as Display
 
 import qualified Graphics.Gnuplot.Private.Terminal as Terminal
 import qualified Graphics.Gnuplot.Execute as Exec

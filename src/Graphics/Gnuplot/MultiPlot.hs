@@ -11,7 +11,7 @@ module Graphics.Gnuplot.MultiPlot (
 import qualified Graphics.Gnuplot.Private.Frame as Frame
 import qualified Graphics.Gnuplot.Private.Plot as Plot
 
-import qualified Graphics.Gnuplot.Display as Display
+import qualified Graphics.Gnuplot.Private.Display as Display
 import qualified Graphics.Gnuplot.Private.Graph as Graph
 
 import qualified Data.Monoid.State as State

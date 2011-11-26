@@ -3,7 +3,7 @@ module Graphics.Gnuplot.Private.Plot where
 import qualified Data.Monoid.State as State
 import Data.Monoid (Monoid, mempty, mappend, )
 
-import qualified Graphics.Gnuplot.Display as Display
+import qualified Graphics.Gnuplot.Private.Display as Display
 import qualified Graphics.Gnuplot.Private.FrameOptionSet as OptionSet
 import qualified Graphics.Gnuplot.Private.Graph as Graph
 import Graphics.Gnuplot.Utility (quote, commaConcat, )
