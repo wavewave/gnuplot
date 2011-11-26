@@ -5,7 +5,7 @@ module Graphics.Gnuplot.Terminal.PostScript (
    font, embedFont,
    ) where
 
-import qualified Graphics.Gnuplot.Terminal as Terminal
+import qualified Graphics.Gnuplot.Private.Terminal as Terminal
 import Graphics.Gnuplot.Utility (quote, )
 import Data.Maybe (maybeToList, )
 

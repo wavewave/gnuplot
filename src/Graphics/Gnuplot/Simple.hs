@@ -64,7 +64,7 @@ import qualified Graphics.Gnuplot.Terminal.PNG as PNG
 import qualified Graphics.Gnuplot.Terminal.SVG as SVG
 -}
 
-import qualified Graphics.Gnuplot.Terminal as Terminal
+import qualified Graphics.Gnuplot.Private.Terminal as Terminal
 import qualified Graphics.Gnuplot.Execute as Exec
 
 import System.Cmd (rawSystem, )

@@ -103,6 +103,7 @@ Library
     Graphics.Gnuplot.Simple
     Graphics.Gnuplot.Time
     Graphics.Gnuplot.Advanced
+    Graphics.Gnuplot.Terminal
     Graphics.Gnuplot.Terminal.PostScript
     Graphics.Gnuplot.Terminal.PNG
     Graphics.Gnuplot.Terminal.SVG
@@ -137,10 +138,10 @@ Library
     Graphics.Gnuplot.Private.Graph2DType
     Graphics.Gnuplot.Private.Graph3DType
     Graphics.Gnuplot.Private.GraphEmpty
+    Graphics.Gnuplot.Private.Terminal
     Graphics.Gnuplot.Utility
     Graphics.Gnuplot.Execute
     Graphics.Gnuplot.Display
-    Graphics.Gnuplot.Terminal
 
 Executable gnuplot-demo
   If flag(buildExamples)

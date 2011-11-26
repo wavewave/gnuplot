@@ -76,7 +76,7 @@ module Graphics.Gnuplot.Advanced (
 import qualified Graphics.Gnuplot.Private.FrameOptionSet as OptionSet
 import qualified Graphics.Gnuplot.Display as Display
 
-import qualified Graphics.Gnuplot.Terminal as Terminal
+import qualified Graphics.Gnuplot.Private.Terminal as Terminal
 import qualified Graphics.Gnuplot.Execute as Exec
 
 import System.Exit (ExitCode, )

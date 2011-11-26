@@ -2,7 +2,7 @@ module Graphics.Gnuplot.Terminal.SVG (
    T, cons,
    ) where
 
-import qualified Graphics.Gnuplot.Terminal as Terminal
+import qualified Graphics.Gnuplot.Private.Terminal as Terminal
 import Graphics.Gnuplot.Utility (quote, )
 
 
