@@ -80,7 +80,7 @@ import qualified Graphics.Gnuplot.Private.Terminal as Terminal
 import qualified Graphics.Gnuplot.Execute as Exec
 
 import System.Exit (ExitCode, )
-import Data.Monoid (Monoid, ) -- for Haddock
+import Data.Monoid (Monoid, mempty, )
 import qualified Data.Monoid.State as State
 import Data.List (intersperse, )
 
@@ -116,3 +116,14 @@ formatTerminal term =
    let (Terminal.Cons options commands) = Terminal.canonical term
    in  concat $ intersperse "; " $
           ("set terminal " ++ unwords options) : commands
+
+
+{-
+In the module introduction we refer to Monoid.
+That is we must import Monoid module in order to make Haddock happy.
+On the other hand we do not use Monoid in the module body,
+thus GHC emits a warning.
+This dummy declaration makes both GHC and Haddock happy.
+-}
+_haddockDummy :: Monoid a => a
+_haddockDummy = mempty
