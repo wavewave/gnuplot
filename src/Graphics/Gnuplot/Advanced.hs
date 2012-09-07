@@ -71,6 +71,7 @@ in order to show, what belongs to where:
 -}
 module Graphics.Gnuplot.Advanced (
     plot,
+    plotDefault,
   ) where
 
 import qualified Graphics.Gnuplot.Private.FrameOptionSet as OptionSet
@@ -99,14 +100,29 @@ better use "Graphics.Gnuplot.Simple".
 plot ::
    (Terminal.C terminal, Display.C gfx) =>
    terminal -> gfx -> IO ExitCode
-plot term gfx =
+plot term =
+   plotCore (formatTerminal term :)
+
+{- |
+Plot using the default gnuplot terminal.
+-}
+plotDefault ::
+   (Display.C gfx) =>
+   gfx -> IO ExitCode
+plotDefault =
+   plotCore id
+
+plotCore ::
+   (Display.C gfx) =>
+   ([String] -> [String]) -> gfx -> IO ExitCode
+plotCore term gfx =
    let body =
           State.evaluate (0, OptionSet.initial) $
           Display.runScript $
           Display.toScript gfx
    in  do mapM_ Display.writeData (Display.files body)
           Exec.simple
-             (formatTerminal term : Display.commands body)
+             (term $ Display.commands body)
              ["-persist"]
 
 formatTerminal ::
