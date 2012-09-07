@@ -46,6 +46,9 @@ deflt =
    (Option.xTickLabels, []) :
    (Option.yTickLabels, []) :
    (Option.zTickLabels, []) :
+   (Option.gridXTicks, ["noxtics"]) :
+   (Option.gridYTicks, ["noytics"]) :
+   (Option.gridZTicks, ["noztics"]) :
    (Option.styleFillSolid, ["0"]) :
    (Option.styleFillBorder, []) :
    (Option.styleHistogram, ["clustered"]) :

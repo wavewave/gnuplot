@@ -69,6 +69,10 @@ xTickLabels :: T; xTickLabels = xTicks "labels"
 yTickLabels :: T; yTickLabels = yTicks "labels"
 zTickLabels :: T; zTickLabels = zTicks "labels"
 
+gridXTicks :: T; gridXTicks = grid "xtics"
+gridYTicks :: T; gridYTicks = grid "ytics"
+gridZTicks :: T; gridZTicks = grid "ztics"
+
 boxwidth :: T; boxwidth = Cons "boxwidth" ""
 
 styleFillSolid  :: T; styleFillSolid  = Cons "style fill" "solid"

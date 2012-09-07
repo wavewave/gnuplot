@@ -150,7 +150,8 @@ wave3d :: Frame.T (Graph3D.T Double Double Double)
 wave3d =
    let meshNodes = linearScale 20 (-2,2)
    in  Frame.cons
-          (Opts.xRange3d (-2.5,2.5) $
+          (Opts.grid True $
+           Opts.xRange3d (-2.5,2.5) $
            Opts.yRange3d (-2.5,2.5) $
            defltOpts) $
        Plot3D.surface

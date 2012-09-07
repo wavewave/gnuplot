@@ -21,6 +21,10 @@ module Graphics.Gnuplot.Frame.OptionSet (
    xTicks3d,
    yTicks3d,
    zTicks3d,
+   grid,
+   gridXTicks,
+   gridYTicks,
+   gridZTicks,
    xFormat,
    yFormat,
    zFormat,
@@ -45,7 +49,7 @@ import qualified Graphics.Gnuplot.Value.Tuple as Tuple
 
 import Graphics.Gnuplot.Private.FrameOptionSet (T, )
 
-import Graphics.Gnuplot.Utility (quote, )
+import Graphics.Gnuplot.Utility (quote, formatBool, )
 
 import qualified Data.List as List
 
@@ -214,6 +218,28 @@ ticks opt labels =
              showString " " .
              atomText pos)
           labels]
+
+
+grid :: Graph.C graph => Bool -> T graph -> T graph
+grid b =
+   gridTicks Option.gridXTicks b .
+   gridTicks Option.gridYTicks b .
+   gridTicks Option.gridZTicks b
+
+gridXTicks :: Graph.C graph => Bool -> T graph -> T graph
+gridXTicks = gridTicks Option.gridXTicks
+
+gridYTicks :: Graph.C graph => Bool -> T graph -> T graph
+gridYTicks = gridTicks Option.gridYTicks
+
+gridZTicks ::
+   (Atom.C x, Atom.C y, Atom.C z) =>
+   Bool -> T (Graph3D.T x y z) -> T (Graph3D.T x y z)
+gridZTicks = gridTicks Option.gridZTicks
+
+gridTicks :: Graph.C graph => Option.T -> Bool -> T graph -> T graph
+gridTicks opt@(Option.Cons _ name) b =
+   OptionSet.add opt [formatBool name b]
 
 
 boxwidthRelative ::
