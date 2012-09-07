@@ -33,3 +33,8 @@ assembleCells ps =
             intersperse (showString ", ") p ++
             [showString "\n"])
          ps)
+
+
+formatBool :: String -> Bool -> String
+formatBool name b =
+   if b then name else "no"++name

@@ -5,9 +5,8 @@ module Graphics.Gnuplot.Terminal.X11 (
    ) where
 
 import qualified Graphics.Gnuplot.Private.Terminal as Terminal
-import Graphics.Gnuplot.Private.Terminal (formatBool, )
 import Data.Maybe (catMaybes, )
-import Graphics.Gnuplot.Utility (quote, )
+import Graphics.Gnuplot.Utility (quote, formatBool, )
 
 
 data T =
