@@ -71,5 +71,20 @@ deflt t c = Cons c (GraphType.toString t) LineSpec.deflt
 typ :: Type -> T x y z -> T x y z
 typ t gr = gr{type_ = t}
 
+{-
+for 3D plots not all line attributes are supported like:
+   pointsize
+   pointtype
+
+pm3d and impulses allow:
+   linestyle
+   linewidth
+   linecolor
+   linetype
+   title
+
+FIXME:
+Do we need a separate LineSpec3D type or a type parameter for LineSpec?
+-}
 lineSpec :: LineSpec.T -> T x y z -> T x y z
 lineSpec ls gr = gr{lineSpec_ = ls}
