@@ -12,6 +12,9 @@ newtype Script =
       runScript :: State.T (Int, OptionSet) Body
    }
 
+pure :: Body -> Script
+pure = Script . State.pure
+
 data Body =
    Body {
       files :: [File],
