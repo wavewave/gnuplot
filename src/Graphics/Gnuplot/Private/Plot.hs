@@ -1,12 +1,13 @@
 module Graphics.Gnuplot.Private.Plot where
 
-import qualified Data.Monoid.State as State
-import Data.Monoid (Monoid, mempty, mappend, )
-
 import qualified Graphics.Gnuplot.Private.Display as Display
 import qualified Graphics.Gnuplot.Private.FrameOptionSet as OptionSet
 import qualified Graphics.Gnuplot.Private.Graph as Graph
 import Graphics.Gnuplot.Utility (quote, commaConcat, )
+
+import qualified Data.Foldable as Fold
+import qualified Data.Monoid.State as State
+import Data.Monoid (Monoid, mempty, mappend, )
 
 import Data.Maybe (mapMaybe, )
 
@@ -46,7 +47,7 @@ data File graph =
 
 writeData :: File graph -> IO ()
 writeData (File fn cont _) =
-   maybe (return ()) (writeFile fn) cont
+   Fold.mapM_ (writeFile fn) cont
 
 
 tmpFileStem :: FilePath
