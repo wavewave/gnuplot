@@ -18,6 +18,9 @@ or several functions from "Data.Foldable".
 -}
 newtype T graph = Cons (State.T Int [File graph])
 
+pure :: [File graph] -> T graph
+pure = Cons . State.pure
+
 {-
 Could also be implemented with Control.Monad.Trans.State:
 mappend = liftA2 mappend
@@ -36,7 +39,7 @@ withUniqueFile content graphs =
 
 fromGraphs :: FilePath -> [graph] -> T graph
 fromGraphs name gs =
-   Cons (State.pure [File name Nothing gs])
+   pure [File name Nothing gs]
 
 
 data File graph =
