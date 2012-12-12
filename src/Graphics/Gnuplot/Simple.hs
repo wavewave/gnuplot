@@ -69,11 +69,10 @@ import qualified Graphics.Gnuplot.Execute as Exec
 
 import System.Cmd (rawSystem, )
 import Graphics.Gnuplot.Utility
-   (quote, commaConcat, showTriplet, linearScale, )
+   (quote, commaConcat, semiColonConcat, showTriplet, linearScale, )
 import qualified Data.Monoid.State as State
 import Data.Maybe (listToMaybe, mapMaybe, isNothing, )
 import Data.List.HT (dropWhileRev, )
-import Data.List (intersperse, )
 import Data.Monoid (mconcat, )
 
 
@@ -365,8 +364,7 @@ attrToProg (Custom attribute parameters) =
    "set " ++ attribute ++ " " ++ unwords parameters
 
 attrToProg (Terminal (Terminal.Cons options commands)) =
-   concat $
-   intersperse "; " $
+   semiColonConcat $
    ("set terminal " ++ unwords options) : commands
 
 attrToProg (EPS filename) =

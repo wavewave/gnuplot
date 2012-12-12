@@ -79,11 +79,11 @@ import qualified Graphics.Gnuplot.Private.Display as Display
 
 import qualified Graphics.Gnuplot.Private.Terminal as Terminal
 import qualified Graphics.Gnuplot.Execute as Exec
-
 import System.Exit (ExitCode, )
-import Data.Monoid (Monoid, mempty, )
+
 import qualified Data.Monoid.State as State
-import Data.List (intersperse, )
+import Data.Monoid (Monoid, mempty, )
+import Graphics.Gnuplot.Utility (semiColonConcat, )
 
 
 -- * User front-end
@@ -130,7 +130,7 @@ formatTerminal ::
    terminal -> String
 formatTerminal term =
    let (Terminal.Cons options commands) = Terminal.canonical term
-   in  concat $ intersperse "; " $
+   in  semiColonConcat $
           ("set terminal " ++ unwords options) : commands
 
 
