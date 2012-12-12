@@ -529,6 +529,6 @@ callGnuplot attrs cmd params =
        [cmd ++ " " ++
         extractRanges attrs ++ " " ++
         commaConcat params])
-      ["-persist"]
+      ["--persist"]
    -- instead of the option, one can also use 'set terminal x11 persist'
      >> return ()

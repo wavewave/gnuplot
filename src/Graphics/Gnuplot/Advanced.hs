@@ -123,7 +123,7 @@ plotCore term gfx =
    in  do mapM_ Display.writeData (Display.files body)
           Exec.simple
              (term $ Display.commands body)
-             ["-persist"]
+             ["--persist"]
 
 formatTerminal ::
    (Terminal.C terminal) =>
