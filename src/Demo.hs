@@ -1,6 +1,6 @@
 module Main where
 
-import qualified Graphics.Gnuplot.Advanced as Plot
+import qualified Graphics.Gnuplot.Advanced as GP
 
 import qualified Graphics.Gnuplot.MultiPlot as MultiPlot
 
@@ -182,16 +182,16 @@ multiplot =
 
 main :: IO ()
 main = sequence_ $
-   Plot.plotDefault simple2d :
-   Plot.plotDefault list2d :
-   Plot.plotDefault candle2d :
-   Plot.plotDefault histogram2d :
-   Plot.plotDefault names2d :
-   Plot.plotDefault overlay2d :
-   (Plot.plotDefault . flip file2d "runtime.data"
+   GP.plotDefault simple2d :
+   GP.plotDefault list2d :
+   GP.plotDefault candle2d :
+   GP.plotDefault histogram2d :
+   GP.plotDefault names2d :
+   GP.plotDefault overlay2d :
+   (GP.plotDefault . flip file2d "runtime.data"
       =<< fmap (</> "data") Path.getDataDir) :
-   Plot.plotDefault mixed2d :
-   Plot.plotDefault size2d :
-   Plot.plotDefault wave3d :
-   Plot.plotDefault multiplot :
+   GP.plotDefault mixed2d :
+   GP.plotDefault size2d :
+   GP.plotDefault wave3d :
+   GP.plotDefault multiplot :
    []
