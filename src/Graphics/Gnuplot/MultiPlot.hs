@@ -16,6 +16,7 @@ import qualified Graphics.Gnuplot.Private.Graph as Graph
 
 import qualified Data.Monoid.State as State
 import Data.Monoid (mconcat, )
+import Data.Foldable (foldMap, )
 
 import Data.Array (Array, elems, bounds, )
 import Data.Ix (Ix, rangeSize, )
@@ -81,7 +82,7 @@ instance Display.C T where
          Display.Body []
             ["set multiplot layout " ++
              show (numRows mp) ++ ", " ++ show (numColumns mp) ++
-             maybe "" ((" title " ++) . quote) (title_ mp)]) :
+             foldMap ((" title " ++) . quote) (title_ mp)]) :
       (map scriptFromPart $ parts mp) ++
       (Display.Script $ State.pure $
          Display.Body [] ["unset multiplot"]) :

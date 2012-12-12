@@ -26,7 +26,8 @@ import qualified Paths_gnuplot as Path
 import System.FilePath ((</>), )
 
 import Data.Array (listArray, )
-import Data.Monoid (mappend, mconcat, )
+import Data.Foldable (foldMap, )
+import Data.Monoid (mappend, )
 
 
 simple2d :: Plot2D.T Double Double
@@ -70,8 +71,7 @@ histogram2d =
          [("220", 0), ("320", 1), ("420", 2), ("520", 3), ("620", 4), ("720", 5)] $
       Opts.yRange2d (0,3000) $
       Opts.deflt) $
-   mconcat $
-   map (\(title,dat) ->
+   foldMap (\(title,dat) ->
       fmap (Graph2D.lineSpec (LineSpec.title title LineSpec.deflt)) $
       Plot2D.list Graph2D.histograms dat) $
    ("1.0011", [102, 213, 378, 408, 840,  920]) :
@@ -88,8 +88,8 @@ names2d =
           Opts.xRange2d domain $
           Opts.yRange2d (-1.5,1.5) $
           Opts.deflt
-   in Frame.cons frameOpts $ mconcat $
-      map (\(name,f) ->
+   in Frame.cons frameOpts $
+      foldMap (\(name,f) ->
          fmap (Graph2D.lineSpec
                   (LineSpec.title name $
                    LineSpec.deflt)) $

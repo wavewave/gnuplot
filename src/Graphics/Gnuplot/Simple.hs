@@ -71,9 +71,9 @@ import System.Cmd (rawSystem, )
 import Graphics.Gnuplot.Utility
    (quote, commaConcat, semiColonConcat, showTriplet, linearScale, )
 import qualified Data.Monoid.State as State
+import Data.Foldable (foldMap, )
 import Data.Maybe (listToMaybe, mapMaybe, isNothing, )
 import Data.List.HT (dropWhileRev, )
-import Data.Monoid (mconcat, )
 
 
 -- * User front-end
@@ -206,14 +206,14 @@ plotLists ::
    (Tuple.C a) =>
    [Attribute] -> [[a]] -> IO ()
 plotLists attrs xss =
-   plot2d attrs (mconcat $ map list xss)
+   plot2d attrs (foldMap list xss)
 
 plotListsStyle ::
    (Tuple.C a) =>
    [Attribute] -> [(PlotStyle, [a])] -> IO ()
 plotListsStyle attrs =
-   plot2d attrs . mconcat .
-   map (\(style,xs) -> setPlotStyle style $ list xs)
+   plot2d attrs .
+   foldMap (\(style,xs) -> setPlotStyle style $ list xs)
 
 {- |
 > plotFunc [] (linearScale 1000 (-10,10)) sin
@@ -243,7 +243,7 @@ plotPaths ::
    (Tuple.C a) =>
    [Attribute] -> [[(a,a)]] -> IO ()
 plotPaths attrs xss =
-   plot2d attrs (mconcat $ map list xss)
+   plot2d attrs (foldMap list xss)
 
 plotPathStyle ::
    (Tuple.C a) =>
@@ -255,8 +255,8 @@ plotPathsStyle ::
    (Tuple.C a) =>
    [Attribute] -> [(PlotStyle, [(a,a)])] -> IO ()
 plotPathsStyle attrs =
-   plot2d attrs . mconcat .
-   map (\(style,xs) -> setPlotStyle style $ list xs)
+   plot2d attrs .
+   foldMap (\(style,xs) -> setPlotStyle style $ list xs)
 
 {- |
 > plotParamFunc [] (linearScale 1000 (0,2*pi)) (\t -> (sin (2*t), cos t))
@@ -274,8 +274,8 @@ plotParamFuncs ::
    (Atom.C a, Tuple.C a) =>
    [Attribute] -> [a] -> [a -> (a,a)] -> IO ()
 plotParamFuncs attrs args fs =
-   plot2d attrs (mconcat $
-      map (Plot2D.parameterFunction GraphType.lines args) fs)
+   plot2d attrs $
+   foldMap (Plot2D.parameterFunction GraphType.lines args) fs
 
 
 plotDots ::
