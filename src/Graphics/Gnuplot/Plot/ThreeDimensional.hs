@@ -23,7 +23,8 @@ import Data.List.HT (outerProduct, )
 
 
 {- |
-Plots can be assembled using 'mappend' or 'mconcat'.
+Plots can be assembled using 'mappend' or 'mconcat'
+or several functions from "Data.Foldable".
 -}
 type T x y z = Plot.T (Graph.T x y z)
 
