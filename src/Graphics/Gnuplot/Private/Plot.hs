@@ -93,11 +93,11 @@ toScript p@(Cons mp) =
                  [plotCmd p undefined ++ " " ++ commaConcat graphs],
               (n1, opts))
 
-toOptions :: Graph.C graph => T graph -> Display.Script
-toOptions plot =
+optionsToScript :: Graph.C graph => OptionSet.T graph -> Display.Script
+optionsToScript opts =
    Display.Script $
       State.Cons $ \(n, opts0) ->
-         let opts1 = OptionSet.decons (defltOpts plot)
+         let opts1 = OptionSet.decons opts
          in  (Display.Body [] $
               OptionSet.diffToString opts0 opts1,
               (n, opts1))
@@ -107,7 +107,7 @@ defltOpts _ = Graph.defltOptions
 
 instance Graph.C graph => Display.C (T graph) where
    toScript plot =
-      toOptions plot  `mappend`  toScript plot
+      optionsToScript (defltOpts plot)  `mappend`  toScript plot
 
 plotCmd ::
    Graph.C graph =>
