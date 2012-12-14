@@ -306,6 +306,8 @@ data Attribute3d =
 
 {- |
 > let xs = [-2,-1.8..2::Double] in plotMesh3d [] [] (do x <- xs; return (do y <- xs; return (x,y,cos(x*x+y*y))))
+
+> let phis = linearScale 30 (-pi, pi :: Double) in plotMesh3d [] [] (do phi <- phis; return (do psi <- phis; let r = 5 + sin psi in return (r * cos phi, r * sin phi, cos psi)))
 -}
 plotMesh3d ::
    (Atom.C x, Atom.C y, Atom.C z,
