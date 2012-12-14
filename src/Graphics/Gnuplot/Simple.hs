@@ -51,8 +51,8 @@ import qualified Graphics.Gnuplot.Plot.TwoDimensional as Plot2D
 import qualified Graphics.Gnuplot.Plot.ThreeDimensional as Plot3D
 import qualified Graphics.Gnuplot.Private.LineSpecification as LineSpec
 import qualified Graphics.Gnuplot.Private.Graph2D as Graph2D
-import qualified Graphics.Gnuplot.Private.Graph3D as Graph3D
 import qualified Graphics.Gnuplot.Private.Graph2DType as GraphType
+import qualified Graphics.Gnuplot.Private.Graph as Graph
 import qualified Graphics.Gnuplot.Private.Plot as Plot
 
 import qualified Graphics.Gnuplot.Value.Tuple as Tuple
@@ -479,14 +479,11 @@ attribute3dToString (CornersToColor c2c) =
 
 
 
-plot2d :: [Attribute] -> Plot2D.T x y -> IO ()
-plot2d attrs (Plot.Cons mp) =
-   let files = State.evaluate 0 mp
-   in  do mapM_ Plot.writeData files
-          callGnuplot attrs "plot" $
-             concatMap (\(Plot.File filename _ grs) ->
-                map (\gr -> quote filename ++ " " ++ Graph2D.toString gr) grs) $
-             files
+plot2d ::
+   (Atom.C x, Atom.C y) =>
+   [Attribute] -> Plot2D.T x y -> IO ()
+plot2d attrs plt =
+   runGnuplot attrs "plot" plt
 
 setPlotStyle :: PlotStyle -> Plot2D.T x y -> Plot2D.T x y
 setPlotStyle ps =
@@ -494,15 +491,12 @@ setPlotStyle ps =
          Graph2D.lineSpec (lineSpecRecord $ lineSpec ps))
 
 
-plot3d :: [Attribute] -> [Attribute3d] -> Plot3D.T x y z -> IO ()
-plot3d attrs pt (Plot.Cons mp) =
-   let files = State.evaluate 0 mp
-   in  do mapM_ Plot.writeData files
-          callGnuplot
-             (attrs ++ [Custom "pm3d" (map attribute3dToString pt)]) "splot" $
-             concatMap (\(Plot.File filename _ grs) ->
-                map (\gr -> quote filename ++ " " ++ Graph3D.toString gr) grs) $
-             files
+plot3d ::
+   (Atom.C x, Atom.C y, Atom.C z) =>
+   [Attribute] -> [Attribute3d] -> Plot3D.T x y z -> IO ()
+plot3d attrs pt plt =
+   runGnuplot
+      (attrs ++ [Custom "pm3d" (map attribute3dToString pt)]) "splot" plt
 
 
 lineSpecRecord :: LineSpec -> LineSpec.T
@@ -521,6 +515,17 @@ lineAttrRecord =
          PointSize s -> LineSpec.pointSize s
          LineTitle s -> LineSpec.title     s
       )
+
+runGnuplot ::
+   Graph.C graph =>
+   [Attribute] -> String -> Plot.T graph -> IO ()
+runGnuplot attrs cmd (Plot.Cons mp) =
+   let files = State.evaluate 0 mp
+   in  do mapM_ Plot.writeData files
+          callGnuplot attrs cmd $
+             concatMap (\(Plot.File filename _ grs) ->
+                map (\gr -> quote filename ++ " " ++ Graph.toString gr) grs) $
+             files
 
 callGnuplot :: [Attribute] -> String -> [String] -> IO ()
 callGnuplot attrs cmd params =
