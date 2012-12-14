@@ -101,7 +101,7 @@ plot ::
    (Terminal.C terminal, Display.C gfx) =>
    terminal -> gfx -> IO ExitCode
 plot term =
-   plotCore (formatTerminal term ++)
+   plotCore (Terminal.format term ++)
 
 {- |
 Plot using the default gnuplot terminal.
@@ -124,13 +124,6 @@ plotCore term gfx =
           Exec.simple
              (term $ Display.commands body)
              ["--persist"]
-
-formatTerminal ::
-   (Terminal.C terminal) =>
-   terminal -> [String]
-formatTerminal term =
-   let (Terminal.Cons options commands) = Terminal.canonical term
-   in  ("set terminal " ++ unwords options) : commands
 
 
 {-
