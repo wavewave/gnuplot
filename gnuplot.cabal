@@ -77,7 +77,7 @@ Library
   Build-Depends:
     array >=0.1 && <0.5,
     containers >=0.1 && <0.6,
-    utility-ht >=0.0.1 && <0.1,
+    utility-ht >=0.0.8 && <0.1,
     monoid-transformer >=0.0.2 && <0.1
   If flag(splitBase)
     Build-Depends:

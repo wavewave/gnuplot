@@ -71,6 +71,7 @@ import System.Cmd (rawSystem, )
 import Graphics.Gnuplot.Utility
    (quote, commaConcat, semiColonConcat, showTriplet, linearScale, )
 import qualified Data.Monoid.State as State
+import Control.Functor.HT (void, )
 import Data.Foldable (foldMap, )
 import Data.Maybe (listToMaybe, mapMaybe, isNothing, )
 import Data.List.HT (dropWhileRev, )
@@ -338,8 +339,7 @@ epspdfPlot ::
    -> IO ()
 epspdfPlot filename plot =
    do plot (EPS (filename++".eps") : Key Nothing : [])
-      _ <- rawSystem "epstopdf" [filename++".eps"]
-      return ()
+      void $ rawSystem "epstopdf" [filename++".eps"]
 
 {-| Creates an EPS and a PDF graphics
     and returns a string that can be inserted into a LaTeX document
@@ -528,10 +528,10 @@ runGnuplot attrs cmd (Plot.Cons mp) =
 
 callGnuplot :: [Plot.File graph] -> [Attribute] -> String -> [String] -> IO ()
 callGnuplot files attrs cmd params =
+   void $
    Cmd.run files
       (map attrToProg attrs ++
        [cmd ++ " " ++
         extractRanges attrs ++ " " ++
         commaConcat params])
    -- instead of the option, one can also use 'set terminal x11 persist'
-     >> return ()
