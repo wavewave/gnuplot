@@ -521,17 +521,16 @@ runGnuplot ::
    [Attribute] -> String -> Plot.T graph -> IO ()
 runGnuplot attrs cmd (Plot.Cons mp) =
    let files = State.evaluate 0 mp
-   in  do callGnuplot files attrs cmd $
-             concatMap (\(Plot.File filename _ grs) ->
-                map (\gr -> quote filename ++ " " ++ Graph.toString gr) grs) $
-             files
+   in  void $
+       Cmd.run files
+          (map attrToProg attrs ++
+           [cmd ++ " " ++
+            extractRanges attrs ++ " " ++
+            commaConcat (plotFileStatements files)])
 
-callGnuplot :: [Plot.File graph] -> [Attribute] -> String -> [String] -> IO ()
-callGnuplot files attrs cmd params =
-   void $
-   Cmd.run files
-      (map attrToProg attrs ++
-       [cmd ++ " " ++
-        extractRanges attrs ++ " " ++
-        commaConcat params])
-   -- instead of the option, one can also use 'set terminal x11 persist'
+plotFileStatements ::
+   Graph.C graph => [Plot.File graph] -> [String]
+plotFileStatements =
+   concatMap
+      (\(Plot.File filename _ grs) ->
+         map (\gr -> quote filename ++ " " ++ Graph.toString gr) grs)
