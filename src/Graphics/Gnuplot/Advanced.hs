@@ -84,7 +84,6 @@ import System.Exit (ExitCode, )
 
 import qualified Data.Monoid.State as State
 import Data.Monoid (Monoid, mempty, )
-import Graphics.Gnuplot.Utility (semiColonConcat, )
 
 
 -- * User front-end
@@ -102,7 +101,7 @@ plot ::
    (Terminal.C terminal, Display.C gfx) =>
    terminal -> gfx -> IO ExitCode
 plot term =
-   plotCore (formatTerminal term :)
+   plotCore (formatTerminal term ++)
 
 {- |
 Plot using the default gnuplot terminal.
@@ -128,11 +127,10 @@ plotCore term gfx =
 
 formatTerminal ::
    (Terminal.C terminal) =>
-   terminal -> String
+   terminal -> [String]
 formatTerminal term =
    let (Terminal.Cons options commands) = Terminal.canonical term
-   in  semiColonConcat $
-          ("set terminal " ++ unwords options) : commands
+   in  ("set terminal " ++ unwords options) : commands
 
 
 {-
