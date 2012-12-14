@@ -106,6 +106,7 @@ Library
     Graphics.Gnuplot.Advanced
     Graphics.Gnuplot.Display
     Graphics.Gnuplot.Terminal
+    Graphics.Gnuplot.Terminal.Default
     Graphics.Gnuplot.Terminal.PostScript
     Graphics.Gnuplot.Terminal.PNG
     Graphics.Gnuplot.Terminal.SVG

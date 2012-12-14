@@ -13,8 +13,6 @@ format :: (C terminal) => terminal -> [String]
 format term =
    case canonical term of
       Cons opts cmds ->
-         ("set terminal " ++ unwords opts) : cmds
-
-
-deflt :: T
-deflt = Cons ["x11"] []
+         if null opts
+           then cmds
+           else (unwords $ "set" : "terminal" : opts) : cmds

@@ -77,6 +77,7 @@ module Graphics.Gnuplot.Advanced (
 import qualified Graphics.Gnuplot.Private.FrameOptionSet as OptionSet
 import qualified Graphics.Gnuplot.Private.Display as Display
 import qualified Graphics.Gnuplot.Private.Terminal as Terminal
+import qualified Graphics.Gnuplot.Terminal.Default as DefaultTerm
 
 import qualified Graphics.Gnuplot.Private.Command as Cmd
 import System.Exit (ExitCode, )
@@ -99,8 +100,14 @@ better use "Graphics.Gnuplot.Simple".
 plot ::
    (Terminal.C terminal, Display.C gfx) =>
    terminal -> gfx -> IO ExitCode
-plot term =
-   plotCore (Terminal.format term ++)
+plot term gfx =
+   let body =
+          State.evaluate (0, OptionSet.initial) $
+          Display.runScript $
+          Display.toScript gfx
+   in  Cmd.run
+          (Display.files body)
+          (Terminal.format term ++ Display.commands body)
 
 {- |
 Plot using the default gnuplot terminal.
@@ -109,17 +116,7 @@ plotDefault ::
    (Display.C gfx) =>
    gfx -> IO ExitCode
 plotDefault =
-   plotCore id
-
-plotCore ::
-   (Display.C gfx) =>
-   ([String] -> [String]) -> gfx -> IO ExitCode
-plotCore term gfx =
-   let body =
-          State.evaluate (0, OptionSet.initial) $
-          Display.runScript $
-          Display.toScript gfx
-   in  Cmd.run (Display.files body) (term $ Display.commands body)
+   plot DefaultTerm.cons
 
 {-
 In the module introduction we refer to Monoid.
