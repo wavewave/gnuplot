@@ -1,6 +1,7 @@
 module Graphics.Gnuplot.Private.Plot where
 
 import qualified Graphics.Gnuplot.Private.Display as Display
+import qualified Graphics.Gnuplot.Private.File as File
 import qualified Graphics.Gnuplot.Private.FrameOptionSet as OptionSet
 import qualified Graphics.Gnuplot.Private.Graph as Graph
 import Graphics.Gnuplot.Utility (quote, commaConcat, )
@@ -49,9 +50,9 @@ data File graph =
       graphs_ :: [graph]
    }
 
-writeData :: File graph -> IO ()
-writeData (File fn cont _) =
-   Fold.mapM_ (writeFile fn) cont
+instance File.C (File graph) where
+   write (File fn cont _) =
+      Fold.mapM_ (writeFile fn) cont
 
 
 tmpFileStem :: FilePath

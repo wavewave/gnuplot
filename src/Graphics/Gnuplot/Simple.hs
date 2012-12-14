@@ -54,6 +54,7 @@ import qualified Graphics.Gnuplot.Private.Graph2D as Graph2D
 import qualified Graphics.Gnuplot.Private.Graph2DType as GraphType
 import qualified Graphics.Gnuplot.Private.Graph as Graph
 import qualified Graphics.Gnuplot.Private.Plot as Plot
+import qualified Graphics.Gnuplot.Private.File as File
 
 import qualified Graphics.Gnuplot.Value.Tuple as Tuple
 import qualified Graphics.Gnuplot.Value.Atom as Atom
@@ -521,7 +522,7 @@ runGnuplot ::
    [Attribute] -> String -> Plot.T graph -> IO ()
 runGnuplot attrs cmd (Plot.Cons mp) =
    let files = State.evaluate 0 mp
-   in  do mapM_ Plot.writeData files
+   in  do mapM_ File.write files
           callGnuplot attrs cmd $
              concatMap (\(Plot.File filename _ grs) ->
                 map (\gr -> quote filename ++ " " ++ Graph.toString gr) grs) $

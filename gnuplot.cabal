@@ -142,6 +142,7 @@ Library
     Graphics.Gnuplot.Private.GraphEmpty
     Graphics.Gnuplot.Private.Terminal
     Graphics.Gnuplot.Private.Display
+    Graphics.Gnuplot.Private.File
     Graphics.Gnuplot.Utility
     Graphics.Gnuplot.Execute
 

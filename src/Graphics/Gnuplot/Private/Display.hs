@@ -1,6 +1,7 @@
 module Graphics.Gnuplot.Private.Display where
 
 import qualified Graphics.Gnuplot.Private.FrameOption as Option
+import qualified Graphics.Gnuplot.Private.File as File
 
 import qualified Data.Map as Map
 import qualified Data.Monoid.State as State
@@ -29,9 +30,9 @@ data File =
       content :: String
    }
 
-writeData :: File -> IO ()
-writeData (File fn cont) =
-   writeFile fn cont
+instance File.C File where
+   write (File fn cont) =
+      writeFile fn cont
 
 
 {-
