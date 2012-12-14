@@ -54,7 +54,6 @@ import qualified Graphics.Gnuplot.Private.Graph2D as Graph2D
 import qualified Graphics.Gnuplot.Private.Graph2DType as GraphType
 import qualified Graphics.Gnuplot.Private.Graph as Graph
 import qualified Graphics.Gnuplot.Private.Plot as Plot
-import qualified Graphics.Gnuplot.Private.File as File
 
 import qualified Graphics.Gnuplot.Value.Tuple as Tuple
 import qualified Graphics.Gnuplot.Value.Atom as Atom
@@ -66,8 +65,8 @@ import qualified Graphics.Gnuplot.Terminal.SVG as SVG
 -}
 
 import qualified Graphics.Gnuplot.Private.Terminal as Terminal
-import qualified Graphics.Gnuplot.Execute as Exec
 
+import qualified Graphics.Gnuplot.Private.Command as Cmd
 import System.Cmd (rawSystem, )
 import Graphics.Gnuplot.Utility
    (quote, commaConcat, semiColonConcat, showTriplet, linearScale, )
@@ -522,19 +521,17 @@ runGnuplot ::
    [Attribute] -> String -> Plot.T graph -> IO ()
 runGnuplot attrs cmd (Plot.Cons mp) =
    let files = State.evaluate 0 mp
-   in  do mapM_ File.write files
-          callGnuplot attrs cmd $
+   in  do callGnuplot files attrs cmd $
              concatMap (\(Plot.File filename _ grs) ->
                 map (\gr -> quote filename ++ " " ++ Graph.toString gr) grs) $
              files
 
-callGnuplot :: [Attribute] -> String -> [String] -> IO ()
-callGnuplot attrs cmd params =
-   Exec.simple
+callGnuplot :: [Plot.File graph] -> [Attribute] -> String -> [String] -> IO ()
+callGnuplot files attrs cmd params =
+   Cmd.run files
       (map attrToProg attrs ++
        [cmd ++ " " ++
         extractRanges attrs ++ " " ++
         commaConcat params])
-      ["--persist"]
    -- instead of the option, one can also use 'set terminal x11 persist'
      >> return ()

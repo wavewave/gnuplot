@@ -76,10 +76,9 @@ module Graphics.Gnuplot.Advanced (
 
 import qualified Graphics.Gnuplot.Private.FrameOptionSet as OptionSet
 import qualified Graphics.Gnuplot.Private.Display as Display
-import qualified Graphics.Gnuplot.Private.File as File
-
 import qualified Graphics.Gnuplot.Private.Terminal as Terminal
-import qualified Graphics.Gnuplot.Execute as Exec
+
+import qualified Graphics.Gnuplot.Private.Command as Cmd
 import System.Exit (ExitCode, )
 
 import qualified Data.Monoid.State as State
@@ -120,11 +119,7 @@ plotCore term gfx =
           State.evaluate (0, OptionSet.initial) $
           Display.runScript $
           Display.toScript gfx
-   in  do mapM_ File.write (Display.files body)
-          Exec.simple
-             (term $ Display.commands body)
-             ["--persist"]
-
+   in  Cmd.run (Display.files body) (term $ Display.commands body)
 
 {-
 In the module introduction we refer to Monoid.
