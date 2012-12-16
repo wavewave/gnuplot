@@ -87,8 +87,8 @@ import qualified Graphics.Gnuplot.Private.Command as Cmd
 import Control.Concurrent (ThreadId, forkIO, )
 import System.Exit (ExitCode, )
 
-import qualified Data.Monoid.Reader as Reader
-import qualified Data.Monoid.State as State
+import qualified Control.Monad.Trans.Reader as MR
+import qualified Control.Monad.Trans.State as MS
 import Data.Monoid (Monoid, mempty, )
 import Control.Functor.HT (void, )
 import Data.Tuple.HT (mapFst, )
@@ -161,8 +161,8 @@ render ::
    Terminal.T -> gfx -> FilePath -> ([String], [File.T])
 render term gfx dir =
    let body =
-          flip Reader.run dir $
-          State.evaluate (0, OptionSet.initial) $
+          flip MR.runReader dir $
+          flip MS.evalStateT (0, OptionSet.initial) $
           Display.runScript $
           Display.toScript gfx
    in  (Terminal.format term ++ Display.commands body,

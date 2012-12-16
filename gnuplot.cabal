@@ -82,7 +82,9 @@ Library
     array >=0.1 && <0.5,
     containers >=0.1 && <0.6,
     utility-ht >=0.0.8 && <0.1,
-    monoid-transformer >=0.0.2 && <0.1
+    data-accessor-transformers >=0.2.1 && <0.3,
+    data-accessor >=0.2.2 && <0.3,
+    transformers >=0.3 && <0.4
   If flag(splitBase)
     Build-Depends:
       process >=1.0 && <1.2,

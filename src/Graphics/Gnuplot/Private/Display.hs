@@ -4,18 +4,19 @@ import qualified Graphics.Gnuplot.Private.FrameOption as Option
 import qualified Graphics.Gnuplot.File as File
 
 import qualified Data.Map as Map
-import qualified Data.Monoid.Reader as Reader
-import qualified Data.Monoid.State as State
+import qualified Control.Monad.Trans.Reader as MR
+import qualified Control.Monad.Trans.State as MS
+import Control.Monad (liftM2, )
 import Data.Monoid (Monoid, mempty, mappend, )
 
 
 newtype Script =
    Script {
-      runScript :: State.T (Int, OptionSet) (Reader.T FilePath Body)
+      runScript :: MS.StateT (Int, OptionSet) (MR.Reader FilePath) Body
    }
 
 pure :: Body -> Script
-pure = Script . State.pure . Reader.pure
+pure = Script . return
 
 data Body =
    Body {
@@ -31,9 +32,9 @@ Could also be implemented with Control.Monad.Trans.State:
 mappend = liftA2 mappend
 -}
 instance Monoid Script where
-   mempty = Script mempty
+   mempty = Script $ return mempty
    mappend (Script b0) (Script b1) =
-      Script (mappend b0 b1)
+      Script (liftM2 mappend b0 b1)
 
 {-
 Could also be implemented with Control.Monad.Trans.State:

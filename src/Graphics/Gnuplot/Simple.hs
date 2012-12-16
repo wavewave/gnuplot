@@ -69,8 +69,8 @@ import qualified Graphics.Gnuplot.Private.Terminal as Terminal
 import Graphics.Gnuplot.Utility
    (quote, commaConcat, semiColonConcat, showTriplet, linearScale, )
 
-import qualified Data.Monoid.Reader as Reader
-import qualified Data.Monoid.State as State
+import qualified Control.Monad.Trans.Reader as MR
+import qualified Control.Monad.Trans.State as MS
 
 import qualified Graphics.Gnuplot.Private.Command as Cmd
 import System.Cmd (rawSystem, )
@@ -532,7 +532,7 @@ runGnuplot ::
    [Attribute] -> String -> Plot.T graph -> IO ()
 runGnuplot attrs cmd (Plot.Cons mp) =
    void $ Cmd.asyncIfInteractive (interactiveTerm attrs) $ Cmd.run $ \dir ->
-      let files = Reader.run (State.evaluate 0 mp) dir
+      let files = MR.runReader (MS.evalStateT mp 0) dir
       in  (map attrToProg attrs ++
            [cmd ++ " " ++
             extractRanges attrs ++ " " ++
