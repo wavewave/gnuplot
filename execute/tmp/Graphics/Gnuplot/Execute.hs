@@ -3,7 +3,7 @@ module Graphics.Gnuplot.Execute where
 import qualified System.IO as IO
 import System.IO.Temp (withSystemTempFile, )
 import System.Exit (ExitCode, )
-import System.Cmd (rawSystem, )
+import System.Process (readProcessWithExitCode, )
 
 
 tmpScript :: FilePath
@@ -17,5 +17,9 @@ simple program options =
    withSystemTempFile tmpScript $ \path handle -> do
       IO.hPutStr handle (unlines program)
       IO.hClose handle
-      -- putStrLn cmd
-      rawSystem "gnuplot" $ options ++ [path]
+      -- putStrLn $ showCommandForUser "gnuplot" (options ++ [path])
+      (exitCode, _out, _err) <-
+         readProcessWithExitCode "gnuplot" (options ++ [path]) []
+      -- putStr out
+      -- putStr err
+      return exitCode
