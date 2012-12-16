@@ -72,6 +72,8 @@ in order to show, what belongs to where:
 module Graphics.Gnuplot.Advanced (
     plot,
     plotDefault,
+    plotSync,
+    plotAsync,
   ) where
 
 import qualified Graphics.Gnuplot.Private.FrameOptionSet as OptionSet
@@ -80,11 +82,13 @@ import qualified Graphics.Gnuplot.Private.Terminal as Terminal
 import qualified Graphics.Gnuplot.Terminal.Default as DefaultTerm
 
 import qualified Graphics.Gnuplot.Private.Command as Cmd
+import Control.Concurrent (ThreadId, forkIO, )
 import System.Exit (ExitCode, )
 
 import qualified Data.Monoid.Reader as Reader
 import qualified Data.Monoid.State as State
 import Data.Monoid (Monoid, mempty, )
+import Control.Functor.HT (void, )
 
 
 -- * User front-end
@@ -101,7 +105,17 @@ better use "Graphics.Gnuplot.Simple".
 plot ::
    (Terminal.C terminal, Display.C gfx) =>
    terminal -> gfx -> IO ExitCode
-plot term gfx =
+plot = plotSync
+
+plotAsync ::
+   (Terminal.C terminal, Display.C gfx) =>
+   terminal -> gfx -> IO ThreadId
+plotAsync term gfx = forkIO $ void $ plotSync term gfx
+
+plotSync ::
+   (Terminal.C terminal, Display.C gfx) =>
+   terminal -> gfx -> IO ExitCode
+plotSync term gfx =
    Cmd.run $ \dir ->
       let body =
              flip Reader.run dir $
