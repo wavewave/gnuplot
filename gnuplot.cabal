@@ -109,6 +109,7 @@ Library
     Graphics.Gnuplot.Time
     Graphics.Gnuplot.Advanced
     Graphics.Gnuplot.Display
+    Graphics.Gnuplot.File
     Graphics.Gnuplot.Terminal
     Graphics.Gnuplot.Terminal.Default
     Graphics.Gnuplot.Terminal.PostScript

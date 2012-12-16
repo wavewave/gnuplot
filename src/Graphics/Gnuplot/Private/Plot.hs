@@ -1,9 +1,10 @@
 module Graphics.Gnuplot.Private.Plot where
 
 import qualified Graphics.Gnuplot.Private.Display as Display
-import qualified Graphics.Gnuplot.Private.File as File
 import qualified Graphics.Gnuplot.Private.FrameOptionSet as OptionSet
 import qualified Graphics.Gnuplot.Private.Graph as Graph
+import qualified Graphics.Gnuplot.Private.File as FileClass
+import qualified Graphics.Gnuplot.File as File
 import Graphics.Gnuplot.Utility (quote, commaConcat, )
 
 import qualified Data.Foldable as Fold
@@ -57,7 +58,7 @@ data File graph =
       graphs_ :: [graph]
    }
 
-instance File.C (File graph) where
+instance FileClass.C (File graph) where
    write (File fn cont _) =
       Fold.mapM_ (writeFile fn) cont
 
@@ -89,7 +90,7 @@ toScript p@(Cons mp) =
          let (rd, n1) = State.run mp n0
              files blocks =
                 mapMaybe
-                   (\blk -> fmap (Display.File (filename_ blk)) (content_ blk))
+                   (\blk -> fmap (File.Cons (filename_ blk)) (content_ blk))
                    blocks
              graphs blocks =
                 concatMap

@@ -1,7 +1,7 @@
 module Graphics.Gnuplot.Private.Display where
 
 import qualified Graphics.Gnuplot.Private.FrameOption as Option
-import qualified Graphics.Gnuplot.Private.File as File
+import qualified Graphics.Gnuplot.File as File
 
 import qualified Data.Map as Map
 import qualified Data.Monoid.Reader as Reader
@@ -19,21 +19,11 @@ pure = Script . State.pure . Reader.pure
 
 data Body =
    Body {
-      files :: [File],
+      files :: [File.T],
       commands :: [String]
    }
 
 type OptionSet = Map.Map Option.T [String]
-
-data File =
-   File {
-      filename :: FilePath,
-      content :: String
-   }
-
-instance File.C File where
-   write (File fn cont) =
-      writeFile fn cont
 
 
 {-
