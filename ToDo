@@ -1,4 +1,7 @@
-replace use of -persist option by persist flag in Terminal.X11
+Since we switched to files in the /tmp directory
+   the default line titles are rather long.
+   Shall we set a shorter default title?
+   But what shall they show?
 
 combinable size handling within multiplots
 
