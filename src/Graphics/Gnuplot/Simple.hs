@@ -430,6 +430,15 @@ extractRanges attrs =
        showRng (l,r) = "[" ++ show l ++ ":" ++ show r ++ "]"
    in  unwords (map (maybe "[:]" showRng) (dropWhileRev isNothing ranges))
 
+interactiveTerm :: [Attribute] -> Bool
+interactiveTerm =
+   all $ \attr ->
+      case attr of
+         Terminal term -> Terminal.interactive term
+         PNG _ -> False
+         EPS _ -> False
+         _ -> True
+
 
 
 plotTypeToGraph :: PlotType -> Graph2D.Type -- GraphType.T
@@ -522,7 +531,7 @@ runGnuplot ::
    Graph.C graph =>
    [Attribute] -> String -> Plot.T graph -> IO ()
 runGnuplot attrs cmd (Plot.Cons mp) =
-   void $ Cmd.run $ \dir ->
+   void $ Cmd.asyncIfInteractive (interactiveTerm attrs) $ Cmd.run $ \dir ->
       let files = Reader.run (State.evaluate 0 mp) dir
       in  (files,
            map attrToProg attrs ++

@@ -101,11 +101,24 @@ but ugly for interactive GHCi sessions.
 For interactive sessions,
 better use "Graphics.Gnuplot.Simple".
 @gfx@ must be one of the types @Plot@, @Frame@, @MultiPlot@.
+
+This function runs gnuplot asynchronously
+for interactive terminals (X11, WX)
+and synchronously for file terminals (PostScript, PNG, etc.).
+This emulates the behaviour of @gnuplot --persist@.
+However, when running asynchronous
+we cannot obtain a real 'ExitCode'.
+Thus, in this case we will always return 'ExitSuccess'.
 -}
 plot ::
    (Terminal.C terminal, Display.C gfx) =>
    terminal -> gfx -> IO ExitCode
-plot = plotSync
+plot term gfx =
+   case Terminal.canonical term of
+      cterm ->
+         Cmd.asyncIfInteractive
+            (Terminal.interactive cterm)
+            (plotCore cterm gfx)
 
 plotAsync ::
    (Terminal.C terminal, Display.C gfx) =>
