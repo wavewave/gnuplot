@@ -66,11 +66,14 @@ import qualified Graphics.Gnuplot.Terminal.SVG as SVG
 
 import qualified Graphics.Gnuplot.Private.Terminal as Terminal
 
-import qualified Graphics.Gnuplot.Private.Command as Cmd
-import System.Cmd (rawSystem, )
 import Graphics.Gnuplot.Utility
    (quote, commaConcat, semiColonConcat, showTriplet, linearScale, )
+
+import qualified Data.Monoid.Reader as Reader
 import qualified Data.Monoid.State as State
+
+import qualified Graphics.Gnuplot.Private.Command as Cmd
+import System.Cmd (rawSystem, )
 import Control.Functor.HT (void, )
 import Data.Foldable (foldMap, )
 import Data.Maybe (listToMaybe, mapMaybe, isNothing, )
@@ -520,10 +523,10 @@ runGnuplot ::
    Graph.C graph =>
    [Attribute] -> String -> Plot.T graph -> IO ()
 runGnuplot attrs cmd (Plot.Cons mp) =
-   let files = State.evaluate 0 mp
-   in  void $
-       Cmd.run files
-          (map attrToProg attrs ++
+   void $ Cmd.run $ \dir ->
+      let files = Reader.run (State.evaluate 0 mp) dir
+      in  (files,
+           map attrToProg attrs ++
            [cmd ++ " " ++
             extractRanges attrs ++ " " ++
             commaConcat (plotFileStatements files)])

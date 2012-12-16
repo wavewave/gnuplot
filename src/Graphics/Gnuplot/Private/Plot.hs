@@ -7,20 +7,24 @@ import qualified Graphics.Gnuplot.Private.Graph as Graph
 import Graphics.Gnuplot.Utility (quote, commaConcat, )
 
 import qualified Data.Foldable as Fold
+import qualified Data.Monoid.Reader as Reader
 import qualified Data.Monoid.State as State
 import Data.Monoid (Monoid, mempty, mappend, )
 
 import Data.Maybe (mapMaybe, )
+
+import qualified System.FilePath as Path
+import System.FilePath ((</>), )
 
 
 {- |
 Plots can be assembled using 'mappend' or 'mconcat'
 or several functions from "Data.Foldable".
 -}
-newtype T graph = Cons (State.T Int [File graph])
+newtype T graph = Cons (State.T Int (Reader.T FilePath [File graph]))
 
 pure :: [File graph] -> T graph
-pure = Cons . State.pure
+pure = Cons . State.pure . Reader.pure
 
 {-
 Could also be implemented with Control.Monad.Trans.State:
@@ -34,9 +38,12 @@ instance Monoid (T graph) where
 
 withUniqueFile :: String -> [graph] -> T graph
 withUniqueFile content graphs =
-   Cons (State.Cons $ \n ->
-      ([File (tmpFileStem ++ show n ++ ".csv") (Just content) graphs],
-       succ n))
+   Cons $ State.Cons $ \n ->
+      (Reader.Cons $ \dir ->
+          [File
+             (dir </> Path.addExtension (tmpFileStem ++ show n) "csv")
+             (Just content) graphs],
+       succ n)
 
 fromGraphs :: FilePath -> [graph] -> T graph
 fromGraphs name gs =
@@ -67,7 +74,7 @@ tmpFile = tmpFileStem ++ ".csv"
 instance Functor T where
    fmap f (Cons mp) =
       Cons $
-      fmap (map (\file -> file{graphs_ = map f $ graphs_ file}))
+      fmap (fmap (map (\file -> file{graphs_ = map f $ graphs_ file})))
       mp
 
 {- |
@@ -79,19 +86,24 @@ toScript :: Graph.C graph => T graph -> Display.Script
 toScript p@(Cons mp) =
    Display.Script $ State.Cons $
       \(n0, opts) ->
-         let (blocks, n1) = State.run mp n0
-             files =
+         let (rd, n1) = State.run mp n0
+             files blocks =
                 mapMaybe
                    (\blk -> fmap (Display.File (filename_ blk)) (content_ blk))
                    blocks
-             graphs =
-                concatMap (\blk ->
-                   map (\gr ->
-                           quote (filename_ blk) ++ " " ++
-                           Graph.toString gr) $ graphs_ blk) $
-                   blocks
-         in  (Display.Body files
-                 [plotCmd p undefined ++ " " ++ commaConcat graphs],
+             graphs blocks =
+                concatMap
+                   (\blk ->
+                      map
+                         (\gr ->
+                            quote (filename_ blk) ++ " " ++
+                            Graph.toString gr) $ graphs_ blk) $
+                blocks
+         in  (Reader.Cons $ \dir ->
+                 case Reader.run rd dir of
+                    blocks ->
+                       Display.Body (files blocks)
+                          [plotCmd p undefined ++ " " ++ commaConcat (graphs blocks)],
               (n1, opts))
 
 optionsToScript :: Graph.C graph => OptionSet.T graph -> Display.Script
@@ -99,7 +111,7 @@ optionsToScript opts =
    Display.Script $
       State.Cons $ \(n, opts0) ->
          let opts1 = OptionSet.decons opts
-         in  (Display.Body [] $
+         in  (Reader.pure $ Display.Body [] $
               OptionSet.diffToString opts0 opts1,
               (n, opts1))
 

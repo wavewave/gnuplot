@@ -82,6 +82,7 @@ import qualified Graphics.Gnuplot.Terminal.Default as DefaultTerm
 import qualified Graphics.Gnuplot.Private.Command as Cmd
 import System.Exit (ExitCode, )
 
+import qualified Data.Monoid.Reader as Reader
 import qualified Data.Monoid.State as State
 import Data.Monoid (Monoid, mempty, )
 
@@ -101,13 +102,14 @@ plot ::
    (Terminal.C terminal, Display.C gfx) =>
    terminal -> gfx -> IO ExitCode
 plot term gfx =
-   let body =
-          State.evaluate (0, OptionSet.initial) $
-          Display.runScript $
-          Display.toScript gfx
-   in  Cmd.run
-          (Display.files body)
-          (Terminal.format term ++ Display.commands body)
+   Cmd.run $ \dir ->
+      let body =
+             flip Reader.run dir $
+             State.evaluate (0, OptionSet.initial) $
+             Display.runScript $
+             Display.toScript gfx
+      in  (Display.files body,
+           Terminal.format term ++ Display.commands body)
 
 {- |
 Plot using the default gnuplot terminal.

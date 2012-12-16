@@ -4,17 +4,18 @@ import qualified Graphics.Gnuplot.Private.FrameOption as Option
 import qualified Graphics.Gnuplot.Private.File as File
 
 import qualified Data.Map as Map
+import qualified Data.Monoid.Reader as Reader
 import qualified Data.Monoid.State as State
 import Data.Monoid (Monoid, mempty, mappend, )
 
 
 newtype Script =
    Script {
-      runScript :: State.T (Int, OptionSet) Body
+      runScript :: State.T (Int, OptionSet) (Reader.T FilePath Body)
    }
 
 pure :: Body -> Script
-pure = Script . State.pure
+pure = Script . State.pure . Reader.pure
 
 data Body =
    Body {
