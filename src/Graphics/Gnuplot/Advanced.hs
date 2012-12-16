@@ -74,12 +74,14 @@ module Graphics.Gnuplot.Advanced (
     plotDefault,
     plotSync,
     plotAsync,
+    fileContents,
   ) where
 
 import qualified Graphics.Gnuplot.Private.FrameOptionSet as OptionSet
 import qualified Graphics.Gnuplot.Private.Display as Display
 import qualified Graphics.Gnuplot.Private.Terminal as Terminal
 import qualified Graphics.Gnuplot.Terminal.Default as DefaultTerm
+import qualified Graphics.Gnuplot.File as File
 
 import qualified Graphics.Gnuplot.Private.Command as Cmd
 import Control.Concurrent (ThreadId, forkIO, )
@@ -89,6 +91,7 @@ import qualified Data.Monoid.Reader as Reader
 import qualified Data.Monoid.State as State
 import Data.Monoid (Monoid, mempty, )
 import Control.Functor.HT (void, )
+import Data.Tuple.HT (mapFst, )
 
 
 -- * User front-end
@@ -134,14 +137,37 @@ plotCore ::
    (Display.C gfx) =>
    Terminal.T -> gfx -> IO ExitCode
 plotCore term gfx =
-   Cmd.run $ \dir ->
-      let body =
-             flip Reader.run dir $
-             State.evaluate (0, OptionSet.initial) $
-             Display.runScript $
-             Display.toScript gfx
-      in  (Terminal.format term ++ Display.commands body,
-           Display.files body)
+   Cmd.run $ render term gfx
+
+{- |
+Return the gnuplot script and the curve files
+corresponding to your plot data.
+The first parameter is the directory where the curve files are located.
+This directory is baked into the gnuplot script
+and the paths of the curve files.
+
+Don't make any assumptions about the structure of the files.
+Feeding the files to gnuplot, archiving them or study them
+are the intended uses of them.
+-}
+fileContents ::
+   (Terminal.C terminal, Display.C gfx) =>
+   FilePath -> terminal -> gfx -> (String, [File.T])
+fileContents dir term gfx =
+   mapFst unlines $ render (Terminal.canonical term) gfx dir
+
+render ::
+   Display.C gfx =>
+   Terminal.T -> gfx -> FilePath -> ([String], [File.T])
+render term gfx dir =
+   let body =
+          flip Reader.run dir $
+          State.evaluate (0, OptionSet.initial) $
+          Display.runScript $
+          Display.toScript gfx
+   in  (Terminal.format term ++ Display.commands body,
+        Display.files body)
+
 
 {- |
 Plot using the default gnuplot terminal.
