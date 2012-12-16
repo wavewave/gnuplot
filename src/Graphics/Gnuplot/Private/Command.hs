@@ -12,11 +12,11 @@ import Control.Functor.HT (void, )
 
 run ::
    (File.C file) =>
-   (FilePath -> ([file], [String])) -> IO ExitCode
+   (FilePath -> ([String], [file])) -> IO ExitCode
 run render =
    withSystemTempDirectory "gnuplot" $ \dir ->
    case render dir of
-      (files, cmds) -> do
+      (cmds, files) -> do
          mapM_ File.write files
          Exec.simple (cmds ++ ["pause mouse close"]) []
 

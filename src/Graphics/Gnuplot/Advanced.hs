@@ -140,8 +140,8 @@ plotCore term gfx =
              State.evaluate (0, OptionSet.initial) $
              Display.runScript $
              Display.toScript gfx
-      in  (Display.files body,
-           Terminal.format term ++ Display.commands body)
+      in  (Terminal.format term ++ Display.commands body,
+           Display.files body)
 
 {- |
 Plot using the default gnuplot terminal.

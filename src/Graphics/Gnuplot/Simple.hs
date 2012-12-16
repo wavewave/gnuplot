@@ -533,11 +533,11 @@ runGnuplot ::
 runGnuplot attrs cmd (Plot.Cons mp) =
    void $ Cmd.asyncIfInteractive (interactiveTerm attrs) $ Cmd.run $ \dir ->
       let files = Reader.run (State.evaluate 0 mp) dir
-      in  (files,
-           map attrToProg attrs ++
+      in  (map attrToProg attrs ++
            [cmd ++ " " ++
             extractRanges attrs ++ " " ++
-            commaConcat (plotFileStatements files)])
+            commaConcat (plotFileStatements files)],
+           files)
 
 plotFileStatements ::
    Graph.C graph => [Plot.File graph] -> [String]
