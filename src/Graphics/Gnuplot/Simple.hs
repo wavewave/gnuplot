@@ -368,9 +368,8 @@ attrToProg :: Attribute -> String
 attrToProg (Custom attribute parameters) =
    "set " ++ attribute ++ " " ++ unwords parameters
 
-attrToProg (Terminal (Terminal.Cons options commands)) =
-   semiColonConcat $
-   ("set terminal " ++ unwords options) : commands
+attrToProg (Terminal term) =
+   semiColonConcat $ Terminal.format term
 
 attrToProg (EPS filename) =
    "set terminal postscript eps; " ++  -- latex

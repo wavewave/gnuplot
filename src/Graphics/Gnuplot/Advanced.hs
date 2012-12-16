@@ -115,7 +115,12 @@ plotAsync term gfx = forkIO $ void $ plotSync term gfx
 plotSync ::
    (Terminal.C terminal, Display.C gfx) =>
    terminal -> gfx -> IO ExitCode
-plotSync term gfx =
+plotSync = plotCore . Terminal.canonical
+
+plotCore ::
+   (Display.C gfx) =>
+   Terminal.T -> gfx -> IO ExitCode
+plotCore term gfx =
    Cmd.run $ \dir ->
       let body =
              flip Reader.run dir $
