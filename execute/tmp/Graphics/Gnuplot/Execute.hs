@@ -1,5 +1,7 @@
 module Graphics.Gnuplot.Execute where
 
+import qualified System.IO as IO
+import System.IO.Temp (withSystemTempFile, )
 import System.Exit (ExitCode, )
 import System.Cmd (rawSystem, )
 
@@ -12,6 +14,8 @@ simple ::
    -> [String] {-^ Options for gnuplot -}
    -> IO ExitCode
 simple program options =
-   do writeFile tmpScript (unlines program)
+   withSystemTempFile tmpScript $ \path handle -> do
+      IO.hPutStr handle (unlines program)
+      IO.hClose handle
       -- putStrLn cmd
-      rawSystem "gnuplot" $ options ++ [tmpScript]
+      rawSystem "gnuplot" $ options ++ [path]
