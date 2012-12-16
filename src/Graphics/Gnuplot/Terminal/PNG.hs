@@ -86,5 +86,6 @@ instance Terminal.C T where
                (fmap formatFontSize $ fontSize_ term) :
                []),
          Terminal.commands =
-            ["set output " ++ (quote $ filename_ term)]
+            ["set output " ++ (quote $ filename_ term)],
+         Terminal.interactive = False
       }

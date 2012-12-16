@@ -15,5 +15,6 @@ instance Terminal.C T where
    canonical _term =
       Terminal.Cons {
          Terminal.options = [],
-         Terminal.commands = []
+         Terminal.commands = [],
+         Terminal.interactive = True  -- Always true? I don't know.
       }

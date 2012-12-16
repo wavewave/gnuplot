@@ -91,5 +91,6 @@ instance Terminal.C T where
             (maybe [] (\(name,size) -> "font" : quote name : show size : []) $ font_ term) ++
             [],
          Terminal.commands =
-            ["set output " ++ (quote $ filename_ term)]
+            ["set output " ++ (quote $ filename_ term)],
+         Terminal.interactive = False
       }

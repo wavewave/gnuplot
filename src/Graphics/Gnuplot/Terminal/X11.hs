@@ -43,6 +43,6 @@ instance Terminal.C T where
                (fmap quote $ title_ term) :
                (fmap (formatBool "persist") $ persist_ term) :
                []),
-         Terminal.commands =
-            []
+         Terminal.commands = [],
+         Terminal.interactive = True
       }
