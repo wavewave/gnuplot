@@ -15,5 +15,4 @@ run render =
    case render dir of
       (files, cmds) -> do
          mapM_ File.write files
-         Exec.simple cmds ["--persist"]
-         -- instead of the option, one can also use 'set terminal x11 persist'
+         Exec.simple (cmds ++ ["pause mouse close"]) []
