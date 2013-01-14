@@ -157,6 +157,14 @@ wave3d =
           meshNodes meshNodes
           (\x y -> cos(x*x+y*y))
 
+lissajous3d :: Frame.T (Graph3D.T Double Double Double)
+lissajous3d =
+   let t = linearScale 300 (-pi, pi)
+       f n = map (sin . (*) n) t
+   in  Frame.cons defltOpts $
+       Plot3D.cloud Graph3D.lines $
+       zip3 (f 3) (f 4) (f 9)
+
 multiplot :: MultiPlot.T
 multiplot =
    let (prefix,suffix) =
@@ -193,5 +201,6 @@ main = sequence_ $
    GP.plotDefault mixed2d :
    GP.plotDefault size2d :
    GP.plotDefault wave3d :
+   GP.plotDefault lissajous3d :
    GP.plotDefault multiplot :
    []

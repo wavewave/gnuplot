@@ -9,6 +9,9 @@ module Graphics.Gnuplot.Graph.ThreeDimensional (
    impulses,
    vectors,
    Graph3DType.pm3d,
+
+   Graph3DType.lines,
+   points,
    ) where
 
 import Graphics.Gnuplot.Private.Graph3D

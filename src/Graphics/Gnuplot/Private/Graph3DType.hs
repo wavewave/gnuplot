@@ -12,6 +12,13 @@ tupleSize :: (Tuple.C a) => T x y z a -> Tuple.ColumnCount a
 tupleSize _ = Tuple.columnCount
 
 
+lines          :: (Atom.C x, Atom.C y, Atom.C z) => T x y z (x,y,z)
+points         :: (Atom.C x, Atom.C y, Atom.C z) => T x y z (x,y,z)
+
+lines          = Cons "lines"
+points         = Cons "points"
+
+
 {-
 See info:/gnuplot/set_style_rectangle
 -}
