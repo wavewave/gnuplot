@@ -65,6 +65,9 @@ instance (Atom.C x, Atom.C y, Atom.C z) => Graph.C (T x y z) where
    defltOptions = defltOptions
 
 
+pm3d :: T x y z
+pm3d = Cons (1:2:3:[]) "pm3d" LineSpec.deflt
+
 deflt :: GraphType.T x y z a -> Columns -> T x y z
 deflt t c = Cons c (GraphType.toString t) LineSpec.deflt
 

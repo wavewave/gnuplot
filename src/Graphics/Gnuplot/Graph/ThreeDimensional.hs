@@ -8,8 +8,8 @@ module Graphics.Gnuplot.Graph.ThreeDimensional (
 
    impulses,
    vectors,
-   pm3d,
+   Graph3DType.pm3d,
    ) where
 
 import Graphics.Gnuplot.Private.Graph3D
-import Graphics.Gnuplot.Private.Graph3DType hiding (T, )
+import Graphics.Gnuplot.Private.Graph3DType as Graph3DType hiding (T, )

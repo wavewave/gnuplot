@@ -24,6 +24,8 @@ impulses       = Cons "impulses"
 vectors        = Cons "vectors"
 pm3d           = Cons "pm3d"
 
+{-# DEPRECATED pm3d "do not use this as graph type, use Graphics.Gnuplot.Plot.ThreeDimensional.surface instead" #-}
+
 
 toString :: T x y z a -> String
 toString (Cons t) = t

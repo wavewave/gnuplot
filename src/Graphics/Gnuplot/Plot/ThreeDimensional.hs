@@ -55,11 +55,9 @@ mesh ::
     Tuple.C x, Tuple.C y, Tuple.C z) =>
    [[(x,y,z)]] -> T x y z
 mesh pss =
-   let typ :: [[a]] -> Type.T x y z a -> Type.T x y z a
-       typ _ = id
-   in  Plot.withUniqueFile
-          (assembleCells (concat (map (\ps -> map Tuple.text ps ++ [[]]) pss)))
-          [Graph.deflt (typ pss Type.pm3d) (1:2:3:[])]
+   Plot.withUniqueFile
+      (assembleCells (concatMap (\ps -> map Tuple.text ps ++ [[]]) pss))
+      [Graph.pm3d]
 
 surface ::
    (Atom.C x, Atom.C y, Atom.C z,
